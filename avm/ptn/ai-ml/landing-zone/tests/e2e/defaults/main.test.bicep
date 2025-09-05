@@ -32,29 +32,28 @@ module testDeployment '../../../main.bicep' = [
     scope: resourceGroup
     name: '${uniqueString(deployment().name, enforcedLocation)}-test-${serviceShort}-${iteration}'
     params: {
-      // Make baseName explicit for stability
       baseName: workloadName
 
-      // Minimal model to keep capacity small and deterministic
+      // Minimal Foundry: project-only (no agent hosts, no auto-deps, no models)
       aiFoundryDefinition: {
         lock: { kind: 'None', name: '' }
         aiProjects: []
-        includeAssociatedResources: true
+        includeAssociatedResources: false
         aiFoundryConfiguration: {
-          createCapabilityHosts: true
+          createCapabilityHosts: false
         }
         aiSearchConfiguration: {}
         storageAccountConfiguration: {}
         cosmosDbConfiguration: {}
         keyVaultConfiguration: {}
-        aiModelDeployments: [
-          {
-            name: 'gpt-4o'
-            model: { format: 'OpenAI', name: 'gpt-4o', version: '2024-11-20' }
-            scale: { type: 'Standard', capacity: 1, family: '', size: '', tier: '' }
-          }
-        ]
+        aiModelDeployments: [] // none
       }
+
+      // If your root module exposes this, pass it to avoid PE/PDNS setup in CI
+      // (keeps the test small/fast). If not available, omit this line.
+      networkIsolation: false
+
+      // Keep if the param is required by the module—even if no VM is created.
       jumpVmAdminPassword: '<StrongP@ssw0rd!>'
     }
   }
