@@ -539,7 +539,6 @@ param buildVmDefinition types.BuildVmDefinitionType = {
     pool: 'Default'
   }
   tags: {}
-  enableTelemetry: false
 }
 
 // 1.5.22 Jump VM configuration (Windows, Bastion-accessed)
@@ -550,7 +549,6 @@ param jumpVmDefinition types.JumpVmDefinitionType = {
   adminUsername: 'azureuser'
   vmKeyVaultSecName: 'jump-admin-password'
   tags: {}
-  enableTelemetry: false
 }
 
 // 1.5.23 Dedicated Key Vault for JumpVM password (public network access for convenience with Bastion operators)
@@ -622,9 +620,9 @@ var varAgwCreatePublicFrontend = bool(appGatewayDefinition.createPublicFrontend!
 
 // ── 2.3 Virtual network & subnets (reuse/new) + peering helpers
 // Parse existing VNet Id (if provided)
-var varVnetIdSegments = empty(resourceIds.virtualNetworkResourceId)
+var varVnetIdSegments = empty(resourceIds.virtualNetworkResourceId!)
   ? ['']
-  : split(resourceIds.virtualNetworkResourceId, '/')
+  : split(resourceIds.virtualNetworkResourceId!, '/')
 var varExistingVNetSubscriptionId = length(varVnetIdSegments) >= 3 ? varVnetIdSegments[2] : ''
 var varExistingVNetResourceGroupName = length(varVnetIdSegments) >= 5 ? varVnetIdSegments[4] : ''
 var varExistingVNetName = length(varVnetIdSegments) >= 1 ? last(varVnetIdSegments) : ''
@@ -668,111 +666,115 @@ var varHasPeer = !empty(varPeerCfgVnetId)
 var varPeerName = empty(varPeerCfgName) ? '${varVnetName}-to-peer' : varPeerCfgName
 
 // Whether we will deploy the VNet (vs reuse)
-var varDeployVnet = empty(resourceIds.virtualNetworkResourceId) && deployToggles.virtualNetwork
+var varDeployVnet = empty(resourceIds.virtualNetworkResourceId!) && deployToggles.virtualNetwork
 
 // VNet resourceId that works for both reuse/new
 #disable-next-line BCP318
-var varVnetResourceId = !empty(resourceIds.virtualNetworkResourceId)
+var varVnetResourceId = !empty(resourceIds.virtualNetworkResourceId!)
   ? existingVNet.id
   : (varDeployVnet ? virtualNetwork!.outputs.resourceId : '')
 
 // Subnets used across modules (computed once)
 var varPeSubnetName = 'pe-subnet'
-var varPeSubnetId = empty(resourceIds.virtualNetworkResourceId)
+var varPeSubnetId = empty(resourceIds.virtualNetworkResourceId!)
   ? resourceId('Microsoft.Network/virtualNetworks/subnets', varVnetName, varPeSubnetName)
   : '${existingVNet.id}/subnets/${varPeSubnetName}'
 
 var varAgentSubnetName = 'agent-subnet'
-var varAgentSubnetId = empty(resourceIds.virtualNetworkResourceId)
+var varAgentSubnetId = empty(resourceIds.virtualNetworkResourceId!)
   ? resourceId('Microsoft.Network/virtualNetworks/subnets', varVnetName, varAgentSubnetName)
   : '${existingVNet.id}/subnets/${varAgentSubnetName}'
 
 var varAgwSubnetName = 'AppGatewaySubnet'
-var varAgwSubnetId = empty(resourceIds.virtualNetworkResourceId)
+var varAgwSubnetId = empty(resourceIds.virtualNetworkResourceId!)
   ? resourceId('Microsoft.Network/virtualNetworks/subnets', varVnetName, varAgwSubnetName)
   : '${existingVNet.id}/subnets/${varAgwSubnetName}'
 
-var varAcaInfraSubnetId = empty(resourceIds.virtualNetworkResourceId)
+var varAcaInfraSubnetId = empty(resourceIds.virtualNetworkResourceId!)
   ? resourceId('Microsoft.Network/virtualNetworks/subnets', varVnetName, containerAppEnvDefinition.subnetName!)
   : '${existingVNet.id}/subnets/${containerAppEnvDefinition.subnetName!}'
 
 // Compute subnets (Jump/Build)
 var varJumpSubnetName = 'jumpbox-subnet'
 var varBuildSubnetName = 'devops-build-agents-subnet'
-var varJumpSubnetId = empty(resourceIds.virtualNetworkResourceId)
+var varJumpSubnetId = empty(resourceIds.virtualNetworkResourceId!)
   ? resourceId('Microsoft.Network/virtualNetworks/subnets', varVnetName, varJumpSubnetName)
   : '${existingVNet.id}/subnets/${varJumpSubnetName}'
-var varBuildSubnetId = empty(resourceIds.virtualNetworkResourceId)
+var varBuildSubnetId = empty(resourceIds.virtualNetworkResourceId!)
   ? resourceId('Microsoft.Network/virtualNetworks/subnets', varVnetName, varBuildSubnetName)
   : '${existingVNet.id}/subnets/${varBuildSubnetName}'
 
 // ── 2.4 Existing resource parsing (IDs → subscription/rg/name)
-var varApimIdSegments = empty(resourceIds.apimServiceResourceId) ? [''] : split(resourceIds.apimServiceResourceId, '/')
+var varApimIdSegments = empty(resourceIds.apimServiceResourceId!)
+  ? ['']
+  : split(resourceIds.apimServiceResourceId!, '/')
 var varApimSub = length(varApimIdSegments) >= 3 ? varApimIdSegments[2] : ''
 var varApimRg = length(varApimIdSegments) >= 5 ? varApimIdSegments[4] : ''
 var varApimNameExisting = length(varApimIdSegments) >= 1 ? last(varApimIdSegments) : ''
 
-var varAgwIdSegments = empty(resourceIds.applicationGatewayResourceId)
+var varAgwIdSegments = empty(resourceIds.applicationGatewayResourceId!)
   ? ['']
-  : split(resourceIds.applicationGatewayResourceId, '/')
+  : split(resourceIds.applicationGatewayResourceId!, '/')
 var varAgwSub = length(varAgwIdSegments) >= 3 ? varAgwIdSegments[2] : ''
 var varAgwRg = length(varAgwIdSegments) >= 5 ? varAgwIdSegments[4] : ''
 var varAgwNameExisting = length(varAgwIdSegments) >= 1 ? last(varAgwIdSegments) : ''
 
-var varAfwIdSegments = empty(resourceIds.firewallResourceId) ? [''] : split(resourceIds.firewallResourceId, '/')
+var varAfwIdSegments = empty(resourceIds.firewallResourceId!) ? [''] : split(resourceIds.firewallResourceId!, '/')
 var varAfwSub = length(varAfwIdSegments) >= 3 ? varAfwIdSegments[2] : ''
 var varAfwRg = length(varAfwIdSegments) >= 5 ? varAfwIdSegments[4] : ''
 var varAfwNameExisting = length(varAfwIdSegments) >= 1 ? last(varAfwIdSegments) : ''
 
-var varLawIdSegments = empty(resourceIds.logAnalyticsWorkspaceResourceId)
+var varLawIdSegments = empty(resourceIds.logAnalyticsWorkspaceResourceId!)
   ? ['']
-  : split(resourceIds.logAnalyticsWorkspaceResourceId, '/')
+  : split(resourceIds.logAnalyticsWorkspaceResourceId!, '/')
 var varExistingLawSubscriptionId = length(varLawIdSegments) >= 3 ? varLawIdSegments[2] : ''
 var varExistingLawResourceGroupName = length(varLawIdSegments) >= 5 ? varLawIdSegments[4] : ''
 var varExistingLawName = length(varLawIdSegments) >= 1 ? last(varLawIdSegments) : ''
 
-var varAiIdSegments = empty(resourceIds.appInsightsResourceId) ? [''] : split(resourceIds.appInsightsResourceId, '/')
+var varAiIdSegments = empty(resourceIds.appInsightsResourceId!) ? [''] : split(resourceIds.appInsightsResourceId!, '/')
 var varExistingAISubscriptionId = length(varAiIdSegments) >= 3 ? varAiIdSegments[2] : ''
 var varExistingAIResourceGroupName = length(varAiIdSegments) >= 5 ? varAiIdSegments[4] : ''
 var varExistingAIName = length(varAiIdSegments) >= 1 ? last(varAiIdSegments) : ''
 
-var varEnvIdSegments = empty(resourceIds.containerEnvResourceId) ? [''] : split(resourceIds.containerEnvResourceId, '/')
+var varEnvIdSegments = empty(resourceIds.containerEnvResourceId!)
+  ? ['']
+  : split(resourceIds.containerEnvResourceId!, '/')
 var varExistingEnvSubscriptionId = length(varEnvIdSegments) >= 3 ? varEnvIdSegments[2] : ''
 var varExistingEnvResourceGroup = length(varEnvIdSegments) >= 5 ? varEnvIdSegments[4] : ''
 var varExistingEnvName = length(varEnvIdSegments) >= 1 ? last(varEnvIdSegments) : ''
 
-var varAcrIdSegments = empty(resourceIds.containerRegistryResourceId)
+var varAcrIdSegments = empty(resourceIds.containerRegistryResourceId!)
   ? ['']
-  : split(resourceIds.containerRegistryResourceId, '/')
+  : split(resourceIds.containerRegistryResourceId!, '/')
 var varExistingAcrSub = length(varAcrIdSegments) >= 3 ? varAcrIdSegments[2] : ''
 var varExistingAcrRg = length(varAcrIdSegments) >= 5 ? varAcrIdSegments[4] : ''
 var varExistingAcrName = length(varAcrIdSegments) >= 1 ? last(varAcrIdSegments) : ''
 
-var varCosmosIdSegments = empty(resourceIds.dbAccountResourceId) ? [''] : split(resourceIds.dbAccountResourceId, '/')
+var varCosmosIdSegments = empty(resourceIds.dbAccountResourceId!) ? [''] : split(resourceIds.dbAccountResourceId!, '/')
 var varExistingCosmosSub = length(varCosmosIdSegments) >= 3 ? varCosmosIdSegments[2] : ''
 var varExistingCosmosRg = length(varCosmosIdSegments) >= 5 ? varCosmosIdSegments[4] : ''
 var varExistingCosmosName = length(varCosmosIdSegments) >= 1 ? last(varCosmosIdSegments) : ''
 
-var varKvIdSegments = empty(resourceIds.keyVaultResourceId) ? [''] : split(resourceIds.keyVaultResourceId, '/')
+var varKvIdSegments = empty(resourceIds.keyVaultResourceId!) ? [''] : split(resourceIds.keyVaultResourceId!, '/')
 var varExistingKvSub = length(varKvIdSegments) >= 3 ? varKvIdSegments[2] : ''
 var varExistingKvRg = length(varKvIdSegments) >= 5 ? varKvIdSegments[4] : ''
 var varExistingKvName = length(varKvIdSegments) >= 1 ? last(varKvIdSegments) : ''
 
-var varSaIdSegments = empty(resourceIds.storageAccountResourceId)
+var varSaIdSegments = empty(resourceIds.storageAccountResourceId!)
   ? ['']
-  : split(resourceIds.storageAccountResourceId, '/')
+  : split(resourceIds.storageAccountResourceId!, '/')
 var varExistingSaSub = length(varSaIdSegments) >= 3 ? varSaIdSegments[2] : ''
 var varExistingSaRg = length(varSaIdSegments) >= 5 ? varSaIdSegments[4] : ''
 var varExistingSaName = length(varSaIdSegments) >= 1 ? last(varSaIdSegments) : ''
 
-var varSearchIdSegments = empty(resourceIds.searchServiceResourceId)
+var varSearchIdSegments = empty(resourceIds.searchServiceResourceId!)
   ? ['']
-  : split(resourceIds.searchServiceResourceId, '/')
+  : split(resourceIds.searchServiceResourceId!, '/')
 var varExistingSearchSub = length(varSearchIdSegments) >= 3 ? varSearchIdSegments[2] : ''
 var varExistingSearchRg = length(varSearchIdSegments) >= 5 ? varSearchIdSegments[4] : ''
 var varExistingSearchName = length(varSearchIdSegments) >= 1 ? last(varSearchIdSegments) : ''
 
-var varAppcsIdSegments = empty(resourceIds.appConfigResourceId) ? [''] : split(resourceIds.appConfigResourceId, '/')
+var varAppcsIdSegments = empty(resourceIds.appConfigResourceId!) ? [''] : split(resourceIds.appConfigResourceId!, '/')
 var varExistingAppcsSub = length(varAppcsIdSegments) >= 3 ? varAppcsIdSegments[2] : ''
 var varExistingAppcsRg = length(varAppcsIdSegments) >= 5 ? varAppcsIdSegments[4] : ''
 var varExistingAppcsName = length(varAppcsIdSegments) >= 1 ? last(varAppcsIdSegments) : ''
@@ -811,17 +813,17 @@ var varBingNameEffective = empty(groundingWithBingDefinition.name!)
   : groundingWithBingDefinition.name!
 
 // ── 2.7 Deployment switches & “has” state (create vs reuse)
-var varDeploySa = empty(resourceIds.storageAccountResourceId) && deployGenAiAppBackingServices && deployToggles.storageAccount
-var varDeployCosmos = empty(resourceIds.dbAccountResourceId) && deployGenAiAppBackingServices && deployToggles.cosmosDb
-var varDeploySearch = empty(resourceIds.searchServiceResourceId) && deployGenAiAppBackingServices && deployToggles.searchService
-var varDeployKv = empty(resourceIds.keyVaultResourceId) && deployGenAiAppBackingServices && deployToggles.keyVault
-var varDeployContainerAppEnv = empty(resourceIds.containerEnvResourceId) && deployGenAiAppBackingServices && deployToggles.containerEnv
+var varDeploySa = empty(resourceIds.storageAccountResourceId!) && deployGenAiAppBackingServices && deployToggles.storageAccount
+var varDeployCosmos = empty(resourceIds.dbAccountResourceId!) && deployGenAiAppBackingServices && deployToggles.cosmosDb
+var varDeploySearch = empty(resourceIds.searchServiceResourceId!) && deployGenAiAppBackingServices && deployToggles.searchService
+var varDeployKv = empty(resourceIds.keyVaultResourceId!) && deployGenAiAppBackingServices && deployToggles.keyVault
+var varDeployContainerAppEnv = empty(resourceIds.containerEnvResourceId!) && deployGenAiAppBackingServices && deployToggles.containerEnv
 var varDeployContainerApps = deployGenAiAppBackingServices && varHasContainerEnv && deployToggles.containerApps && length(containerAppsList) > 0
-var varDeployAppConfig = empty(resourceIds.appConfigResourceId) && deployGenAiAppBackingServices && deployToggles.appConfig
-var varDeployAcr = empty(resourceIds.containerRegistryResourceId) && deployGenAiAppBackingServices && deployToggles.containerRegistry
-var varDeployApim = empty(resourceIds.apimServiceResourceId) && deployToggles.apiManagement
-var varDeployAppGateway = empty(resourceIds.applicationGatewayResourceId) && deployToggles.applicationGateway
-var varDeployFirewall = empty(resourceIds.firewallResourceId) && deployToggles.firewall
+var varDeployAppConfig = empty(resourceIds.appConfigResourceId!) && deployGenAiAppBackingServices && deployToggles.appConfig
+var varDeployAcr = empty(resourceIds.containerRegistryResourceId!) && deployGenAiAppBackingServices && deployToggles.containerRegistry
+var varDeployApim = empty(resourceIds.apimServiceResourceId!) && deployToggles.apiManagement
+var varDeployAppGateway = empty(resourceIds.applicationGatewayResourceId!) && deployToggles.applicationGateway
+var varDeployFirewall = empty(resourceIds.firewallResourceId!) && deployToggles.firewall
 
 var varIsPlatformLz = flagPlatformLandingZone
 var varDeployPdnsAndPe = networkIsolation && !varIsPlatformLz
@@ -829,47 +831,47 @@ var varDeployBuildVm = deployToggles.buildVm && !varIsPlatformLz
 var varDeployJumpVm = deployToggles.jumpVm && !varIsPlatformLz && !empty(jumpVmAdminPassword)
 
 // Observability coupling (App Insights requires LAW)
-var varDeployLogAnalytics = empty(resourceIds.logAnalyticsWorkspaceResourceId) && deployToggles.logAnalytics
-var varHasLogAnalytics = (!empty(resourceIds.logAnalyticsWorkspaceResourceId)) || (varDeployLogAnalytics)
-var varDeployAppInsights = empty(resourceIds.appInsightsResourceId) && deployToggles.appInsights && varHasLogAnalytics
-var varHasAppInsights = (!empty(resourceIds.appInsightsResourceId)) || (varDeployAppInsights)
+var varDeployLogAnalytics = empty(resourceIds.logAnalyticsWorkspaceResourceId!) && deployToggles.logAnalytics
+var varHasLogAnalytics = (!empty(resourceIds.logAnalyticsWorkspaceResourceId!)) || (varDeployLogAnalytics)
+var varDeployAppInsights = empty(resourceIds.appInsightsResourceId!) && deployToggles.appInsights && varHasLogAnalytics
+var varHasAppInsights = (!empty(resourceIds.appInsightsResourceId!)) || (varDeployAppInsights)
 
 // Decide if Bing module runs (create or reuse+connect)
-var varInvokeBingModule = (!empty(resourceIds.groundingServiceResourceId)) || (deployToggles.groundingWithBingSearch && empty(resourceIds.groundingServiceResourceId))
+var varInvokeBingModule = (!empty(resourceIds.groundingServiceResourceId!)) || (deployToggles.groundingWithBingSearch && empty(resourceIds.groundingServiceResourceId!))
 
 // “Has” state for GenAI app stack (create or reuse)
-var varHasStorage = (!empty(resourceIds.storageAccountResourceId)) || (varDeploySa)
-var varHasCosmos = (!empty(resourceIds.dbAccountResourceId)) || (varDeployCosmos)
-var varHasSearch = (!empty(resourceIds.searchServiceResourceId)) || (varDeploySearch)
-var varHasKv = (!empty(resourceIds.keyVaultResourceId)) || (varDeployKv)
-var varHasContainerEnv = (!empty(resourceIds.containerEnvResourceId)) || (varDeployContainerAppEnv)
-var varHasAppConfig = (!empty(resourceIds.appConfigResourceId)) || (varDeployAppConfig)
-var varHasAcr = (!empty(resourceIds.containerRegistryResourceId)) || (varDeployAcr)
+var varHasStorage = (!empty(resourceIds.storageAccountResourceId!)) || (varDeploySa)
+var varHasCosmos = (!empty(resourceIds.dbAccountResourceId!)) || (varDeployCosmos)
+var varHasSearch = (!empty(resourceIds.searchServiceResourceId!)) || (varDeploySearch)
+var varHasKv = (!empty(resourceIds.keyVaultResourceId!)) || (varDeployKv)
+var varHasContainerEnv = (!empty(resourceIds.containerEnvResourceId!)) || (varDeployContainerAppEnv)
+var varHasAppConfig = (!empty(resourceIds.appConfigResourceId!)) || (varDeployAppConfig)
+var varHasAcr = (!empty(resourceIds.containerRegistryResourceId!)) || (varDeployAcr)
 
 // ── 2.8 Observability effective values (LAW Id, AI connection)
-var varLaIdEffective = !empty(resourceIds.logAnalyticsWorkspaceResourceId)
-  ? resourceIds.logAnalyticsWorkspaceResourceId
+var varLaIdEffective = !empty(resourceIds.logAnalyticsWorkspaceResourceId!)
+  ? resourceIds.logAnalyticsWorkspaceResourceId!
   : (varDeployLogAnalytics ? logAnalytics!.outputs.resourceId : '')
-var varLaCustomerIdEffective = !empty(resourceIds.logAnalyticsWorkspaceResourceId)
-  ? reference(resourceIds.logAnalyticsWorkspaceResourceId, '2022-10-01', 'Full').properties.customerId
+var varLaCustomerIdEffective = !empty(resourceIds.logAnalyticsWorkspaceResourceId!)
+  ? reference(resourceIds.logAnalyticsWorkspaceResourceId!, '2022-10-01', 'Full').properties.customerId
   : (varDeployLogAnalytics ? logAnalytics!.outputs.logAnalyticsWorkspaceId : '')
-var varLaSharedKeyEffective = !empty(resourceIds.logAnalyticsWorkspaceResourceId)
-  ? listKeys(resourceIds.logAnalyticsWorkspaceResourceId, '2020-08-01').primarySharedKey
+var varLaSharedKeyEffective = !empty(resourceIds.logAnalyticsWorkspaceResourceId!)
+  ? listKeys(resourceIds.logAnalyticsWorkspaceResourceId!, '2020-08-01').primarySharedKey
   #disable-next-line BCP318
   : (varDeployLogAnalytics ? logAnalytics.outputs.primarySharedKey : '')
 
 // ── 2.9 Effective resourceIds for dependent modules (env, ACR, App Config)
-var varContainerEnvIdEffective = !empty(resourceIds.containerEnvResourceId)
-  ? resourceIds.containerEnvResourceId
+var varContainerEnvIdEffective = !empty(resourceIds.containerEnvResourceId!)
+  ? resourceIds.containerEnvResourceId!
   #disable-next-line BCP318
   : containerEnv.outputs.resourceId
 
-var varAcrResourceId = !empty(resourceIds.containerRegistryResourceId)
+var varAcrResourceId = !empty(resourceIds.containerRegistryResourceId!)
   ? existingAcr.id
   : (varDeployAcr ? resourceId('Microsoft.ContainerRegistry/registries', varAcrNameEffective) : '')
 
-var varAppConfigResourceId = !empty(resourceIds.appConfigResourceId)
-  ? resourceIds.appConfigResourceId
+var varAppConfigResourceId = !empty(resourceIds.appConfigResourceId!)
+  ? resourceIds.appConfigResourceId!
   : (varDeployAppConfig ? resourceId('Microsoft.AppConfiguration/configurationStores', varAppConfigName) : '')
 
 // ── 2.10 AI Foundry inputs & derived values
@@ -1172,8 +1174,8 @@ var varBuildVmNormalized = union(
 )
 
 // Render cloud-init from template with placeholders
-var varT0raw = loadTextContent('./common/build-cloudinit.yaml')
-var varT0 = replace(varT0raw, '\r\n', '\n')
+var varT0raw = replace(loadTextContent('./common/build-cloudinit.yaml'), '\r\n', '\n')
+var varT0 = varT0raw
 var varT1 = replace(varT0, '{0}', string(varBuildVmNormalized.runner))
 var varT2 = replace(varT1, '{1}', string(varBuildVmNormalized.azdo.orgUrl))
 var varT3 = replace(varT2, '{2}', string(varBuildVmNormalized.azdo.pool))
@@ -1225,7 +1227,7 @@ resource avmTelemetry 'Microsoft.Resources/deployments@2024-03-01' = if (enableT
 // 3.1 Networking — VNet (reuse or create)
 // ─────────────────────────────────────────────────────────────────────-
 
-resource existingVNet 'Microsoft.Network/virtualNetworks@2024-07-01' existing = if (!empty(resourceIds.virtualNetworkResourceId)) {
+resource existingVNet 'Microsoft.Network/virtualNetworks@2024-07-01' existing = if (!empty(resourceIds.virtualNetworkResourceId!)) {
   name: varExistingVNetName
   scope: resourceGroup(varExistingVNetSubscriptionId, varExistingVNetResourceGroupName)
 }
@@ -1505,7 +1507,7 @@ module privateEndpointAppConfig 'br/public:avm/res/network/private-endpoint:0.11
       {
         name: 'appConfigConnection'
         properties: {
-          privateLinkServiceId: empty(resourceIds.appConfigResourceId)
+          privateLinkServiceId: empty(resourceIds.appConfigResourceId!)
             ? configurationStore!.outputs.resourceId
             : existingAppConfig.id
           groupIds: ['configurationStores']
@@ -1539,7 +1541,7 @@ module privateEndpointContainerAppsEnv 'br/public:avm/res/network/private-endpoi
       {
         name: 'ccaConnection'
         properties: {
-          privateLinkServiceId: empty(resourceIds.containerEnvResourceId)
+          privateLinkServiceId: empty(resourceIds.containerEnvResourceId!)
             ? containerEnv!.outputs.resourceId
             : existingContainerEnv.id
           groupIds: ['managedEnvironments']
@@ -1610,7 +1612,7 @@ module privateEndpointStorageBlob 'br/public:avm/res/network/private-endpoint:0.
       {
         name: 'blobConnection'
         properties: {
-          privateLinkServiceId: empty(resourceIds.storageAccountResourceId)
+          privateLinkServiceId: empty(resourceIds.storageAccountResourceId!)
             #disable-next-line BCP318
             ? storageAccount.outputs.resourceId
             : existingStorage.id
@@ -1646,7 +1648,7 @@ module privateEndpointCosmos 'br/public:avm/res/network/private-endpoint:0.11.0'
       {
         name: 'cosmosConnection'
         properties: {
-          privateLinkServiceId: empty(resourceIds.dbAccountResourceId)
+          privateLinkServiceId: empty(resourceIds.dbAccountResourceId!)
             #disable-next-line BCP318
             ? databaseAccount.outputs.resourceId
             : existingCosmos.id
@@ -1682,7 +1684,7 @@ module privateEndpointSearch 'br/public:avm/res/network/private-endpoint:0.11.0'
       {
         name: 'searchConnection'
         properties: {
-          privateLinkServiceId: empty(resourceIds.searchServiceResourceId)
+          privateLinkServiceId: empty(resourceIds.searchServiceResourceId!)
             #disable-next-line BCP318
             ? searchService.outputs.resourceId
             : existingSearch.id
@@ -1705,9 +1707,9 @@ module privateEndpointSearch 'br/public:avm/res/network/private-endpoint:0.11.0'
   }
   dependsOn: [
     #disable-next-line BCP321
-    (empty(resourceIds.searchServiceResourceId)) ? searchService : null
+    (empty(resourceIds.searchServiceResourceId!)) ? searchService : null
     #disable-next-line BCP321
-    (empty(resourceIds.virtualNetworkResourceId)) ? virtualNetwork : null
+    (empty(resourceIds.virtualNetworkResourceId!)) ? virtualNetwork : null
     #disable-next-line BCP321
     (varDeployPdnsAndPe && !varUseExistingPdz.search && varNeedSearchPdns) ? privateDnsZoneSearch : null
   ]
@@ -1727,7 +1729,7 @@ module privateEndpointKeyVault 'br/public:avm/res/network/private-endpoint:0.11.
         name: 'kvConnection'
         properties: {
           #disable-next-line BCP318
-          privateLinkServiceId: empty(resourceIds.keyVaultResourceId) ? vault.outputs.resourceId : existingVault.id
+          privateLinkServiceId: empty(resourceIds.keyVaultResourceId!) ? vault.outputs.resourceId : existingVault.id
           groupIds: ['vault']
         }
       }
@@ -1750,17 +1752,17 @@ module privateEndpointKeyVault 'br/public:avm/res/network/private-endpoint:0.11.
 // ─────────────────────────────────────────────────────────────────────-
 // 3.5 Existing Resources (APIM, AGW, Firewall)
 // ─────────────────────────────────────────────────────────────────────-
-resource existingApim 'Microsoft.ApiManagement/service@2024-06-01-preview' existing = if (!empty(resourceIds.apimServiceResourceId)) {
+resource existingApim 'Microsoft.ApiManagement/service@2024-06-01-preview' existing = if (!empty(resourceIds.apimServiceResourceId!)) {
   name: varApimNameExisting
   scope: resourceGroup(varApimSub, varApimRg)
 }
 
-resource existingAppGateway 'Microsoft.Network/applicationGateways@2024-07-01' existing = if (!empty(resourceIds.applicationGatewayResourceId)) {
+resource existingAppGateway 'Microsoft.Network/applicationGateways@2024-07-01' existing = if (!empty(resourceIds.applicationGatewayResourceId!)) {
   name: varAgwNameExisting
   scope: resourceGroup(varAgwSub, varAgwRg)
 }
 
-resource existingFirewall 'Microsoft.Network/azureFirewalls@2024-07-01' existing = if (!empty(resourceIds.firewallResourceId)) {
+resource existingFirewall 'Microsoft.Network/azureFirewalls@2024-07-01' existing = if (!empty(resourceIds.firewallResourceId!)) {
   name: varAfwNameExisting
   scope: resourceGroup(varAfwSub, varAfwRg)
 }
@@ -1769,7 +1771,7 @@ resource existingFirewall 'Microsoft.Network/azureFirewalls@2024-07-01' existing
 // 3.6 Observability (LAW, App Insights)
 // ─────────────────────────────────────────────────────────────────────-
 
-resource existingLogAnalytics 'Microsoft.OperationalInsights/workspaces@2025-02-01' existing = if (!empty(resourceIds.logAnalyticsWorkspaceResourceId)) {
+resource existingLogAnalytics 'Microsoft.OperationalInsights/workspaces@2025-02-01' existing = if (!empty(resourceIds.logAnalyticsWorkspaceResourceId!)) {
   name: varExistingLawName
   scope: resourceGroup(varExistingLawSubscriptionId, varExistingLawResourceGroupName)
 }
@@ -1789,7 +1791,7 @@ module logAnalytics 'br/public:avm/res/operational-insights/workspace:0.12.0' = 
 
 // App Insights
 
-resource existingAppInsights 'Microsoft.Insights/components@2020-02-02' existing = if (!empty(resourceIds.appInsightsResourceId)) {
+resource existingAppInsights 'Microsoft.Insights/components@2020-02-02' existing = if (!empty(resourceIds.appInsightsResourceId!)) {
   name: varExistingAIName
   scope: resourceGroup(varExistingAISubscriptionId, varExistingAIResourceGroupName)
 }
@@ -1808,7 +1810,7 @@ module appInsights 'br/public:avm/res/insights/component:0.6.0' = if (varDeployA
   }
   dependsOn: [
     #disable-next-line BCP321
-    (empty(resourceIds.logAnalyticsWorkspaceResourceId)) ? logAnalytics : null
+    (empty(resourceIds.logAnalyticsWorkspaceResourceId!)) ? logAnalytics : null
   ]
 }
 
@@ -1816,7 +1818,7 @@ module appInsights 'br/public:avm/res/insights/component:0.6.0' = if (varDeployA
 // 3.7 Container Apps Environment (reuse or create)
 // ─────────────────────────────────────────────────────────────────────-
 
-resource existingContainerEnv 'Microsoft.App/managedEnvironments@2025-02-02-preview' existing = if (!empty(resourceIds.containerEnvResourceId)) {
+resource existingContainerEnv 'Microsoft.App/managedEnvironments@2025-02-02-preview' existing = if (!empty(resourceIds.containerEnvResourceId!)) {
   name: varExistingEnvName
   scope: resourceGroup(varExistingEnvSubscriptionId, varExistingEnvResourceGroup)
 }
@@ -1827,6 +1829,7 @@ module containerEnv 'br/public:avm/res/app/managed-environment:0.11.3' = if (var
     name: varContainerEnvName
     location: location
     tags: union(tags, containerAppEnvDefinition.tags! ?? {})
+    enableTelemetry: enableTelemetry
 
     appLogsConfiguration: (varHasLogAnalytics && (containerAppEnvDefinition.enableDiagnosticSettings! ?? false))
       ? {
@@ -1838,7 +1841,7 @@ module containerEnv 'br/public:avm/res/app/managed-environment:0.11.3' = if (var
         }
       : null
 
-    appInsightsConnectionString: empty(resourceIds.appInsightsResourceId)
+    appInsightsConnectionString: empty(resourceIds.appInsightsResourceId!)
       #disable-next-line BCP318
       ? appInsights.outputs.connectionString
       #disable-next-line BCP318
@@ -1854,9 +1857,9 @@ module containerEnv 'br/public:avm/res/app/managed-environment:0.11.3' = if (var
   }
   dependsOn: [
     #disable-next-line BCP321
-    (empty(resourceIds.virtualNetworkResourceId)) ? virtualNetwork : null
+    (empty(resourceIds.virtualNetworkResourceId!)) ? virtualNetwork : null
     #disable-next-line BCP321
-    (empty(resourceIds.logAnalyticsWorkspaceResourceId)) ? logAnalytics : null
+    (empty(resourceIds.logAnalyticsWorkspaceResourceId!)) ? logAnalytics : null
   ]
 }
 
@@ -1871,6 +1874,8 @@ module containerApps 'br/public:avm/res/app/container-app:0.18.1' = [
     params: {
       name: empty(app.name!) ? '${varCa}${baseName}-${app.appId}' : app.name!
       location: location
+      enableTelemetry: enableTelemetry
+
       environmentResourceId: varContainerEnvIdEffective
       workloadProfileName: app.profileName
 
@@ -1919,7 +1924,7 @@ module containerApps 'br/public:avm/res/app/container-app:0.18.1' = [
     }
     dependsOn: [
       #disable-next-line BCP321
-      (empty(resourceIds.containerEnvResourceId)) ? containerEnv : null
+      (empty(resourceIds.containerEnvResourceId!)) ? containerEnv : null
       #disable-next-line BCP321
       (varDeployPdnsAndPe && !varUseExistingPdz.containerApps && varHasContainerEnv)
         ? privateDnsZoneContainerApps
@@ -1935,7 +1940,7 @@ module containerApps 'br/public:avm/res/app/container-app:0.18.1' = [
 // ─────────────────────────────────────────────────────────────────────-
 // -------- ACR
 
-resource existingAcr 'Microsoft.ContainerRegistry/registries@2025-05-01-preview' existing = if (!empty(resourceIds.containerRegistryResourceId)) {
+resource existingAcr 'Microsoft.ContainerRegistry/registries@2025-05-01-preview' existing = if (!empty(resourceIds.containerRegistryResourceId!)) {
   name: varExistingAcrName
   scope: resourceGroup(varExistingAcrSub, varExistingAcrRg)
 }
@@ -1955,7 +1960,7 @@ module registry 'br/public:avm/res/container-registry/registry:0.9.3' = if (varD
 
 // -------- Cosmos DB (GenAI)
 
-resource existingCosmos 'Microsoft.DocumentDB/databaseAccounts@2025-04-15' existing = if (!empty(resourceIds.dbAccountResourceId)) {
+resource existingCosmos 'Microsoft.DocumentDB/databaseAccounts@2025-04-15' existing = if (!empty(resourceIds.dbAccountResourceId!)) {
   name: varExistingCosmosName
   scope: resourceGroup(varExistingCosmosSub, varExistingCosmosRg)
 }
@@ -1971,7 +1976,7 @@ module databaseAccount 'br/public:avm/res/document-db/database-account:0.15.1' =
 
 // -------- Key Vault (GenAI)
 
-resource existingVault 'Microsoft.KeyVault/vaults@2024-12-01-preview' existing = if (!empty(resourceIds.keyVaultResourceId)) {
+resource existingVault 'Microsoft.KeyVault/vaults@2024-12-01-preview' existing = if (!empty(resourceIds.keyVaultResourceId!)) {
   name: varExistingKvName
   scope: resourceGroup(varExistingKvSub, varExistingKvRg)
 }
@@ -1988,7 +1993,7 @@ module vault 'br/public:avm/res/key-vault/vault:0.13.3' = if (varDeployKv) {
 
 // -------- Storage Account (GenAI)
 
-resource existingStorage 'Microsoft.Storage/storageAccounts@2025-01-01' existing = if (!empty(resourceIds.storageAccountResourceId)) {
+resource existingStorage 'Microsoft.Storage/storageAccounts@2025-01-01' existing = if (!empty(resourceIds.storageAccountResourceId!)) {
   name: varExistingSaName
   scope: resourceGroup(varExistingSaSub, varExistingSaRg)
 }
@@ -2009,7 +2014,7 @@ module storageAccount 'br/public:avm/res/storage/storage-account:0.26.2' = if (v
 
 // -------- AI Search (GenAI)
 #disable-next-line BCP081
-resource existingSearch 'Microsoft.Search/searchServices@2024-03-01' existing = if (!empty(resourceIds.searchServiceResourceId)) {
+resource existingSearch 'Microsoft.Search/searchServices@2024-03-01' existing = if (!empty(resourceIds.searchServiceResourceId!)) {
   name: varExistingSearchName
   scope: resourceGroup(varExistingSearchSub, varExistingSearchRg)
 }
@@ -2025,7 +2030,7 @@ module searchService 'br/public:avm/res/search/search-service:0.11.1' = if (varD
 
 // -------- App Configuration
 
-resource existingAppConfig 'Microsoft.AppConfiguration/configurationStores@2024-06-01' existing = if (!empty(resourceIds.appConfigResourceId)) {
+resource existingAppConfig 'Microsoft.AppConfiguration/configurationStores@2024-06-01' existing = if (!empty(resourceIds.appConfigResourceId!)) {
   name: varExistingAppcsName
   scope: resourceGroup(varExistingAppcsSub, varExistingAppcsRg)
 }
@@ -2088,9 +2093,9 @@ module aiFoundry 'components/ai-foundry/main.bicep' = {
   }
   dependsOn: [
     #disable-next-line BCP321
-    (empty(resourceIds.searchServiceResourceId)) ? searchService : null
+    (empty(resourceIds.searchServiceResourceId!)) ? searchService : null
     #disable-next-line BCP321
-    (empty(resourceIds.virtualNetworkResourceId)) ? virtualNetwork : null
+    (empty(resourceIds.virtualNetworkResourceId!)) ? virtualNetwork : null
     #disable-next-line BCP321
     (varDeployPdnsAndPe && !varUseExistingPdz.search && varNeedSearchPdns) ? privateDnsZoneSearch : null
     #disable-next-line BCP321
@@ -2208,7 +2213,7 @@ module applicationGateway 'br/public:avm/res/network/application-gateway:0.7.1' 
     #disable-next-line BCP321
     (varAgwCreatePublicFrontend) ? appGatewayPip : null
     #disable-next-line BCP321
-    (empty(resourceIds.virtualNetworkResourceId)) ? virtualNetwork : null
+    (empty(resourceIds.virtualNetworkResourceId!)) ? virtualNetwork : null
   ]
 }
 
@@ -2310,7 +2315,7 @@ module apim 'br/public:avm/res/api-management/service:0.11.0' = if (varDeployApi
     publisherName: apimDefinition.publisherName
 
     // Enable HTTP/2 via customProperties (string "true"/"false")
-    customProperties: apimDefinition.protocols != null && apimDefinition.protocols.enableHttp2
+    customProperties: apimDefinition.protocols! != null && apimDefinition!.protocols!.enableHttp2
       ? { 'Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2': 'true' }
       : {}
 
@@ -2328,7 +2333,7 @@ module apim 'br/public:avm/res/api-management/service:0.11.0' = if (varDeployApi
 // ─────────────────────────────────────────────────────────────────────-
 
 // Spoke -> Hub
-module existingSpokePeering 'br/public:avm/res/network/virtual-network:0.7.0' = if (!empty(resourceIds.virtualNetworkResourceId) && varHasPeer) {
+module existingSpokePeering 'br/public:avm/res/network/virtual-network:0.7.0' = if (!empty(resourceIds.virtualNetworkResourceId!) && varHasPeer) {
   name: 'existingSpokePeering'
   scope: resourceGroup(varExistingVNetSubscriptionId, varExistingVNetResourceGroupName)
   params: {
@@ -2390,7 +2395,7 @@ module hubReversePeering 'br/public:avm/res/network/virtual-network:0.7.0' = if 
   }
   dependsOn: [
     #disable-next-line BCP321
-    (empty(resourceIds.virtualNetworkResourceId)) ? virtualNetwork : null
+    (empty(resourceIds.virtualNetworkResourceId!)) ? virtualNetwork : null
   ]
 }
 
@@ -2421,7 +2426,7 @@ module jumpVm 'br/public:avm/res/compute/virtual-machine:0.18.0' = if (varDeploy
     name: empty(jumpVmDefinition.name!) ? '${varVm}${baseName}-jump' : jumpVmDefinition.name!
     location: location
     tags: union(tags, jumpVmDefinition.tags! ?? {})
-    enableTelemetry: jumpVmDefinition.enableTelemetry ?? enableTelemetry
+    enableTelemetry: enableTelemetry
     osType: varJumpVmOsType
     availabilityZone: -1
     adminUsername: jumpVmDefinition.adminUsername
@@ -2451,7 +2456,7 @@ module jumpVm 'br/public:avm/res/compute/virtual-machine:0.18.0' = if (varDeploy
   }
   dependsOn: [
     #disable-next-line BCP321
-    (empty(resourceIds.virtualNetworkResourceId)) ? virtualNetwork : null
+    (empty(resourceIds.virtualNetworkResourceId!)) ? virtualNetwork : null
   ]
 }
 
@@ -2462,7 +2467,7 @@ module buildVm 'br/public:avm/res/compute/virtual-machine:0.18.0' = if (varDeplo
     name: empty(buildVmDefinition.name!) ? '${varVm}${baseName}-build' : buildVmDefinition.name!
     location: location
     tags: union(tags, buildVmDefinition.tags! ?? {})
-    enableTelemetry: buildVmDefinition.enableTelemetry! ?? enableTelemetry
+    enableTelemetry: enableTelemetry
 
     osType: varBuildVmOsType
     availabilityZone: -1
@@ -2501,7 +2506,7 @@ module buildVm 'br/public:avm/res/compute/virtual-machine:0.18.0' = if (varDeplo
   }
   dependsOn: [
     #disable-next-line BCP321
-    (empty(resourceIds.virtualNetworkResourceId)) ? virtualNetwork : null
+    (empty(resourceIds.virtualNetworkResourceId!)) ? virtualNetwork : null
   ]
 }
 
@@ -2524,7 +2529,7 @@ module bingSearch 'components/bing-search/main.bicep' = if (varInvokeBingModule)
 
     // Reuse path: when provided, the child module will NOT create the Bing account,
     // it will use this existing one and still create the connection.
-    existingResourceId: resourceIds.groundingServiceResourceId
+    existingResourceId: resourceIds.groundingServiceResourceId!
   }
   dependsOn: [
     aiFoundry!
@@ -2550,7 +2555,7 @@ output location string = location
 
 // VNet
 @description('Virtual network resource ID.')
-output virtualNetworkResourceId string = empty(resourceIds.virtualNetworkResourceId)
+output virtualNetworkResourceId string = empty(resourceIds.virtualNetworkResourceId!)
   #disable-next-line BCP318
   ? virtualNetwork.outputs.resourceId
   : existingVNet.id
@@ -2560,25 +2565,25 @@ output virtualNetworkResourceId string = empty(resourceIds.virtualNetworkResourc
 output logAnalyticsWorkspaceResourceId string = varDeployLogAnalytics
   #disable-next-line BCP318
   ? logAnalytics.outputs.resourceId
-  : (empty(resourceIds.logAnalyticsWorkspaceResourceId) ? '' : existingLogAnalytics.id)
+  : (empty(resourceIds.logAnalyticsWorkspaceResourceId!) ? '' : existingLogAnalytics.id)
 
 // App Insights
 @description('Application Insights resource ID.')
 output applicationInsightsResourceId string = varDeployAppInsights
   #disable-next-line BCP318
   ? appInsights.outputs.resourceId
-  : (empty(resourceIds.appInsightsResourceId) ? '' : existingAppInsights.id)
+  : (empty(resourceIds.appInsightsResourceId!) ? '' : existingAppInsights.id)
 
 // Container Apps Environment
 @description('Container Apps Environment resource ID.')
-output containerEnvResourceId string = !empty(resourceIds.containerEnvResourceId)
-  ? resourceIds.containerEnvResourceId
+output containerEnvResourceId string = !empty(resourceIds.containerEnvResourceId!)
+  ? resourceIds.containerEnvResourceId!
   : (varDeployContainerAppEnv ? resourceId('Microsoft.App/managedEnvironments', varContainerEnvName) : '')
 
 // ACR
 @description('Container registry resource ID.')
-output containerRegistryResourceId string = !empty(resourceIds.containerRegistryResourceId)
-  ? resourceIds.containerRegistryResourceId
+output containerRegistryResourceId string = !empty(resourceIds.containerRegistryResourceId!)
+  ? resourceIds.containerRegistryResourceId!
   : (varDeployAcr ? resourceId('Microsoft.ContainerRegistry/registries', varAcrNameEffective) : '')
 
 // Storage
@@ -2603,27 +2608,27 @@ output searchServiceResourceId string = varDeploySearch ? searchService.outputs.
 
 // App Configuration
 @description('App Configuration store resource ID.')
-output appConfigResourceId string = !empty(resourceIds.appConfigResourceId)
-  ? resourceIds.appConfigResourceId
+output appConfigResourceId string = !empty(resourceIds.appConfigResourceId!)
+  ? resourceIds.appConfigResourceId!
   : (varDeployAppConfig ? resourceId('Microsoft.AppConfiguration/configurationStores', varAppConfigName) : '')
 
 // APIM
 @description('API Management service resource ID.')
 output apimServiceResourceId string = varDeployApim
   ? resourceId('Microsoft.ApiManagement/service', varApimName)
-  : (empty(resourceIds.apimServiceResourceId) ? '' : existingApim.id)
+  : (empty(resourceIds.apimServiceResourceId!) ? '' : existingApim.id)
 
 // Application Gateway
 @description('Application Gateway resource ID.')
 output applicationGatewayResourceId string = varDeployAppGateway
   ? resourceId('Microsoft.Network/applicationGateways', varAgwName)
-  : (empty(resourceIds.applicationGatewayResourceId) ? '' : existingAppGateway.id)
+  : (empty(resourceIds.applicationGatewayResourceId!) ? '' : existingAppGateway.id)
 
 // Azure Firewall
 @description('Azure Firewall resource ID.')
 output firewallResourceId string = varDeployFirewall
   ? resourceId('Microsoft.Network/azureFirewalls', varAfwName)
-  : (empty(resourceIds.firewallResourceId) ? '' : existingFirewall.id)
+  : (empty(resourceIds.firewallResourceId!) ? '' : existingFirewall.id)
 
 // Grounding with Bing
 @description('Grounding (Bing Search) resource ID.')

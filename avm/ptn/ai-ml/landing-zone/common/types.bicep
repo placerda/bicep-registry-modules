@@ -2,49 +2,49 @@
 @description('Optional existing resource IDs to reuse; leave empty to create new resources.')
 type ResourceIdsType = {
   @description('Optional. Existing VNet resource ID to reuse; leave empty to create a new VNet.')
-  virtualNetworkResourceId: string
+  virtualNetworkResourceId: string?
 
   @description('Optional. Existing Azure Bastion resource ID to reuse; leave empty to skip.')
-  bastionHostResourceId: string
+  bastionHostResourceId: string?
 
   @description('Optional. Existing Application Insights resource ID to reuse.')
-  appInsightsResourceId: string
+  appInsightsResourceId: string?
 
   @description('Optional. Existing Log Analytics Workspace resource ID to reuse.')
-  logAnalyticsWorkspaceResourceId: string
+  logAnalyticsWorkspaceResourceId: string?
 
   @description('Optional. Existing App Configuration store resource ID to reuse.')
-  appConfigResourceId: string
+  appConfigResourceId: string?
 
   @description('Optional. Existing Key Vault resource ID to reuse.')
-  keyVaultResourceId: string
+  keyVaultResourceId: string?
 
   @description('Optional. Existing Storage Account resource ID to reuse.')
-  storageAccountResourceId: string
+  storageAccountResourceId: string?
 
   @description('Optional. Existing Cosmos DB account resource ID to reuse.')
-  dbAccountResourceId: string
+  dbAccountResourceId: string?
 
   @description('Optional. Existing Azure AI Search service resource ID to reuse.')
-  searchServiceResourceId: string
+  searchServiceResourceId: string?
 
   @description('Optional. Existing Grounding service resource ID to reuse.')
-  groundingServiceResourceId: string
+  groundingServiceResourceId: string?
 
   @description('Optional. Existing Container Apps Environment resource ID to reuse.')
-  containerEnvResourceId: string
+  containerEnvResourceId: string?
 
   @description('Optional. Existing Azure Container Registry resource ID to reuse.')
-  containerRegistryResourceId: string
+  containerRegistryResourceId: string?
 
   @description('Optional. Existing API Management service resource ID to reuse.')
-  apimServiceResourceId: string
+  apimServiceResourceId: string?
 
   @description('Optional. Existing Application Gateway resource ID to reuse.')
-  applicationGatewayResourceId: string
+  applicationGatewayResourceId: string?
 
   @description('Optional. Existing Azure Firewall resource ID to reuse.')
-  firewallResourceId: string
+  firewallResourceId: string?
 }
 
 @export()
@@ -315,7 +315,7 @@ type ContainerAppEnvDefinitionType = {
     conditionVersion: '2.0'?
     @description('Optional. Delegated managed identity resource ID.')
     delegatedManagedIdentityResourceId: string?
-  }[]
+  }[]?
 }
 
 @export()
@@ -324,9 +324,9 @@ type ContainerRegistryDefinitionType = {
   @description('Optional. Data plane proxy configuration.')
   dataPlaneProxy: {
     @description('Optional. Authentication mode for data plane proxy.')
-    authenticationMode: string
+    authenticationMode: string?
     @description('Optional. Private Link delegation setting for data plane proxy.')
-    privateLinkDelegation: string
+    privateLinkDelegation: string?
   }?
   @description('Optional. Container Registry name.')
   name: string?
@@ -426,7 +426,7 @@ type GenAIAppCosmosDbDefinitionType = {
     @description('Required. Backup type (e.g., Periodic/Continuous).')
     type: string
     @description('Optional. Backup tier (if applicable).')
-    tier: string
+    tier: string?
   }?
 
   @description('Optional. Capabilities to enable on the Cosmos DB account.')
@@ -600,10 +600,7 @@ type KSAISearchDefinitionType = {
     conditionVersion: '2.0'?
     @description('Optional. Delegated managed identity resource ID.')
     delegatedManagedIdentityResourceId: string?
-  }[]
-
-  @description('Optional. Enable module telemetry.')
-  enableTelemetry: bool?
+  }[]?
 }
 
 @export()
@@ -626,9 +623,9 @@ type AppConfigurationDefinitionType = {
   @description('Optional. Data plane proxy configuration (auth and Private Link delegation).')
   dataPlaneProxy: {
     @description('Optional. Authentication mode for data plane proxy.')
-    authenticationMode: string
+    authenticationMode: string?
     @description('Optional. Private Link delegation for data plane proxy.')
-    privateLinkDelegation: string
+    privateLinkDelegation: string?
   }?
 
   @description('Optional. App Configuration store name.')
@@ -809,9 +806,6 @@ type AiFoundryDefinitionType = {
   @description('Optional. Location/region for the AI Foundry resources.')
   location: string?
 
-  @description('Optional. Enable telemetry for the pattern modules.')
-  enableTelemetry: bool?
-
   @description('Optional. Create BYOR (bring-your-own resource) links where applicable.')
   createByor: bool?
 
@@ -980,8 +974,6 @@ type JumpVmDefinitionType = {
   imageReference: VmImageReferenceType?
   @description('Required. Name of the admin password secret in the Bastion Key Vault.')
   vmKeyVaultSecName: string
-  @description('Required. Enable telemetry for helper scripts.')
-  enableTelemetry: bool
   @description('Required. Tags to apply to the Jump VM.')
   tags: {
     @description('Required. Arbitrary key for each tag.')
@@ -1034,9 +1026,7 @@ type BuildVmDefinitionType = {
   tags: {
     @description('Required. Arbitrary key for each tag.')
     *: string
-  }
-  @description('Optional. Enable AVM telemetry.')
-  enableTelemetry: bool?
+  }?
 }
 
 @export()
@@ -1173,9 +1163,9 @@ type WafPolicyDefinitionsType = {
         @description('Required. Rule set version (e.g., 3.2).')
         version: string
         @description('Optional. Rule groups to exclude.')
-        ruleGroup: string[]
-      }
-    }[]
+        ruleGroup: string[]?
+      }?
+    }[]?
     @description('Required. Managed rule sets to apply.')
     managedRuleSets: {
       @description('Required. Rule set type (e.g., OWASP).')
@@ -1195,7 +1185,7 @@ type WafPolicyDefinitionsType = {
           @description('Required. Whether the rule is enabled.')
           enabled: bool
         }[]
-      }[]
+      }[]?
     }[]
   }
 
@@ -1203,7 +1193,7 @@ type WafPolicyDefinitionsType = {
   tags: {
     @description('Required. Arbitrary key for each tag.')
     *: string
-  }
+  }?
 }
 
 @export()
@@ -1227,7 +1217,7 @@ type AppGatewayDefinitionType = {
       @description('Required. Certificate data.')
       data: string
     }
-  }
+  }?
 
   @description('Required. SKU definition (name/tier/capacity).')
   sku: {
@@ -1268,9 +1258,9 @@ type AppGatewayDefinitionType = {
       @description('Required. Pool name.')
       name: string
       @description('Optional. Backend FQDNs.')
-      fqdns: string[]
+      fqdns: string[]?
       @description('Optional. Backend IP addresses.')
-      ipAddresses: string[]
+      ipAddresses: string[]?
     }
   }
 
@@ -1287,28 +1277,28 @@ type AppGatewayDefinitionType = {
       @description('Required. Protocol (Http/Https).')
       protocol: string
       @description('Optional. Custom affinity cookie name.')
-      affinityCookieName: string
-      @description('Optional. Host header to use when forwarding.')
+      affinityCookieName: string?
+      @description('Optional. Host head?er to use when forwarding.')
       hostName: string
       @description('Optional. Path to append when forwarding.')
-      path: string
+      path: string?
       @description('Optional. Use backend address as host header (true/false).')
-      pickHostNameFromBackendAddress: bool
+      pickHostNameFromBackendAddress: bool?
       @description('Optional. Probe name to associate.')
-      probeName: string
+      probeName: string?
       @description('Required. Request timeout in seconds.')
       requestTimeout: int
       @description('Optional. Trusted root certificate names to use.')
-      trustedRootCertificateNames: string[]
+      trustedRootCertificateNames: string[]?
       @description('Optional. Authentication certificate names to present to backend.')
-      authenticationCertificate: string[]
+      authenticationCertificate: string[]?
       @description('Optional. Connection draining settings (enable and drain timeout in seconds).')
       connectionDraining: {
         @description('Required. Enable connection draining for backend HTTP settings.')
         enabled: bool
         @description('Required. Drain timeout in seconds before terminating connections.')
         drainTimeoutSec: int
-      }
+      }?
     }
   }
 
@@ -1332,21 +1322,21 @@ type AppGatewayDefinitionType = {
       @description('Required. Name of the frontend port to use.')
       frontendPortName: string
       @description('Optional. Name of the frontend IP configuration to use.')
-      frontendIpConfigurationName: string
+      frontendIpConfigurationName: string?
       @description('Optional. Resource ID of the associated WAF policy.')
-      firewallPolicyId: string
+      firewallPolicyId: string?
       @description('Optional. Require SNI for TLS.')
-      requireSni: bool
+      requireSni: bool?
       @description('Optional. Host name for the listener.')
-      hostName: string
+      hostName: string?
       @description('Optional. Multiple host names for the listener.')
-      hostNames: string[]
+      hostNames: string[]?
       @description('Optional. SSL certificate name to bind to the listener.')
-      sslCertificateName: string
+      sslCertificateName: string?
       @description('Optional. SSL profile name to use.')
-      sslProfileName: string
+      sslProfileName: string?
       @description('Optional. Custom error configuration entries.')
-      customErrorConfiguration: object[]
+      customErrorConfiguration: object[]?
     }
   }
 
@@ -1563,7 +1553,7 @@ type AppGatewayDefinitionType = {
     conditionVersion: '2.0'?
     @description('Optional. Delegated managed identity resource ID.')
     delegatedManagedIdentityResourceId: string?
-  }[]
+  }[]?
 }
 
 @export()
@@ -1593,18 +1583,18 @@ type ApimDefinitionType = {
       @description('Required. Capacity for the region.')
       capacity: int
       @description('Optional. Availability zones for the region.')
-      zones: int[]
+      zones: int[]?
       @description('Optional. Public IP address resource ID to bind.')
-      publicIpAddressId: string
+      publicIpAddressId: string?
       @description('Optional. Disable gateway in this region.')
-      gatewayDisabled: bool
+      gatewayDisabled: bool?
       @description('Optional. VNet configuration for the region.')
       virtualNetworkConfiguration: {
         @description('Required. Subnet resource ID used by APIM in this region.')
         subnetId: string
-      }
+      }?
     }
-  }
+  }?
 
   @description('Optional. Certificates for API Management endpoints.')
   certificate: {
@@ -1615,9 +1605,9 @@ type ApimDefinitionType = {
       @description('Required. Store name to import to (e.g., CertificateAuthority).')
       storeName: string
       @description('Optional. Certificate password.')
-      certificatePassword: string
+      certificatePassword: string?
     }
-  }
+  }?
 
   @description('Required. Enable client certificate authentication for gateway.')
   clientCertificateEnabled: bool
@@ -1652,17 +1642,17 @@ type ApimDefinitionType = {
         @description('Required. Host name to bind.')
         hostName: string
         @description('Optional. Key Vault secret ID for the certificate.')
-        keyVaultId: string
+        keyVaultId: string?
         @description('Optional. Inline certificate as base64.')
-        certificate: string
+        certificate: string?
         @description('Optional. Password for the inline certificate (if provided).')
         certificatePassword: string
         @description('Optional. Negotiate client certificate on TLS.')
-        negotiateClientCertificate: bool
+        negotiateClientCertificate: bool?
         @description('Optional. Client ID of the Key Vault identity used for SSL.')
-        sslKeyvaultIdentityClientId: string
+        sslKeyvaultIdentityClientId: string?
         @description('Optional. Set this binding as default for the endpoint.')
-        defaultSslBinding: bool
+        defaultSslBinding: bool?
       }
     }
 
@@ -1673,19 +1663,19 @@ type ApimDefinitionType = {
         @description('Required. Host name to bind.')
         hostName: string
         @description('Optional. Key Vault secret ID for the certificate.')
-        keyVaultId: string
+        keyVaultId: string?
         @description('Optional. Inline certificate as base64.')
-        certificate: string
+        certificate: string?
         @description('Optional. Password for the inline certificate (if provided).')
-        certificatePassword: string
+        certificatePassword: string?
         @description('Optional. Negotiate client certificate on TLS.')
-        negotiateClientCertificate: bool
+        negotiateClientCertificate: bool?
         @description('Optional. Client ID of the Key Vault identity used for SSL.')
-        sslKeyvaultIdentityClientId: string
+        sslKeyvaultIdentityClientId: string?
         @description('Optional. Set this binding as default for the endpoint.')
-        defaultSslBinding: bool
+        defaultSslBinding: bool?
       }
-    }
+    }?
 
     @description('Optional. Hostname configuration map for the Gateway/Proxy endpoint.')
     proxy: {
@@ -1694,19 +1684,19 @@ type ApimDefinitionType = {
         @description('Required. Host name to bind.')
         hostName: string
         @description('Optional. Key Vault secret ID for the certificate.')
-        keyVaultId: string
+        keyVaultId: string?
         @description('Optional. Inline certificate as base64.')
-        certificate: string
+        certificate: string?
         @description('Optional. Password for the inline certificate (if provided).')
-        certificatePassword: string
+        certificatePassword: string?
         @description('Optional. Negotiate client certificate on TLS.')
-        negotiateClientCertificate: bool
+        negotiateClientCertificate: bool?
         @description('Optional. Client ID of the Key Vault identity used for SSL.')
-        sslKeyvaultIdentityClientId: string
+        sslKeyvaultIdentityClientId: string?
         @description('Optional. Set this binding as default for the endpoint.')
-        defaultSslBinding: bool
+        defaultSslBinding: bool?
       }
-    }
+    }?
 
     @description('Optional. Hostname configuration map for the SCM endpoint.')
     scm: {
@@ -1715,26 +1705,26 @@ type ApimDefinitionType = {
         @description('Required. Host name to bind.')
         hostName: string
         @description('Optional. Key Vault secret ID for the certificate.')
-        keyVaultId: string
+        keyVaultId: string?
         @description('Optional. Inline certificate as base64.')
-        certificate: string
+        certificate: string?
         @description('Optional. Password for the inline certificate (if provided).')
-        certificatePassword: string
+        certificatePassword: string?
         @description('Optional. Negotiate client certificate on TLS.')
-        negotiateClientCertificate: bool
+        negotiateClientCertificate: bool?
         @description('Optional. Client ID of the Key Vault identity used for SSL.')
-        sslKeyvaultIdentityClientId: string
+        sslKeyvaultIdentityClientId: string?
         @description('Optional. Set this binding as default for the endpoint.')
-        defaultSslBinding: bool
+        defaultSslBinding: bool?
       }
-    }
-  }
+    }?
+  }?
 
   @description('Optional. Protocol options.')
   protocols: {
-    @description('Optional. Enable HTTP/2 for API traffic.')
+    @description('Required. Enable HTTP/2 for API traffic.')
     enableHttp2: bool
-  }
+  }?
 
   @description('Required. Sign-in configuration for the developer portal.')
   signIn: {
@@ -1776,10 +1766,10 @@ type ApimDefinitionType = {
     conditionVersion: '2.0'?
     @description('Optional. Delegated managed identity resource ID.')
     delegatedManagedIdentityResourceId: string?
-  }[]
+  }[]?
 
   @description('Optional. SKU for API Management (Developer/Basic/Standard/Premium/Consumption/V2 variants).')
-  skuRoot: 'Basic' | 'BasicV2' | 'Consumption' | 'Developer' | 'Premium' | 'Standard' | 'StandardV2' | null
+  skuRoot: 'Basic' | 'BasicV2' | 'Consumption' | 'Developer' | 'Premium' | 'Standard' | 'StandardV2'?
 
   @description('Required. Capacity for the chosen SKU.')
   skuCapacity: int
@@ -1788,7 +1778,7 @@ type ApimDefinitionType = {
   tags: {
     @description('Required. Arbitrary key for each tag.')
     *: string
-  }
+  }?
 
   @description('Required. Tenant access configuration for the management plane.')
   tenantAccess: {
@@ -1816,7 +1806,7 @@ type FirewallDefinitionType = {
   tags: {
     @description('Required. Arbitrary key for each tag.')
     *: string
-  }
+  }?
 }
 
 @export()
