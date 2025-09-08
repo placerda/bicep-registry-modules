@@ -351,13 +351,13 @@ type ContainerAppDefinitionType = {
   @description('Optional. Container App resource name.')
   name: string?
   @description('Required. Logical app identifier (used for Dapr and container name).')
-  app_id: string
+  appId: string
   @description('Required. Workload profile name to schedule to.')
-  profile_name: string
+  profileName: string
   @description('Required. Minimum number of replicas.')
-  min_replicas: int
+  minReplicas: int
   @description('Required. Maximum number of replicas.')
-  max_replicas: int
+  maxReplicas: int
   @description('Required. Whether to expose through the environment’s external ingress.')
   external: bool
 }
@@ -1806,8 +1806,8 @@ type FirewallDefinitionType = {
   @description('Required. Azure Firewall SKU (e.g., AZFW_VNet).')
   sku: string
 
-  @description('Required. Azure Firewall tier (Standard/Premium/Basic).')
-  tier: 'Basic' | 'Premium' | 'Standard' | null
+  @description('Optional. Azure Firewall tier. Allowed values: Standard or Premium.')
+  tier: 'Basic' | 'Premium' | 'Standard'?
 
   @description('Required. Availability zones to use (if any).')
   zones: int[]

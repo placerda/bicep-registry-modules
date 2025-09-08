@@ -17,11 +17,11 @@ param bingConnectionName string = '${bingSearchName}-connection'
 param existingResourceId string = ''
 
 // Resolve create vs reuse
-var _isReuse = !empty(existingResourceId)
-var _idSegs = split(existingResourceId, '/')
-var _exSub = length(_idSegs) >= 3 ? _idSegs[2] : ''
-var _exRg = length(_idSegs) >= 5 ? _idSegs[4] : ''
-var _exName = length(_idSegs) >= 1 ? last(_idSegs) : ''
+var varIsReuse = !empty(existingResourceId)
+var varIdSegs = split(existingResourceId, '/')
+var varExSub = length(varIdSegs) >= 3 ? varIdSegs[2] : ''
+var varExRg = length(varIdSegs) >= 5 ? varIdSegs[4] : ''
+var varExName = length(varIdSegs) >= 1 ? last(varIdSegs) : ''
 
 // Cognitive Services account (same resource group as current deployment)
 #disable-next-line BCP081
@@ -32,14 +32,14 @@ resource account_name_resource 'Microsoft.CognitiveServices/accounts@2025-06-01'
 
 // Reuse path: declare existing Bing account
 #disable-next-line BCP081
-resource existingBing 'Microsoft.Bing/accounts@2025-05-01-preview' existing = if (_isReuse) {
-  name: _exName
-  scope: resourceGroup(_exSub, _exRg)
+resource existingBing 'Microsoft.Bing/accounts@2025-05-01-preview' existing = if (varIsReuse) {
+  name: varExName
+  scope: resourceGroup(varExSub, varExRg)
 }
 
 // Create path: create Bing account (global location)
 #disable-next-line BCP081
-resource bingAccount 'Microsoft.Bing/accounts@2025-05-01-preview' = if (!_isReuse) {
+resource bingAccount 'Microsoft.Bing/accounts@2025-05-01-preview' = if (!varIsReuse) {
   name: bingSearchName
   location: 'global'
   kind: 'Bing.Grounding'
@@ -49,10 +49,10 @@ resource bingAccount 'Microsoft.Bing/accounts@2025-05-01-preview' = if (!_isReus
 }
 
 // Effective props for both paths
-var _bingId = _isReuse ? existingResourceId : bingAccount.id
-var _bingEndpoint = _isReuse ? existingBing!.properties.endpoint : bingAccount!.properties.endpoint
-var _bingKey = _isReuse ? existingBing!.listKeys().key1 : bingAccount!.listKeys().key1
-var _bingLocation = _isReuse ? existingBing!.location : 'global'
+var varBingId = varIsReuse ? existingResourceId : bingAccount.id
+var varBingEndpoint = varIsReuse ? existingBing!.properties.endpoint : bingAccount!.properties.endpoint
+var varBingKey = varIsReuse ? existingBing!.listKeys().key1 : bingAccount!.listKeys().key1
+var varBingLocation = varIsReuse ? existingBing!.location : 'global'
 
 // Create the Cognitive Services connection under the AI Services account
 #disable-next-line BCP081
@@ -61,23 +61,23 @@ resource bing_search_account_connection 'Microsoft.CognitiveServices/accounts/co
   parent: account_name_resource
   properties: {
     category: 'GroundingWithBingSearch'
-    target: _bingEndpoint
+    target: varBingEndpoint
     authType: 'ApiKey'
     credentials: {
-      key: _bingKey
+      key: varBingKey
     }
     isSharedToAll: true
     metadata: {
       ApiType: 'Azure'
-      Location: _bingLocation
-      ResourceId: _bingId
+      Location: varBingLocation
+      ResourceId: varBingId
     }
   }
 }
 
 // Outputs
 @description('Resource ID of the Bing Grounding account (created or reused).')
-output resourceId string = _bingId
+output resourceId string = varBingId
 
 @description('Connection ID path under the AI services project.')
 output bingConnectionId string = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.CognitiveServices/accounts/${accountName}/projects/${projectName}/connections/${bingConnectionName}'
