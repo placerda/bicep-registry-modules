@@ -126,20 +126,20 @@ type VNetSubnetType = {
   @description('Optional. Resource ID of an associated NAT Gateway.')
   natGatewayResourceId: string?
 
-  @description('Optional. Whether private endpoint network policies are Enabled or Disabled.')
+  @description('Conditional. Whether private endpoint network policies are Enabled or Disabled. Required if the subnet will host Private Endpoints and you need policies Disabled.')
   privateEndpointNetworkPolicies: 'Enabled' | 'Disabled'?
 
-  @description('Optional. Whether private link service network policies are Enabled or Disabled.')
+  @description('Conditional. Whether private link service network policies are Enabled or Disabled. Required if the subnet will host a Private Link Service and you need policies Disabled.')
   privateLinkServiceNetworkPolicies: 'Enabled' | 'Disabled'?
 }
 
 @export()
-@description('Peering with another VNet (hub/spoke).')
+@description('Conditional. Peering with another VNet (hub/spoke). Required if the template establishes hub–spoke peering for this VNet.')
 type VNetPeeringConfigurationType = {
   @description('Required. Resource ID of the peer virtual network.')
   peerVnetResourceId: string
 
-  @description('Optional. Hub firewall private IP address used for routing (if applicable).')
+  @description('Conditional. Hub firewall private IP address used for routing (if applicable). Required if the peering must route via a hub firewall.')
   firewallIpAddress: string?
 
   @description('Optional. Name of the spoke-to-hub peering.')
@@ -177,14 +177,14 @@ type VNetPeeringConfigurationType = {
 }
 
 @export()
-@description('Peering with a Virtual WAN hub.')
+@description('Conditional. Peering with a Virtual WAN hub. Required if the template establishes a Virtual WAN hub peering.')
 type VWanHubPeeringConfigurationType = {
   @description('Required. Resource ID of the target Virtual WAN hub.')
   peerVwanHubResourceId: string
 }
 
 @export()
-@description('Configuration object for the Virtual Network to be deployed.')
+@description('Conditional. Configuration object for the Virtual Network to be deployed. Required if the template deploys a new VNet (deployToggles.virtualNetwork is true) and resourceIds.virtualNetworkResourceId is empty.')
 type VNetDefinitionType = {
   @description('Optional. VNet name. If empty, a deterministic name is generated.')
   name: string?
@@ -201,10 +201,10 @@ type VNetDefinitionType = {
   @description('Required. Subnet definitions for the VNet.')
   subnets: VNetSubnetType[]
 
-  @description('Optional. Peering configuration to another VNet (hub/spoke).')
+  @description('Conditional. Peering configuration to another VNet (hub/spoke). Required if the template establishes hub–spoke peering for this VNet.')
   vnetPeeringConfiguration: VNetPeeringConfigurationType?
 
-  @description('Optional. Peering configuration to a Virtual WAN hub.')
+  @description('Conditional. Peering configuration to a Virtual WAN hub. Required if the template establishes a Virtual WAN hub peering.')
   vwanHubPeeringConfiguration: VWanHubPeeringConfigurationType?
 
   @description('Optional. Tags to apply to the VNet.')
@@ -215,7 +215,7 @@ type VNetDefinitionType = {
 }
 
 @export()
-@description('Configuration object for the Log Analytics Workspace to be created for monitoring and logging.')
+@description('Conditional. Configuration object for the Log Analytics Workspace to be created for monitoring and logging. Required if the template deploys Log Analytics (deployToggles.logAnalytics is true) and resourceIds.logAnalyticsWorkspaceResourceId is empty, or if Application Insights is deployed and no workspace is reused.')
 type LogAnalyticsWorkspaceDefinitionType = {
   @description('Optional. Workspace name. If empty, a deterministic name is used.')
   name: string?
@@ -234,7 +234,7 @@ type LogAnalyticsWorkspaceDefinitionType = {
 }
 
 @export()
-@description('Configuration object for the Application Insights component to be created or reused.')
+@description('Conditional. Configuration object for the Application Insights component to be created or reused. Required if the template deploys Application Insights (deployToggles.appInsights is true) and resourceIds.appInsightsResourceId is empty.')
 type AppInsightsDefinitionType = {
   @description('Optional. Application Insights resource name.')
   name: string?
@@ -256,7 +256,7 @@ type AppInsightsDefinitionType = {
 }
 
 @export()
-@description('Configuration object for the Container App Environment to be created for GenAI services.')
+@description('Conditional. Configuration object for the Container App Environment to be created for GenAI services. Required if the template deploys a new environment (deployGenAiAppBackingServices and deployToggles.containerEnv are true) and resourceIds.containerEnvResourceId is empty.')
 type ContainerAppEnvDefinitionType = {
   @description('Optional. Container Apps Environment name.')
   name: string?
@@ -270,7 +270,7 @@ type ContainerAppEnvDefinitionType = {
   @description('Required. Enable internal load balancer (true) to make the environment internal.')
   internalLoadBalancerEnabled: bool
 
-  @description('Optional. Subnet name where the environment is deployed when internal.')
+  @description('Conditional. Subnet name where the environment is deployed when internal. Required if the environment is internal (internalLoadBalancerEnabled is true).')
   subnetName: string?
 
   @description('Required. Enable zone redundancy for the environment.')
@@ -294,7 +294,7 @@ type ContainerAppEnvDefinitionType = {
   @description('Optional. Enable diagnostic settings for the environment.')
   enableDiagnosticSettings: bool?
 
-  @description('Optional. Resource ID of a Log Analytics workspace for diagnostics.')
+  @description('Conditional. Resource ID of a Log Analytics workspace for diagnostics. Required if enableDiagnosticSettings is true and a workspace is not inferred by the template.')
   logAnalyticsWorkspaceResourceId: string?
 
   @description('Optional. Role assignments to create on the environment.')
@@ -319,7 +319,7 @@ type ContainerAppEnvDefinitionType = {
 }
 
 @export()
-@description('Configuration object for the Azure Container Registry to be created for GenAI services.')
+@description('Conditional. Configuration object for the Azure Container Registry to be created for GenAI services. Required if the template deploys ACR (deployGenAiAppBackingServices and deployToggles.containerRegistry are true) and resourceIds.containerRegistryResourceId is empty.')
 type ContainerRegistryDefinitionType = {
   @description('Optional. Data plane proxy configuration.')
   dataPlaneProxy: {
@@ -350,7 +350,7 @@ type ContainerRegistryDefinitionType = {
 type ContainerAppDefinitionType = {
   @description('Optional. Container App resource name.')
   name: string?
-  @description('Required.  Logical app identifier (used for Dapr and container name).')
+  @description('Required. Logical app identifier (used for Dapr and container name).')
   app_id: string
   @description('Required. Workload profile name to schedule to.')
   profile_name: string
@@ -358,17 +358,17 @@ type ContainerAppDefinitionType = {
   min_replicas: int
   @description('Required. Maximum number of replicas.')
   max_replicas: int
-  @description('Required.  Whether to expose through the environment’s external ingress.')
-  external: bool?
+  @description('Required. Whether to expose through the environment’s external ingress.')
+  external: bool
 }
 
 @export()
-@description('Configuration object for the Azure Cosmos DB account to be created for GenAI services.')
+@description('Conditional. Configuration object for the Azure Cosmos DB account to be created for GenAI services. Required if the template deploys Cosmos DB (deployGenAiAppBackingServices and deployToggles.cosmosDb are true) and resourceIds.dbAccountResourceId is empty.')
 type GenAIAppCosmosDbDefinitionType = {
   @description('Optional. Cosmos DB account name.')
   name: string?
 
-  @description('Optional. Map of secondary regions and failover properties.')
+  @description('Conditional. Map of secondary regions and failover properties. Required if multipleWriteLocationsEnabled is true or you need regional failover.')
   secondaryRegions: {
     @description('Required. Arbitrary key for each secondary region entry.')
     *: {
@@ -399,13 +399,13 @@ type GenAIAppCosmosDbDefinitionType = {
   @description('Optional. Enable multiple write locations.')
   multipleWriteLocationsEnabled: bool?
 
-  @description('Optional. Analytical storage configuration.')
+  @description('Conditional. Analytical storage configuration. Required if analyticalStorageEnabled is true.')
   analyticalStorageConfig: {
     @description('Required. Schema type for analytical storage.')
     schemaType: string
   }?
 
-  @description('Optional. Consistency policy configuration.')
+  @description('Conditional. Consistency policy configuration. Required if you choose a non-default consistency level or use Bounded Staleness.')
   consistencyPolicy: {
     @description('Required. Maximum interval in seconds for Bounded Staleness.')
     maxIntervalInSeconds: int
@@ -415,7 +415,7 @@ type GenAIAppCosmosDbDefinitionType = {
     consistencyLevel: string
   }?
 
-  @description('Optional. Backup policy configuration.')
+  @description('Conditional. Backup policy configuration. Required if you require a non-default backup policy (e.g., Continuous or custom periodic settings).')
   backup: {
     @description('Required. Retention period in hours.')
     retentionInHours: int
@@ -460,7 +460,7 @@ type GenAIAppCosmosDbDefinitionType = {
 }
 
 @export()
-@description('Configuration object for the Azure Key Vault to be created for GenAI services.')
+@description('Conditional. Configuration object for the Azure Key Vault to be created. Required if the template deploys a Key Vault (deployGenAiAppBackingServices and deployToggles.keyVault are true and resourceIds.keyVaultResourceId is empty), or if a dedicated Bastion Key Vault is deployed for the Jump VM.')
 type KeyVaultDefinitionType = {
   @description('Optional. Key Vault name.')
   name: string?
@@ -499,7 +499,7 @@ type KeyVaultDefinitionType = {
 }
 
 @export()
-@description('Configuration object for the Azure Storage Account to be created for GenAI services.')
+@description('Conditional. Configuration object for the Azure Storage Account to be created for GenAI services. Required if the template deploys a Storage Account (deployGenAiAppBackingServices and deployToggles.storageAccount are true) and resourceIds.storageAccountResourceId is empty.')
 type StorageAccountDefinitionType = {
   @description('Optional. Storage account name.')
   name: string?
@@ -553,7 +553,7 @@ type StorageAccountDefinitionType = {
 }
 
 @export()
-@description('Configuration object for the Azure AI Search service to be deployed.')
+@description('Conditional. Configuration object for the Azure AI Search service to be deployed. Required if the template deploys Azure AI Search (deployGenAiAppBackingServices and deployToggles.searchService are true) and resourceIds.searchServiceResourceId is empty.')
 type KSAISearchDefinitionType = {
   @description('Optional. Search service name.')
   name: string?
@@ -600,7 +600,7 @@ type KSAISearchDefinitionType = {
     conditionVersion: '2.0'?
     @description('Optional. Delegated managed identity resource ID.')
     delegatedManagedIdentityResourceId: string?
-  }[]?
+  }[]
 
   @description('Optional. Enable module telemetry.')
   enableTelemetry: bool?
@@ -621,7 +621,7 @@ type KSGroundingWithBingDefinitionType = {
 }
 
 @export()
-@description('Configuration object for the Azure App Configuration store for GenAI app.')
+@description('Conditional. Configuration object for the Azure App Configuration store for the GenAI app. Required if the template deploys App Configuration (deployGenAiAppBackingServices and deployToggles.appConfig are true) and resourceIds.appConfigResourceId is empty.')
 type AppConfigurationDefinitionType = {
   @description('Optional. Data plane proxy configuration (auth and Private Link delegation).')
   dataPlaneProxy: {
@@ -748,9 +748,7 @@ type AiFoundryConfigurationType = {
   @description('Optional. Location for the account (defaults to RG location if omitted).')
   location: string?
   @description('Optional. Account SKU.')
-  sku: (
-    | 'F0'
-    | 'S0')?
+  sku: ('F0' | 'S0')?
   @description('Optional. Create capability hosts (data plane services).')
   createCapabilityHosts: bool?
   @description('Optional. Allow project management operations.')
@@ -1125,7 +1123,7 @@ type PrivateDnsZoneNetworkLinkType = {
 }
 
 @export()
-@description('Configuration for Private DNS Zones and VNet links.')
+@description('Conditional. Configuration for Private DNS Zones and VNet links. Required if the template creates Private DNS zones (network isolation is enabled and corresponding zone IDs are not provided).')
 type PrivateDnsZoneDefinitionsType = {
   @description('Optional. Resource ID of the resource group that hosts existing Private DNS zones.')
   existingZonesResourceGroupResourceId: string?
@@ -1139,7 +1137,7 @@ type PrivateDnsZoneDefinitionsType = {
 }
 
 @export()
-@description('Configuration object for the Web Application Firewall (WAF) Policy to be deployed.')
+@description('Conditional. Configuration object for the Web Application Firewall (WAF) Policy to be deployed. Required if the template deploys an Application Gateway WAF policy (deployToggles.applicationGateway and deployToggles.wafPolicy are true).')
 type WafPolicyDefinitionsType = {
   @description('Required. WAF policy resource name.')
   name: string
@@ -1209,7 +1207,7 @@ type WafPolicyDefinitionsType = {
 }
 
 @export()
-@description('Configuration object for the Azure Application Gateway to be deployed.')
+@description('Conditional. Configuration object for the Azure Application Gateway to be deployed. Required if the template deploys an Application Gateway (deployToggles.applicationGateway is true) and resourceIds.applicationGatewayResourceId is empty.')
 type AppGatewayDefinitionType = {
   @description('Optional. Application Gateway name.')
   name: string?
@@ -1569,7 +1567,7 @@ type AppGatewayDefinitionType = {
 }
 
 @export()
-@description('Configuration object for the Azure API Management service to be deployed.')
+@description('Conditional. Configuration object for the Azure API Management service to be deployed. Required if the template deploys API Management (deployToggles.apiManagement is true) and resourceIds.apimServiceResourceId is empty.')
 type ApimDefinitionType = {
   @description('Optional. API Management service name.')
   name: string?
@@ -1800,7 +1798,7 @@ type ApimDefinitionType = {
 }
 
 @export()
-@description('Configuration object for the Azure Firewall to be deployed.')
+@description('Conditional. Configuration object for the Azure Firewall to be deployed. Required if the template deploys Azure Firewall (deployToggles.firewall is true) and resourceIds.firewallResourceId is empty.')
 type FirewallDefinitionType = {
   @description('Optional. Azure Firewall name.')
   name: string?
@@ -1881,7 +1879,7 @@ type FirewallPolicyDefinitionType = {
 }
 
 @export()
-@description('Configuration object for VNet peering with a hub network.')
+@description('Conditional. Configuration object for VNet peering with a hub network. Required if the template establishes hub–spoke peering via hubVnetPeeringDefinition.')
 type HuVnetPeeringDefinitionType = {
   @description('Required. Resource ID of the hub (peer) VNet.')
   peerVnetResourceId: string

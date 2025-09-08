@@ -1,4 +1,4 @@
-# ai-foundry `[AiMl/LandingZoneModulesAiFoundry]`
+# ai-foundry `[AiMl/LandingZoneComponentsAiFoundry]`
 
 Creates an AI Foundry account and project with Standard Agent Services.
 

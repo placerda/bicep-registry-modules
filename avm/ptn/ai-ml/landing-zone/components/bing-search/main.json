@@ -5,33 +5,35 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "6193566811235825319"
-    }
+      "templateHash": "6924606239721136283"
+    },
+    "name": "bing-search",
+    "description": "Create-or-reuse a Bing Grounding account and its Cognitive Services connection to be used by Azure AI Foundry."
   },
   "parameters": {
-    "account_name": {
+    "accountName": {
       "type": "string",
       "metadata": {
-        "description": "Conditional. Required when `enableBingSearchConnection` is true. The name of the Azure Cognitive Services account to be used for the Bing Search tool."
+        "description": "Conditional. The name of the Azure Cognitive Services account to be used for the Bing Search tool. Required if `enableBingSearchConnection` is true."
       }
     },
-    "project_name": {
+    "projectName": {
       "type": "string",
       "metadata": {
-        "description": "Conditional. Required when `enableBingSearchConnection` is true. The name of the Azure Cognitive Services Project."
+        "description": "Conditional. The name of the Azure Cognitive Services Project. Required if `enableBingSearchConnection` is true."
       }
     },
     "bingSearchName": {
       "type": "string",
       "metadata": {
-        "description": "Conditional. Required when `enableBingSearchConnection` is true. The name to assign to the Bing Search resource instance (used when creating a new account)."
+        "description": "Conditional. The name to assign to the Bing Search resource instance (used when creating a new account). Required if `enableBingSearchConnection` is true."
       }
     },
     "bingConnectionName": {
       "type": "string",
       "defaultValue": "[format('{0}-connection', parameters('bingSearchName'))]",
       "metadata": {
-        "description": "Conditional. Required when `enableBingSearchConnection` is true. The name to assign to the Bing Search connection in the project."
+        "description": "Conditional. The name to assign to the Bing Search connection in the project. Required if `enableBingSearchConnection` is true."
       }
     },
     "existingResourceId": {
@@ -65,7 +67,7 @@
     {
       "type": "Microsoft.CognitiveServices/accounts/connections",
       "apiVersion": "2025-06-01",
-      "name": "[format('{0}/{1}', parameters('account_name'), parameters('bingConnectionName'))]",
+      "name": "[format('{0}/{1}', parameters('accountName'), parameters('bingConnectionName'))]",
       "properties": {
         "category": "GroundingWithBingSearch",
         "target": "[if(variables('_isReuse'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('_exSub'), variables('_exRg')), 'Microsoft.Bing/accounts', variables('_exName')), '2025-05-01-preview').endpoint, reference(resourceId('Microsoft.Bing/accounts', parameters('bingSearchName')), '2025-05-01-preview').endpoint)]",
@@ -98,7 +100,7 @@
       "metadata": {
         "description": "Connection ID path under the AI services project."
       },
-      "value": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.CognitiveServices/accounts/{2}/projects/{3}/connections/{4}', subscription().subscriptionId, resourceGroup().name, parameters('account_name'), parameters('project_name'), parameters('bingConnectionName'))]"
+      "value": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.CognitiveServices/accounts/{2}/projects/{3}/connections/{4}', subscription().subscriptionId, resourceGroup().name, parameters('accountName'), parameters('projectName'), parameters('bingConnectionName'))]"
     }
   }
 }

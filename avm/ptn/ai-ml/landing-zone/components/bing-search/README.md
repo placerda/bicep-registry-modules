@@ -1,5 +1,6 @@
-#  `[AiMl/LandingZoneModulesBingSearch]`
+# bing-search `[AiMl/LandingZoneComponentsBingSearch]`
 
+Create-or-reuse a Bing Grounding account and its Cognitive Services connection to be used by Azure AI Foundry.
 
 ## Navigation
 
@@ -20,10 +21,10 @@
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`account_name`](#parameter-account_name) | string | Required when `enableBingSearchConnection` is true. The name of the Azure Cognitive Services account to be used for the Bing Search tool. |
-| [`bingConnectionName`](#parameter-bingconnectionname) | string | Required when `enableBingSearchConnection` is true. The name to assign to the Bing Search connection in the project. |
-| [`bingSearchName`](#parameter-bingsearchname) | string | Required when `enableBingSearchConnection` is true. The name to assign to the Bing Search resource instance (used when creating a new account). |
-| [`project_name`](#parameter-project_name) | string | Required when `enableBingSearchConnection` is true. The name of the Azure Cognitive Services Project. |
+| [`accountName`](#parameter-accountname) | string | The name of the Azure Cognitive Services account to be used for the Bing Search tool. Required if `enableBingSearchConnection` is true. |
+| [`bingConnectionName`](#parameter-bingconnectionname) | string | The name to assign to the Bing Search connection in the project. Required if `enableBingSearchConnection` is true. |
+| [`bingSearchName`](#parameter-bingsearchname) | string | The name to assign to the Bing Search resource instance (used when creating a new account). Required if `enableBingSearchConnection` is true. |
+| [`projectName`](#parameter-projectname) | string | The name of the Azure Cognitive Services Project. Required if `enableBingSearchConnection` is true. |
 
 **Optional parameters**
 
@@ -31,16 +32,16 @@
 | :-- | :-- | :-- |
 | [`existingResourceId`](#parameter-existingresourceid) | string | Existing Bing Grounding account resource ID to reuse instead of creating a new one. |
 
-### Parameter: `account_name`
+### Parameter: `accountName`
 
-Required when `enableBingSearchConnection` is true. The name of the Azure Cognitive Services account to be used for the Bing Search tool.
+The name of the Azure Cognitive Services account to be used for the Bing Search tool. Required if `enableBingSearchConnection` is true.
 
 - Required: Yes
 - Type: string
 
 ### Parameter: `bingConnectionName`
 
-Required when `enableBingSearchConnection` is true. The name to assign to the Bing Search connection in the project.
+The name to assign to the Bing Search connection in the project. Required if `enableBingSearchConnection` is true.
 
 - Required: No
 - Type: string
@@ -48,14 +49,14 @@ Required when `enableBingSearchConnection` is true. The name to assign to the Bi
 
 ### Parameter: `bingSearchName`
 
-Required when `enableBingSearchConnection` is true. The name to assign to the Bing Search resource instance (used when creating a new account).
+The name to assign to the Bing Search resource instance (used when creating a new account). Required if `enableBingSearchConnection` is true.
 
 - Required: Yes
 - Type: string
 
-### Parameter: `project_name`
+### Parameter: `projectName`
 
-Required when `enableBingSearchConnection` is true. The name of the Azure Cognitive Services Project.
+The name of the Azure Cognitive Services Project. Required if `enableBingSearchConnection` is true.
 
 - Required: Yes
 - Type: string

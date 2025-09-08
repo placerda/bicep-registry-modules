@@ -1,4 +1,4 @@
-# AI Foundry Project `[AiMl/LandingZoneModulesAiFoundryModulesProject]`
+# AI Foundry Project `[AiMl/LandingZoneComponentsAiFoundryModulesProject]`
 
 Creates an AI Foundry project and any associated Azure service connections.
 

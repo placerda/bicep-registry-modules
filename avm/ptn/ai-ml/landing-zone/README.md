@@ -1,5 +1,6 @@
-#  `[AiMl/LandingZone]`
+# AI/ML Landing Zone `[AiMl/LandingZone]`
 
+Deploys a secure AI/ML landing zone (resource groups, networking, AI services, private endpoints, and guardrails) using AVM resource modules.
 
 ## Navigation
 
@@ -422,30 +423,33 @@ param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`location`](#parameter-location) | string |  Azure region for AI Foundry resources. Defaults to the resource group location. |
-| [`vnetDefinition`](#parameter-vnetdefinition) | object |  Virtual Network configuration (created when not reusing an existing VNet). |
 
 **Conditional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`apimDefinition`](#parameter-apimdefinition) | object |  API Management configuration (used when APIM is deployed). |
-| [`appConfigurationDefinition`](#parameter-appconfigurationdefinition) | object |  App Configuration store settings (used when App Configuration is deployed). |
-| [`appGatewayDefinition`](#parameter-appgatewaydefinition) | object |  Application Gateway configuration (used when AGW is deployed). |
-| [`appInsightsDefinition`](#parameter-appinsightsdefinition) | object |  Application Insights configuration (used when App Insights is deployed). |
-| [`bastionKeyVaultDefinition`](#parameter-bastionkeyvaultdefinition) | object |  Dedicated Key Vault for JumpVM secrets (public network). |
-| [`containerAppEnvDefinition`](#parameter-containerappenvdefinition) | object |  Container App Environment configuration (used when Container Apps are deployed). |
-| [`containerRegistryDefinition`](#parameter-containerregistrydefinition) | object |  Container Registry configuration (used when ACR is deployed). |
-| [`cosmosDbDefinition`](#parameter-cosmosdbdefinition) | object |  Cosmos DB account configuration for the GenAI app (used when Cosmos DB is deployed). |
-| [`firewallDefinition`](#parameter-firewalldefinition) | object |  Azure Firewall configuration (used when Firewall is deployed). |
-| [`hubVnetPeeringDefinition`](#parameter-hubvnetpeeringdefinition) | object |  Hub VNet peering configuration (required only when establishing hub-spoke peering). |
-| [`jumpVmAdminPassword`](#parameter-jumpvmadminpassword) | securestring | Required when deploying Jump VM. Local admin password to set on the Windows JumpVM. |
-| [`keyVaultDefinition`](#parameter-keyvaultdefinition) | object |  Key Vault configuration for the GenAI app (used when KV is deployed). |
-| [`logAnalyticsDefinition`](#parameter-loganalyticsdefinition) | object |  Log Analytics Workspace configuration (required if you deploy App Insights and are not reusing an existing workspace). |
-| [`privateDnsZoneIds`](#parameter-privatednszoneids) | object |  Existing Private DNS Zone resource IDs per service; provide to reuse, or leave empty to create. |
-| [`privateDnsZones`](#parameter-privatednszones) | object |  Private DNS Zones and VNet links configuration (used when creating zones). |
-| [`searchDefinition`](#parameter-searchdefinition) | object |  Azure AI Search configuration for the GenAI app (used when Search is deployed). |
-| [`storageAccountDefinition`](#parameter-storageaccountdefinition) | object |  Storage Account configuration for the GenAI app (used when Storage is deployed). |
-| [`wafPolicyDefinition`](#parameter-wafpolicydefinition) | object |  Web Application Firewall (WAF) policy configuration (required when Application Gateway with WAF is deployed). |
+| [`apimDefinition`](#parameter-apimdefinition) | object | API Management configuration. Required if deployToggles.apiManagement is true and resourceIds.apimServiceResourceId is empty. |
+| [`appConfigurationDefinition`](#parameter-appconfigurationdefinition) | object | App Configuration store settings. Required if deployGenAiAppBackingServices is true, deployToggles.appConfig is true, and resourceIds.appConfigResourceId is empty. |
+| [`appGatewayDefinition`](#parameter-appgatewaydefinition) | object | Application Gateway configuration. Required if deployToggles.applicationGateway is true and resourceIds.applicationGatewayResourceId is empty. |
+| [`appInsightsDefinition`](#parameter-appinsightsdefinition) | object | Application Insights configuration. Required if deployToggles.appInsights is true and resourceIds.appInsightsResourceId is empty; a Log Analytics workspace must exist or be deployed. |
+| [`bastionKeyVaultDefinition`](#parameter-bastionkeyvaultdefinition) | object | Jump (bastion) VM configuration (Windows). Required if deployToggles.jumpVm is true. |
+| [`buildVmDefinition`](#parameter-buildvmdefinition) | object | Build VM configuration to support CI/CD workers (Linux). Required if deployToggles.buildVm is true and you intend to deploy the Build VM (sshPublicKey must be provided). |
+| [`containerAppEnvDefinition`](#parameter-containerappenvdefinition) | object | Container Apps Environment configuration. Required if deployGenAiAppBackingServices is true, deployToggles.containerEnv is true, and resourceIds.containerEnvResourceId is empty. |
+| [`containerRegistryDefinition`](#parameter-containerregistrydefinition) | object | Container Registry configuration. Required if deployGenAiAppBackingServices is true, deployToggles.containerRegistry is true, and resourceIds.containerRegistryResourceId is empty. |
+| [`cosmosDbDefinition`](#parameter-cosmosdbdefinition) | object | Cosmos DB account configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.cosmosDb is true, and resourceIds.dbAccountResourceId is empty. |
+| [`firewallDefinition`](#parameter-firewalldefinition) | object | Azure Firewall configuration. Required if deployToggles.firewall is true and resourceIds.firewallResourceId is empty. |
+| [`groundingWithBingDefinition`](#parameter-groundingwithbingdefinition) | object | Grounding with Bing configuration. Required if deployToggles.groundingWithBingSearch is true and resourceIds.groundingServiceResourceId is empty. |
+| [`hubVnetPeeringDefinition`](#parameter-hubvnetpeeringdefinition) | object | Hub VNet peering configuration. Required if you plan to establish hub–spoke peering. |
+| [`jumpVmAdminPassword`](#parameter-jumpvmadminpassword) | securestring | Local admin password for the Windows JumpVM. Required if deployToggles.jumpVm is true. |
+| [`jumpVmDefinition`](#parameter-jumpvmdefinition) | object | Jump (bastion) VM configuration (Windows). Required if deployToggles.jumpVm is true. |
+| [`keyVaultDefinition`](#parameter-keyvaultdefinition) | object | Key Vault configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.keyVault is true, and resourceIds.keyVaultResourceId is empty. |
+| [`logAnalyticsDefinition`](#parameter-loganalyticsdefinition) | object | Log Analytics Workspace configuration. Required if deployToggles.logAnalytics is true and resourceIds.logAnalyticsWorkspaceResourceId is empty. |
+| [`privateDnsZoneIds`](#parameter-privatednszoneids) | object | Existing Private DNS Zone resource IDs per service. Required if networkIsolation is true and you plan to reuse existing zones for any service. |
+| [`privateDnsZones`](#parameter-privatednszones) | object | Private DNS Zones and VNet links configuration. Required if networkIsolation is true, flagPlatformLandingZone is false, and you want this template to create zones for services not supplied in privateDnsZoneIds. |
+| [`searchDefinition`](#parameter-searchdefinition) | object | Azure AI Search configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.searchService is true, and resourceIds.searchServiceResourceId is empty. |
+| [`storageAccountDefinition`](#parameter-storageaccountdefinition) | object | Storage Account configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.storageAccount is true, and resourceIds.storageAccountResourceId is empty. |
+| [`vnetDefinition`](#parameter-vnetdefinition) | object | Virtual Network configuration. Required if deployToggles.virtualNetwork is true and resourceIds.virtualNetworkResourceId is empty. |
+| [`wafPolicyDefinition`](#parameter-wafpolicydefinition) | object | Web Application Firewall (WAF) policy configuration. Required if deployToggles.wafPolicy is true and you are deploying Application Gateway via this template. |
 
 **Optional parameters**
 
@@ -454,7 +458,6 @@ param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
 | [`aiFoundryDefinition`](#parameter-aifoundrydefinition) | object |  AI Foundry project configuration (account/project, networking, associated resources, and deployments). |
 | [`azdoPat`](#parameter-azdopat) | securestring | PAT used to register the Azure DevOps agent (when runner = azdo). |
 | [`baseName`](#parameter-basename) | string |  Base name to seed resource names; defaults to a 12-char token. |
-| [`buildVmDefinition`](#parameter-buildvmdefinition) | object |  Build VM configuration to support CI/CD workers (Linux). |
 | [`containerAppsList`](#parameter-containerappslist) | array | List of Container Apps to create. |
 | [`deployGenAiAppBackingServices`](#parameter-deploygenaiappbackingservices) | bool |  Deploy GenAI app services; defaults to true. |
 | [`deployToggles`](#parameter-deploytoggles) | object |  Per-service deployment toggles; set false to skip creating a service. Reuse still works via resourceIds. |
@@ -462,8 +465,6 @@ param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
 | [`firewallPolicyDefinition`](#parameter-firewallpolicydefinition) | object |  Azure Firewall Policy configuration (only used if your deployment wires a policy). |
 | [`flagPlatformLandingZone`](#parameter-flagplatformlandingzone) | bool |  Enable platform landing zone integration. |
 | [`githubPat`](#parameter-githubpat) | securestring | PAT used to request a GitHub runner registration token (when runner = github). |
-| [`groundingWithBingDefinition`](#parameter-groundingwithbingdefinition) | object |  Grounding with Bing Configuration. |
-| [`jumpVmDefinition`](#parameter-jumpvmdefinition) | object |  Jump (bastion) VM configuration (Windows). |
 | [`networkIsolation`](#parameter-networkisolation) | bool | Enable network isolation posture (Private Endpoints + Private DNS). |
 | [`resourceIds`](#parameter-resourceids) | object |  Existing resource IDs to reuse; leave empty to create new resources. |
 | [`resourceToken`](#parameter-resourcetoken) | string |  Deterministic token for resource names; auto-generated if not provided. |
@@ -477,386 +478,9 @@ param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
 - Type: string
 - Default: `[resourceGroup().location]`
 
-### Parameter: `vnetDefinition`
-
- Virtual Network configuration (created when not reusing an existing VNet).
-
-- Required: No
-- Type: object
-- Default:
-  ```Bicep
-  {
-      addressSpace: '192.168.0.0/16'
-      dnsServers: []
-      name: ''
-      subnets: [
-        {
-          addressPrefix: '192.168.0.0/24'
-          delegation: 'Microsoft.app/environments'
-          enabled: true
-          name: 'agent-subnet'
-          serviceEndpoints: [
-            'Microsoft.CognitiveServices'
-          ]
-        }
-        {
-          addressPrefix: '192.168.1.0/24'
-          enabled: true
-          name: 'pe-subnet'
-          privateEndpointNetworkPolicies: 'Disabled'
-          serviceEndpoints: [
-            'Microsoft.AzureCosmosDB'
-          ]
-        }
-        {
-          addressPrefix: '192.168.2.0/26'
-          enabled: true
-          name: 'gateway-subnet'
-        }
-        {
-          addressPrefix: '192.168.2.64/26'
-          enabled: true
-          name: 'AzureBastionSubnet'
-        }
-        {
-          addressPrefix: '192.168.2.128/26'
-          enabled: true
-          name: 'AzureFirewallSubnet'
-        }
-        {
-          addressPrefix: '192.168.3.0/24'
-          enabled: true
-          name: 'AppGatewaySubnet'
-        }
-        {
-          addressPrefix: '192.168.4.0/27'
-          enabled: true
-          name: 'jumpbox-subnet'
-        }
-        {
-          addressPrefix: '192.168.4.64/27'
-          delegation: 'Microsoft.app/environments'
-          enabled: true
-          name: 'aca-environment-subnet'
-          serviceEndpoints: [
-            'Microsoft.AzureCosmosDB'
-          ]
-        }
-        {
-          addressPrefix: '192.168.4.96/27'
-          enabled: true
-          name: 'devops-build-agents-subnet'
-        }
-      ]
-      tags: {}
-  }
-  ```
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`addressSpace`](#parameter-vnetdefinitionaddressspace) | string | VNet CIDR address space (e.g., 192.168.0.0/16). |
-| [`subnets`](#parameter-vnetdefinitionsubnets) | array | Subnet definitions for the VNet. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`ddosProtectionPlanResourceId`](#parameter-vnetdefinitionddosprotectionplanresourceid) | string | Resource ID of an existing DDoS Protection Plan to associate. |
-| [`dnsServers`](#parameter-vnetdefinitiondnsservers) | array | Custom DNS server IP addresses for the VNet. |
-| [`name`](#parameter-vnetdefinitionname) | string | VNet name. If empty, a deterministic name is generated. |
-| [`tags`](#parameter-vnetdefinitiontags) | object | Tags to apply to the VNet. |
-| [`vnetPeeringConfiguration`](#parameter-vnetdefinitionvnetpeeringconfiguration) | object | Peering configuration to another VNet (hub/spoke). |
-| [`vwanHubPeeringConfiguration`](#parameter-vnetdefinitionvwanhubpeeringconfiguration) | object | Peering configuration to a Virtual WAN hub. |
-
-### Parameter: `vnetDefinition.addressSpace`
-
-VNet CIDR address space (e.g., 192.168.0.0/16).
-
-- Required: Yes
-- Type: string
-
-### Parameter: `vnetDefinition.subnets`
-
-Subnet definitions for the VNet.
-
-- Required: Yes
-- Type: array
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`addressPrefix`](#parameter-vnetdefinitionsubnetsaddressprefix) | string | Subnet address prefix in CIDR notation (e.g., 10.0.1.0/24). |
-| [`enabled`](#parameter-vnetdefinitionsubnetsenabled) | bool | Enables (true) or disables (false) creation/use of this subnet. |
-| [`name`](#parameter-vnetdefinitionsubnetsname) | string | Subnet name. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`delegation`](#parameter-vnetdefinitionsubnetsdelegation) | string | Service delegation for the subnet (resource provider/type). |
-| [`natGatewayResourceId`](#parameter-vnetdefinitionsubnetsnatgatewayresourceid) | string | Resource ID of an associated NAT Gateway. |
-| [`privateEndpointNetworkPolicies`](#parameter-vnetdefinitionsubnetsprivateendpointnetworkpolicies) | string | Whether private endpoint network policies are Enabled or Disabled. |
-| [`privateLinkServiceNetworkPolicies`](#parameter-vnetdefinitionsubnetsprivatelinkservicenetworkpolicies) | string | Whether private link service network policies are Enabled or Disabled. |
-| [`serviceEndpoints`](#parameter-vnetdefinitionsubnetsserviceendpoints) | array | Service endpoints to enable for this subnet. |
-
-### Parameter: `vnetDefinition.subnets.addressPrefix`
-
-Subnet address prefix in CIDR notation (e.g., 10.0.1.0/24).
-
-- Required: Yes
-- Type: string
-
-### Parameter: `vnetDefinition.subnets.enabled`
-
-Enables (true) or disables (false) creation/use of this subnet.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `vnetDefinition.subnets.name`
-
-Subnet name.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `vnetDefinition.subnets.delegation`
-
-Service delegation for the subnet (resource provider/type).
-
-- Required: No
-- Type: string
-
-### Parameter: `vnetDefinition.subnets.natGatewayResourceId`
-
-Resource ID of an associated NAT Gateway.
-
-- Required: No
-- Type: string
-
-### Parameter: `vnetDefinition.subnets.privateEndpointNetworkPolicies`
-
-Whether private endpoint network policies are Enabled or Disabled.
-
-- Required: No
-- Type: string
-- Allowed:
-  ```Bicep
-  [
-    'Disabled'
-    'Enabled'
-  ]
-  ```
-
-### Parameter: `vnetDefinition.subnets.privateLinkServiceNetworkPolicies`
-
-Whether private link service network policies are Enabled or Disabled.
-
-- Required: No
-- Type: string
-- Allowed:
-  ```Bicep
-  [
-    'Disabled'
-    'Enabled'
-  ]
-  ```
-
-### Parameter: `vnetDefinition.subnets.serviceEndpoints`
-
-Service endpoints to enable for this subnet.
-
-- Required: No
-- Type: array
-
-### Parameter: `vnetDefinition.ddosProtectionPlanResourceId`
-
-Resource ID of an existing DDoS Protection Plan to associate.
-
-- Required: No
-- Type: string
-
-### Parameter: `vnetDefinition.dnsServers`
-
-Custom DNS server IP addresses for the VNet.
-
-- Required: No
-- Type: array
-
-### Parameter: `vnetDefinition.name`
-
-VNet name. If empty, a deterministic name is generated.
-
-- Required: No
-- Type: string
-
-### Parameter: `vnetDefinition.tags`
-
-Tags to apply to the VNet.
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`>Any_other_property<`](#parameter-vnetdefinitiontags>any_other_property<) | string | Arbitrary key for each tag. |
-
-### Parameter: `vnetDefinition.tags.>Any_other_property<`
-
-Arbitrary key for each tag.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration`
-
-Peering configuration to another VNet (hub/spoke).
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`allowForwardedTraffic`](#parameter-vnetdefinitionvnetpeeringconfigurationallowforwardedtraffic) | bool | Allow forwarded traffic across the peering. |
-| [`allowGatewayTransit`](#parameter-vnetdefinitionvnetpeeringconfigurationallowgatewaytransit) | bool | Allow gateway transit across the peering. |
-| [`allowVirtualNetworkAccess`](#parameter-vnetdefinitionvnetpeeringconfigurationallowvirtualnetworkaccess) | bool | Allow virtual network access across the peering. |
-| [`createReversePeering`](#parameter-vnetdefinitionvnetpeeringconfigurationcreatereversepeering) | bool | Create the reverse peering from hub back to this VNet. |
-| [`peerVnetResourceId`](#parameter-vnetdefinitionvnetpeeringconfigurationpeervnetresourceid) | string | Resource ID of the peer virtual network. |
-| [`reverseAllowForwardedTraffic`](#parameter-vnetdefinitionvnetpeeringconfigurationreverseallowforwardedtraffic) | bool | Reverse peering: allow forwarded traffic. |
-| [`reverseAllowGatewayTransit`](#parameter-vnetdefinitionvnetpeeringconfigurationreverseallowgatewaytransit) | bool | Reverse peering: allow gateway transit. |
-| [`reverseAllowVirtualNetworkAccess`](#parameter-vnetdefinitionvnetpeeringconfigurationreverseallowvirtualnetworkaccess) | bool | Reverse peering: allow virtual network access. |
-| [`reverseUseRemoteGateways`](#parameter-vnetdefinitionvnetpeeringconfigurationreverseuseremotegateways) | bool | Reverse peering: use remote gateways. |
-| [`useRemoteGateways`](#parameter-vnetdefinitionvnetpeeringconfigurationuseremotegateways) | bool | Use remote gateways on the spoke peering. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`firewallIpAddress`](#parameter-vnetdefinitionvnetpeeringconfigurationfirewallipaddress) | string | Hub firewall private IP address used for routing (if applicable). |
-| [`name`](#parameter-vnetdefinitionvnetpeeringconfigurationname) | string | Name of the spoke-to-hub peering. |
-| [`reverseName`](#parameter-vnetdefinitionvnetpeeringconfigurationreversename) | string | Name of the reverse peering (hub->spoke). |
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.allowForwardedTraffic`
-
-Allow forwarded traffic across the peering.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.allowGatewayTransit`
-
-Allow gateway transit across the peering.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.allowVirtualNetworkAccess`
-
-Allow virtual network access across the peering.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.createReversePeering`
-
-Create the reverse peering from hub back to this VNet.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.peerVnetResourceId`
-
-Resource ID of the peer virtual network.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.reverseAllowForwardedTraffic`
-
-Reverse peering: allow forwarded traffic.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.reverseAllowGatewayTransit`
-
-Reverse peering: allow gateway transit.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.reverseAllowVirtualNetworkAccess`
-
-Reverse peering: allow virtual network access.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.reverseUseRemoteGateways`
-
-Reverse peering: use remote gateways.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.useRemoteGateways`
-
-Use remote gateways on the spoke peering.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.firewallIpAddress`
-
-Hub firewall private IP address used for routing (if applicable).
-
-- Required: No
-- Type: string
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.name`
-
-Name of the spoke-to-hub peering.
-
-- Required: No
-- Type: string
-
-### Parameter: `vnetDefinition.vnetPeeringConfiguration.reverseName`
-
-Name of the reverse peering (hub->spoke).
-
-- Required: No
-- Type: string
-
-### Parameter: `vnetDefinition.vwanHubPeeringConfiguration`
-
-Peering configuration to a Virtual WAN hub.
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`peerVwanHubResourceId`](#parameter-vnetdefinitionvwanhubpeeringconfigurationpeervwanhubresourceid) | string | Resource ID of the target Virtual WAN hub. |
-
-### Parameter: `vnetDefinition.vwanHubPeeringConfiguration.peerVwanHubResourceId`
-
-Resource ID of the target Virtual WAN hub.
-
-- Required: Yes
-- Type: string
-
 ### Parameter: `apimDefinition`
 
- API Management configuration (used when APIM is deployed).
+API Management configuration. Required if deployToggles.apiManagement is true and resourceIds.apimServiceResourceId is empty.
 
 - Required: No
 - Type: object
@@ -1825,7 +1449,7 @@ Arbitrary key for each tag.
 
 ### Parameter: `appConfigurationDefinition`
 
- App Configuration store settings (used when App Configuration is deployed).
+App Configuration store settings. Required if deployGenAiAppBackingServices is true, deployToggles.appConfig is true, and resourceIds.appConfigResourceId is empty.
 
 - Required: No
 - Type: object
@@ -2037,7 +1661,7 @@ Arbitrary key for each tag.
 
 ### Parameter: `appGatewayDefinition`
 
- Application Gateway configuration (used when AGW is deployed).
+Application Gateway configuration. Required if deployToggles.applicationGateway is true and resourceIds.applicationGatewayResourceId is empty.
 
 - Required: No
 - Type: object
@@ -3613,7 +3237,7 @@ Default rewrite rule set name.
 
 ### Parameter: `appInsightsDefinition`
 
- Application Insights configuration (used when App Insights is deployed).
+Application Insights configuration. Required if deployToggles.appInsights is true and resourceIds.appInsightsResourceId is empty; a Log Analytics workspace must exist or be deployed.
 
 - Required: No
 - Type: object
@@ -3707,7 +3331,7 @@ Arbitrary key for each tag.
 
 ### Parameter: `bastionKeyVaultDefinition`
 
- Dedicated Key Vault for JumpVM secrets (public network).
+Jump (bastion) VM configuration (Windows). Required if deployToggles.jumpVm is true.
 
 - Required: No
 - Type: object
@@ -3870,9 +3494,286 @@ AAD tenant ID for the vault.
 - Required: No
 - Type: string
 
+### Parameter: `buildVmDefinition`
+
+Build VM configuration to support CI/CD workers (Linux). Required if deployToggles.buildVm is true and you intend to deploy the Build VM (sshPublicKey must be provided).
+
+- Required: No
+- Type: object
+- Default:
+  ```Bicep
+  {
+      adminUsername: 'azureuser'
+      azdo: {
+        orgUrl: 'https://dev.azure.com/<org>'
+        pool: 'Default'
+      }
+      enableTelemetry: false
+      name: ''
+      runner: 'azdo'
+      sku: 'Standard_D2s_v5'
+      sshPublicKey: ''
+      tags: {}
+  }
+  ```
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`adminUsername`](#parameter-buildvmdefinitionadminusername) | string | Admin username to create (e.g., azureuser). |
+| [`runner`](#parameter-buildvmdefinitionrunner) | string | Which agent to install. |
+| [`sku`](#parameter-buildvmdefinitionsku) | string | VM size SKU (e.g., Standard_B2s). |
+| [`sshPublicKey`](#parameter-buildvmdefinitionsshpublickey) | string | SSH public key for the admin user. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`azdo`](#parameter-buildvmdefinitionazdo) | object | Azure DevOps settings (required when runner = azdo). |
+| [`enableTelemetry`](#parameter-buildvmdefinitionenabletelemetry) | bool | Enable AVM telemetry. |
+| [`github`](#parameter-buildvmdefinitiongithub) | object | GitHub settings (required when runner = github). |
+| [`imageReference`](#parameter-buildvmdefinitionimagereference) | object | Marketplace image reference for the VM. |
+| [`name`](#parameter-buildvmdefinitionname) | string | VM name. |
+| [`osType`](#parameter-buildvmdefinitionostype) | string | OS type for the VM. |
+| [`tags`](#parameter-buildvmdefinitiontags) | object | Tags to apply to the Build VM resource. |
+
+### Parameter: `buildVmDefinition.adminUsername`
+
+Admin username to create (e.g., azureuser).
+
+- Required: Yes
+- Type: string
+
+### Parameter: `buildVmDefinition.runner`
+
+Which agent to install.
+
+- Required: Yes
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'azdo'
+    'github'
+  ]
+  ```
+
+### Parameter: `buildVmDefinition.sku`
+
+VM size SKU (e.g., Standard_B2s).
+
+- Required: Yes
+- Type: string
+
+### Parameter: `buildVmDefinition.sshPublicKey`
+
+SSH public key for the admin user.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `buildVmDefinition.azdo`
+
+Azure DevOps settings (required when runner = azdo).
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`orgUrl`](#parameter-buildvmdefinitionazdoorgurl) | string | Azure DevOps organization URL (e.g., https://dev.azure.com/contoso). |
+| [`pool`](#parameter-buildvmdefinitionazdopool) | string | Agent pool name. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`agentName`](#parameter-buildvmdefinitionazdoagentname) | string | Agent name. |
+| [`workFolder`](#parameter-buildvmdefinitionazdoworkfolder) | string | Working folder. |
+
+### Parameter: `buildVmDefinition.azdo.orgUrl`
+
+Azure DevOps organization URL (e.g., https://dev.azure.com/contoso).
+
+- Required: Yes
+- Type: string
+
+### Parameter: `buildVmDefinition.azdo.pool`
+
+Agent pool name.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `buildVmDefinition.azdo.agentName`
+
+Agent name.
+
+- Required: No
+- Type: string
+
+### Parameter: `buildVmDefinition.azdo.workFolder`
+
+Working folder.
+
+- Required: No
+- Type: string
+
+### Parameter: `buildVmDefinition.enableTelemetry`
+
+Enable AVM telemetry.
+
+- Required: No
+- Type: bool
+
+### Parameter: `buildVmDefinition.github`
+
+GitHub settings (required when runner = github).
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`owner`](#parameter-buildvmdefinitiongithubowner) | string | GitHub owner (org or user). |
+| [`repo`](#parameter-buildvmdefinitiongithubrepo) | string | Repository name. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`agentName`](#parameter-buildvmdefinitiongithubagentname) | string | Runner name. |
+| [`labels`](#parameter-buildvmdefinitiongithublabels) | string | Runner labels (comma-separated). |
+| [`workFolder`](#parameter-buildvmdefinitiongithubworkfolder) | string | Working folder. |
+
+### Parameter: `buildVmDefinition.github.owner`
+
+GitHub owner (org or user).
+
+- Required: Yes
+- Type: string
+
+### Parameter: `buildVmDefinition.github.repo`
+
+Repository name.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `buildVmDefinition.github.agentName`
+
+Runner name.
+
+- Required: No
+- Type: string
+
+### Parameter: `buildVmDefinition.github.labels`
+
+Runner labels (comma-separated).
+
+- Required: No
+- Type: string
+
+### Parameter: `buildVmDefinition.github.workFolder`
+
+Working folder.
+
+- Required: No
+- Type: string
+
+### Parameter: `buildVmDefinition.imageReference`
+
+Marketplace image reference for the VM.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`offer`](#parameter-buildvmdefinitionimagereferenceoffer) | string | Offer name. |
+| [`publisher`](#parameter-buildvmdefinitionimagereferencepublisher) | string | Publisher name. |
+| [`sku`](#parameter-buildvmdefinitionimagereferencesku) | string | SKU name. |
+| [`version`](#parameter-buildvmdefinitionimagereferenceversion) | string | Image version (e.g., latest). |
+
+### Parameter: `buildVmDefinition.imageReference.offer`
+
+Offer name.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `buildVmDefinition.imageReference.publisher`
+
+Publisher name.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `buildVmDefinition.imageReference.sku`
+
+SKU name.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `buildVmDefinition.imageReference.version`
+
+Image version (e.g., latest).
+
+- Required: Yes
+- Type: string
+
+### Parameter: `buildVmDefinition.name`
+
+VM name.
+
+- Required: No
+- Type: string
+
+### Parameter: `buildVmDefinition.osType`
+
+OS type for the VM.
+
+- Required: No
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Linux'
+    'Windows'
+  ]
+  ```
+
+### Parameter: `buildVmDefinition.tags`
+
+Tags to apply to the Build VM resource.
+
+- Required: Yes
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`>Any_other_property<`](#parameter-buildvmdefinitiontags>any_other_property<) | string | Arbitrary key for each tag. |
+
+### Parameter: `buildVmDefinition.tags.>Any_other_property<`
+
+Arbitrary key for each tag.
+
+- Required: Yes
+- Type: string
+
 ### Parameter: `containerAppEnvDefinition`
 
- Container App Environment configuration (used when Container Apps are deployed).
+Container Apps Environment configuration. Required if deployGenAiAppBackingServices is true, deployToggles.containerEnv is true, and resourceIds.containerEnvResourceId is empty.
 
 - Required: No
 - Type: object
@@ -3912,15 +3813,20 @@ AAD tenant ID for the vault.
 | [`workloadProfiles`](#parameter-containerappenvdefinitionworkloadprofiles) | array | Workload profiles for the environment. |
 | [`zoneRedundancyEnabled`](#parameter-containerappenvdefinitionzoneredundancyenabled) | bool | Enable zone redundancy for the environment. |
 
+**Conditional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`logAnalyticsWorkspaceResourceId`](#parameter-containerappenvdefinitionloganalyticsworkspaceresourceid) | string | Resource ID of a Log Analytics workspace for diagnostics. Required if enableDiagnosticSettings is true and a workspace is not inferred by the template. |
+| [`subnetName`](#parameter-containerappenvdefinitionsubnetname) | string | Subnet name where the environment is deployed when internal. Required if the environment is internal (internalLoadBalancerEnabled is true). |
+
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`enableDiagnosticSettings`](#parameter-containerappenvdefinitionenablediagnosticsettings) | bool | Enable diagnostic settings for the environment. |
-| [`logAnalyticsWorkspaceResourceId`](#parameter-containerappenvdefinitionloganalyticsworkspaceresourceid) | string | Resource ID of a Log Analytics workspace for diagnostics. |
 | [`name`](#parameter-containerappenvdefinitionname) | string | Container Apps Environment name. |
 | [`roleAssignments`](#parameter-containerappenvdefinitionroleassignments) | array | Role assignments to create on the environment. |
-| [`subnetName`](#parameter-containerappenvdefinitionsubnetname) | string | Subnet name where the environment is deployed when internal. |
 | [`tags`](#parameter-containerappenvdefinitiontags) | object | Tags to apply to the environment. |
 
 ### Parameter: `containerAppEnvDefinition.internalLoadBalancerEnabled`
@@ -4006,19 +3912,26 @@ Enable zone redundancy for the environment.
 - Required: Yes
 - Type: bool
 
+### Parameter: `containerAppEnvDefinition.logAnalyticsWorkspaceResourceId`
+
+Resource ID of a Log Analytics workspace for diagnostics. Required if enableDiagnosticSettings is true and a workspace is not inferred by the template.
+
+- Required: No
+- Type: string
+
+### Parameter: `containerAppEnvDefinition.subnetName`
+
+Subnet name where the environment is deployed when internal. Required if the environment is internal (internalLoadBalancerEnabled is true).
+
+- Required: No
+- Type: string
+
 ### Parameter: `containerAppEnvDefinition.enableDiagnosticSettings`
 
 Enable diagnostic settings for the environment.
 
 - Required: No
 - Type: bool
-
-### Parameter: `containerAppEnvDefinition.logAnalyticsWorkspaceResourceId`
-
-Resource ID of a Log Analytics workspace for diagnostics.
-
-- Required: No
-- Type: string
 
 ### Parameter: `containerAppEnvDefinition.name`
 
@@ -4124,13 +4037,6 @@ Role assignment name.
 - Required: No
 - Type: string
 
-### Parameter: `containerAppEnvDefinition.subnetName`
-
-Subnet name where the environment is deployed when internal.
-
-- Required: No
-- Type: string
-
 ### Parameter: `containerAppEnvDefinition.tags`
 
 Tags to apply to the environment.
@@ -4153,7 +4059,7 @@ Arbitrary key for each tag.
 
 ### Parameter: `containerRegistryDefinition`
 
- Container Registry configuration (used when ACR is deployed).
+Container Registry configuration. Required if deployGenAiAppBackingServices is true, deployToggles.containerRegistry is true, and resourceIds.containerRegistryResourceId is empty.
 
 - Required: No
 - Type: object
@@ -4271,7 +4177,7 @@ Arbitrary key for each tag.
 
 ### Parameter: `cosmosDbDefinition`
 
- Cosmos DB account configuration for the GenAI app (used when Cosmos DB is deployed).
+Cosmos DB account configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.cosmosDb is true, and resourceIds.dbAccountResourceId is empty.
 
 - Required: No
 - Type: object
@@ -4284,28 +4190,33 @@ Arbitrary key for each tag.
   }
   ```
 
+**Conditional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`analyticalStorageConfig`](#parameter-cosmosdbdefinitionanalyticalstorageconfig) | object | Analytical storage configuration. Required if analyticalStorageEnabled is true. |
+| [`backup`](#parameter-cosmosdbdefinitionbackup) | object | Backup policy configuration. Required if you require a non-default backup policy (e.g., Continuous or custom periodic settings). |
+| [`consistencyPolicy`](#parameter-cosmosdbdefinitionconsistencypolicy) | object | Consistency policy configuration. Required if you choose a non-default consistency level or use Bounded Staleness. |
+| [`secondaryRegions`](#parameter-cosmosdbdefinitionsecondaryregions) | object | Map of secondary regions and failover properties. Required if multipleWriteLocationsEnabled is true or you need regional failover. |
+
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`analyticalStorageConfig`](#parameter-cosmosdbdefinitionanalyticalstorageconfig) | object | Analytical storage configuration. |
 | [`analyticalStorageEnabled`](#parameter-cosmosdbdefinitionanalyticalstorageenabled) | bool | Enable analytical storage. |
 | [`automaticFailoverEnabled`](#parameter-cosmosdbdefinitionautomaticfailoverenabled) | bool | Enable automatic failover. |
-| [`backup`](#parameter-cosmosdbdefinitionbackup) | object | Backup policy configuration. |
 | [`capabilities`](#parameter-cosmosdbdefinitioncapabilities) | object | Capabilities to enable on the Cosmos DB account. |
 | [`capacity`](#parameter-cosmosdbdefinitioncapacity) | object | Capacity limits for the account. |
-| [`consistencyPolicy`](#parameter-cosmosdbdefinitionconsistencypolicy) | object | Consistency policy configuration. |
 | [`corsRule`](#parameter-cosmosdbdefinitioncorsrule) | object | CORS rules to allow on the account. |
 | [`localAuthenticationDisabled`](#parameter-cosmosdbdefinitionlocalauthenticationdisabled) | bool | Disable local authentication (keys). |
 | [`multipleWriteLocationsEnabled`](#parameter-cosmosdbdefinitionmultiplewritelocationsenabled) | bool | Enable multiple write locations. |
 | [`name`](#parameter-cosmosdbdefinitionname) | string | Cosmos DB account name. |
 | [`partitionMergeEnabled`](#parameter-cosmosdbdefinitionpartitionmergeenabled) | bool | Enable partition merge. |
 | [`publicNetworkAccessEnabled`](#parameter-cosmosdbdefinitionpublicnetworkaccessenabled) | bool | Enable public network access to the account. |
-| [`secondaryRegions`](#parameter-cosmosdbdefinitionsecondaryregions) | object | Map of secondary regions and failover properties. |
 
 ### Parameter: `cosmosDbDefinition.analyticalStorageConfig`
 
-Analytical storage configuration.
+Analytical storage configuration. Required if analyticalStorageEnabled is true.
 
 - Required: No
 - Type: object
@@ -4323,23 +4234,9 @@ Schema type for analytical storage.
 - Required: Yes
 - Type: string
 
-### Parameter: `cosmosDbDefinition.analyticalStorageEnabled`
-
-Enable analytical storage.
-
-- Required: No
-- Type: bool
-
-### Parameter: `cosmosDbDefinition.automaticFailoverEnabled`
-
-Enable automatic failover.
-
-- Required: No
-- Type: bool
-
 ### Parameter: `cosmosDbDefinition.backup`
 
-Backup policy configuration.
+Backup policy configuration. Required if you require a non-default backup policy (e.g., Continuous or custom periodic settings).
 
 - Required: No
 - Type: object
@@ -4394,6 +4291,105 @@ Backup tier (if applicable).
 - Required: Yes
 - Type: string
 
+### Parameter: `cosmosDbDefinition.consistencyPolicy`
+
+Consistency policy configuration. Required if you choose a non-default consistency level or use Bounded Staleness.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`consistencyLevel`](#parameter-cosmosdbdefinitionconsistencypolicyconsistencylevel) | string | Consistency level (e.g., Strong, Session). |
+| [`maxIntervalInSeconds`](#parameter-cosmosdbdefinitionconsistencypolicymaxintervalinseconds) | int | Maximum interval in seconds for Bounded Staleness. |
+| [`maxStalenessPrefix`](#parameter-cosmosdbdefinitionconsistencypolicymaxstalenessprefix) | int | Maximum staleness prefix for Bounded Staleness. |
+
+### Parameter: `cosmosDbDefinition.consistencyPolicy.consistencyLevel`
+
+Consistency level (e.g., Strong, Session).
+
+- Required: Yes
+- Type: string
+
+### Parameter: `cosmosDbDefinition.consistencyPolicy.maxIntervalInSeconds`
+
+Maximum interval in seconds for Bounded Staleness.
+
+- Required: Yes
+- Type: int
+
+### Parameter: `cosmosDbDefinition.consistencyPolicy.maxStalenessPrefix`
+
+Maximum staleness prefix for Bounded Staleness.
+
+- Required: Yes
+- Type: int
+
+### Parameter: `cosmosDbDefinition.secondaryRegions`
+
+Map of secondary regions and failover properties. Required if multipleWriteLocationsEnabled is true or you need regional failover.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`>Any_other_property<`](#parameter-cosmosdbdefinitionsecondaryregions>any_other_property<) | object | Arbitrary key for each secondary region entry. |
+
+### Parameter: `cosmosDbDefinition.secondaryRegions.>Any_other_property<`
+
+Arbitrary key for each secondary region entry.
+
+- Required: Yes
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`failoverPriority`](#parameter-cosmosdbdefinitionsecondaryregions>any_other_property<failoverpriority) | int | Failover priority for the region (0 is primary). |
+| [`location`](#parameter-cosmosdbdefinitionsecondaryregions>any_other_property<location) | string | Secondary region location name. |
+| [`zoneRedundant`](#parameter-cosmosdbdefinitionsecondaryregions>any_other_property<zoneredundant) | bool | Whether zone redundancy is enabled in the region. |
+
+### Parameter: `cosmosDbDefinition.secondaryRegions.>Any_other_property<.failoverPriority`
+
+Failover priority for the region (0 is primary).
+
+- Required: Yes
+- Type: int
+
+### Parameter: `cosmosDbDefinition.secondaryRegions.>Any_other_property<.location`
+
+Secondary region location name.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `cosmosDbDefinition.secondaryRegions.>Any_other_property<.zoneRedundant`
+
+Whether zone redundancy is enabled in the region.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `cosmosDbDefinition.analyticalStorageEnabled`
+
+Enable analytical storage.
+
+- Required: No
+- Type: bool
+
+### Parameter: `cosmosDbDefinition.automaticFailoverEnabled`
+
+Enable automatic failover.
+
+- Required: No
+- Type: bool
+
 ### Parameter: `cosmosDbDefinition.capabilities`
 
 Capabilities to enable on the Cosmos DB account.
@@ -4443,42 +4439,6 @@ Capacity limits for the account.
 ### Parameter: `cosmosDbDefinition.capacity.totalThroughputLimit`
 
 Total throughput limit (RU/s) for the account.
-
-- Required: Yes
-- Type: int
-
-### Parameter: `cosmosDbDefinition.consistencyPolicy`
-
-Consistency policy configuration.
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`consistencyLevel`](#parameter-cosmosdbdefinitionconsistencypolicyconsistencylevel) | string | Consistency level (e.g., Strong, Session). |
-| [`maxIntervalInSeconds`](#parameter-cosmosdbdefinitionconsistencypolicymaxintervalinseconds) | int | Maximum interval in seconds for Bounded Staleness. |
-| [`maxStalenessPrefix`](#parameter-cosmosdbdefinitionconsistencypolicymaxstalenessprefix) | int | Maximum staleness prefix for Bounded Staleness. |
-
-### Parameter: `cosmosDbDefinition.consistencyPolicy.consistencyLevel`
-
-Consistency level (e.g., Strong, Session).
-
-- Required: Yes
-- Type: string
-
-### Parameter: `cosmosDbDefinition.consistencyPolicy.maxIntervalInSeconds`
-
-Maximum interval in seconds for Bounded Staleness.
-
-- Required: Yes
-- Type: int
-
-### Parameter: `cosmosDbDefinition.consistencyPolicy.maxStalenessPrefix`
-
-Maximum staleness prefix for Bounded Staleness.
 
 - Required: Yes
 - Type: int
@@ -4570,58 +4530,9 @@ Enable public network access to the account.
 - Required: No
 - Type: bool
 
-### Parameter: `cosmosDbDefinition.secondaryRegions`
-
-Map of secondary regions and failover properties.
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`>Any_other_property<`](#parameter-cosmosdbdefinitionsecondaryregions>any_other_property<) | object | Arbitrary key for each secondary region entry. |
-
-### Parameter: `cosmosDbDefinition.secondaryRegions.>Any_other_property<`
-
-Arbitrary key for each secondary region entry.
-
-- Required: Yes
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`failoverPriority`](#parameter-cosmosdbdefinitionsecondaryregions>any_other_property<failoverpriority) | int | Failover priority for the region (0 is primary). |
-| [`location`](#parameter-cosmosdbdefinitionsecondaryregions>any_other_property<location) | string | Secondary region location name. |
-| [`zoneRedundant`](#parameter-cosmosdbdefinitionsecondaryregions>any_other_property<zoneredundant) | bool | Whether zone redundancy is enabled in the region. |
-
-### Parameter: `cosmosDbDefinition.secondaryRegions.>Any_other_property<.failoverPriority`
-
-Failover priority for the region (0 is primary).
-
-- Required: Yes
-- Type: int
-
-### Parameter: `cosmosDbDefinition.secondaryRegions.>Any_other_property<.location`
-
-Secondary region location name.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `cosmosDbDefinition.secondaryRegions.>Any_other_property<.zoneRedundant`
-
-Whether zone redundancy is enabled in the region.
-
-- Required: Yes
-- Type: bool
-
 ### Parameter: `firewallDefinition`
 
- Azure Firewall configuration (used when Firewall is deployed).
+Azure Firewall configuration. Required if deployToggles.firewall is true and resourceIds.firewallResourceId is empty.
 
 - Required: No
 - Type: object
@@ -4707,9 +4618,71 @@ Arbitrary key for each tag.
 - Required: Yes
 - Type: string
 
+### Parameter: `groundingWithBingDefinition`
+
+Grounding with Bing configuration. Required if deployToggles.groundingWithBingSearch is true and resourceIds.groundingServiceResourceId is empty.
+
+- Required: No
+- Type: object
+- Default:
+  ```Bicep
+  {
+      name: ''
+      sku: 'G1'
+      tags: {}
+  }
+  ```
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`sku`](#parameter-groundingwithbingdefinitionsku) | string | Bing Grounding resource SKU. |
+| [`tags`](#parameter-groundingwithbingdefinitiontags) | object | Tags to apply to the Bing Grounding resource. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`name`](#parameter-groundingwithbingdefinitionname) | string | Bing Grounding resource name. |
+
+### Parameter: `groundingWithBingDefinition.sku`
+
+Bing Grounding resource SKU.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `groundingWithBingDefinition.tags`
+
+Tags to apply to the Bing Grounding resource.
+
+- Required: Yes
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`>Any_other_property<`](#parameter-groundingwithbingdefinitiontags>any_other_property<) | string | Arbitrary key for each tag. |
+
+### Parameter: `groundingWithBingDefinition.tags.>Any_other_property<`
+
+Arbitrary key for each tag.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `groundingWithBingDefinition.name`
+
+Bing Grounding resource name.
+
+- Required: No
+- Type: string
+
 ### Parameter: `hubVnetPeeringDefinition`
 
- Hub VNet peering configuration (required only when establishing hub-spoke peering).
+Hub VNet peering configuration. Required if you plan to establish hub–spoke peering.
 
 - Required: No
 - Type: object
@@ -4848,15 +4821,164 @@ Name of the peering from spoke to hub.
 
 ### Parameter: `jumpVmAdminPassword`
 
-Required when deploying Jump VM. Local admin password to set on the Windows JumpVM.
+Local admin password for the Windows JumpVM. Required if deployToggles.jumpVm is true.
 
 - Required: No
 - Type: securestring
 - Default: `''`
 
+### Parameter: `jumpVmDefinition`
+
+Jump (bastion) VM configuration (Windows). Required if deployToggles.jumpVm is true.
+
+- Required: No
+- Type: object
+- Default:
+  ```Bicep
+  {
+      adminUsername: 'azureuser'
+      enableTelemetry: false
+      name: ''
+      sku: 'Standard_D2s_v5'
+      tags: {}
+      vmKeyVaultSecName: 'jump-admin-password'
+  }
+  ```
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`adminUsername`](#parameter-jumpvmdefinitionadminusername) | string | Admin username. |
+| [`enableTelemetry`](#parameter-jumpvmdefinitionenabletelemetry) | bool | Enable telemetry for helper scripts. |
+| [`sku`](#parameter-jumpvmdefinitionsku) | string | VM size SKU (e.g., Standard_D2s_v5). |
+| [`tags`](#parameter-jumpvmdefinitiontags) | object | Tags to apply to the Jump VM. |
+| [`vmKeyVaultSecName`](#parameter-jumpvmdefinitionvmkeyvaultsecname) | string | Name of the admin password secret in the Bastion Key Vault. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`imageReference`](#parameter-jumpvmdefinitionimagereference) | object | Marketplace image reference for the VM. |
+| [`name`](#parameter-jumpvmdefinitionname) | string | VM resource name. |
+| [`osType`](#parameter-jumpvmdefinitionostype) | string | OS type for the VM. |
+
+### Parameter: `jumpVmDefinition.adminUsername`
+
+Admin username.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `jumpVmDefinition.enableTelemetry`
+
+Enable telemetry for helper scripts.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `jumpVmDefinition.sku`
+
+VM size SKU (e.g., Standard_D2s_v5).
+
+- Required: Yes
+- Type: string
+
+### Parameter: `jumpVmDefinition.tags`
+
+Tags to apply to the Jump VM.
+
+- Required: Yes
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`>Any_other_property<`](#parameter-jumpvmdefinitiontags>any_other_property<) | string | Arbitrary key for each tag. |
+
+### Parameter: `jumpVmDefinition.tags.>Any_other_property<`
+
+Arbitrary key for each tag.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `jumpVmDefinition.vmKeyVaultSecName`
+
+Name of the admin password secret in the Bastion Key Vault.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `jumpVmDefinition.imageReference`
+
+Marketplace image reference for the VM.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`offer`](#parameter-jumpvmdefinitionimagereferenceoffer) | string | Offer name. |
+| [`publisher`](#parameter-jumpvmdefinitionimagereferencepublisher) | string | Publisher name. |
+| [`sku`](#parameter-jumpvmdefinitionimagereferencesku) | string | SKU name. |
+| [`version`](#parameter-jumpvmdefinitionimagereferenceversion) | string | Image version (e.g., latest). |
+
+### Parameter: `jumpVmDefinition.imageReference.offer`
+
+Offer name.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `jumpVmDefinition.imageReference.publisher`
+
+Publisher name.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `jumpVmDefinition.imageReference.sku`
+
+SKU name.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `jumpVmDefinition.imageReference.version`
+
+Image version (e.g., latest).
+
+- Required: Yes
+- Type: string
+
+### Parameter: `jumpVmDefinition.name`
+
+VM resource name.
+
+- Required: No
+- Type: string
+
+### Parameter: `jumpVmDefinition.osType`
+
+OS type for the VM.
+
+- Required: No
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Linux'
+    'Windows'
+  ]
+  ```
+
 ### Parameter: `keyVaultDefinition`
 
- Key Vault configuration for the GenAI app (used when KV is deployed).
+Key Vault configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.keyVault is true, and resourceIds.keyVaultResourceId is empty.
 
 - Required: No
 - Type: object
@@ -5021,7 +5143,7 @@ AAD tenant ID for the vault.
 
 ### Parameter: `logAnalyticsDefinition`
 
- Log Analytics Workspace configuration (required if you deploy App Insights and are not reusing an existing workspace).
+Log Analytics Workspace configuration. Required if deployToggles.logAnalytics is true and resourceIds.logAnalyticsWorkspaceResourceId is empty.
 
 - Required: No
 - Type: object
@@ -5105,7 +5227,7 @@ Arbitrary key for each tag.
 
 ### Parameter: `privateDnsZoneIds`
 
- Existing Private DNS Zone resource IDs per service; provide to reuse, or leave empty to create.
+Existing Private DNS Zone resource IDs per service. Required if networkIsolation is true and you plan to reuse existing zones for any service.
 
 - Required: No
 - Type: object
@@ -5128,7 +5250,7 @@ Arbitrary key for each tag.
 
 ### Parameter: `privateDnsZones`
 
- Private DNS Zones and VNet links configuration (used when creating zones).
+Private DNS Zones and VNet links configuration. Required if networkIsolation is true, flagPlatformLandingZone is false, and you want this template to create zones for services not supplied in privateDnsZoneIds.
 
 - Required: No
 - Type: object
@@ -5219,7 +5341,7 @@ Resource ID of the resource group that hosts existing Private DNS zones.
 
 ### Parameter: `searchDefinition`
 
- Azure AI Search configuration for the GenAI app (used when Search is deployed).
+Azure AI Search configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.searchService is true, and resourceIds.searchServiceResourceId is empty.
 
 - Required: No
 - Type: object
@@ -5231,6 +5353,7 @@ Resource ID of the resource group that hosts existing Private DNS zones.
       partitionCount: 1
       publicNetworkAccessEnabled: false
       replicaCount: 2
+      roleAssignments: []
       semanticSearchSku: 'standard'
       sku: 'standard'
       tags: {}
@@ -5298,7 +5421,7 @@ Number of replicas.
 
 Role assignments to create on the search service.
 
-- Required: No
+- Required: Yes
 - Type: array
 
 **Required parameters**
@@ -5427,7 +5550,7 @@ Arbitrary key for each tag.
 
 ### Parameter: `storageAccountDefinition`
 
- Storage Account configuration for the GenAI app (used when Storage is deployed).
+Storage Account configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.storageAccount is true, and resourceIds.storageAccountResourceId is empty.
 
 - Required: No
 - Type: object
@@ -5630,9 +5753,401 @@ Arbitrary key for each tag.
 - Required: Yes
 - Type: string
 
+### Parameter: `vnetDefinition`
+
+Virtual Network configuration. Required if deployToggles.virtualNetwork is true and resourceIds.virtualNetworkResourceId is empty.
+
+- Required: No
+- Type: object
+- Default:
+  ```Bicep
+  {
+      addressSpace: '192.168.0.0/16'
+      dnsServers: []
+      name: ''
+      subnets: [
+        {
+          addressPrefix: '192.168.0.0/24'
+          delegation: 'Microsoft.app/environments'
+          enabled: true
+          name: 'agent-subnet'
+          serviceEndpoints: [
+            'Microsoft.CognitiveServices'
+          ]
+        }
+        {
+          addressPrefix: '192.168.1.0/24'
+          enabled: true
+          name: 'pe-subnet'
+          privateEndpointNetworkPolicies: 'Disabled'
+          serviceEndpoints: [
+            'Microsoft.AzureCosmosDB'
+          ]
+        }
+        {
+          addressPrefix: '192.168.2.0/26'
+          enabled: true
+          name: 'gateway-subnet'
+        }
+        {
+          addressPrefix: '192.168.2.64/26'
+          enabled: true
+          name: 'AzureBastionSubnet'
+        }
+        {
+          addressPrefix: '192.168.2.128/26'
+          enabled: true
+          name: 'AzureFirewallSubnet'
+        }
+        {
+          addressPrefix: '192.168.3.0/24'
+          enabled: true
+          name: 'AppGatewaySubnet'
+        }
+        {
+          addressPrefix: '192.168.4.0/27'
+          enabled: true
+          name: 'jumpbox-subnet'
+        }
+        {
+          addressPrefix: '192.168.4.64/27'
+          delegation: 'Microsoft.app/environments'
+          enabled: true
+          name: 'aca-environment-subnet'
+          serviceEndpoints: [
+            'Microsoft.AzureCosmosDB'
+          ]
+        }
+        {
+          addressPrefix: '192.168.4.96/27'
+          enabled: true
+          name: 'devops-build-agents-subnet'
+        }
+      ]
+      tags: {}
+  }
+  ```
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`addressSpace`](#parameter-vnetdefinitionaddressspace) | string | VNet CIDR address space (e.g., 192.168.0.0/16). |
+| [`subnets`](#parameter-vnetdefinitionsubnets) | array | Subnet definitions for the VNet. |
+
+**Conditional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`vnetPeeringConfiguration`](#parameter-vnetdefinitionvnetpeeringconfiguration) | object | Peering configuration to another VNet (hub/spoke). Required if the template establishes hub–spoke peering for this VNet. |
+| [`vwanHubPeeringConfiguration`](#parameter-vnetdefinitionvwanhubpeeringconfiguration) | object | Peering configuration to a Virtual WAN hub. Required if the template establishes a Virtual WAN hub peering. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`ddosProtectionPlanResourceId`](#parameter-vnetdefinitionddosprotectionplanresourceid) | string | Resource ID of an existing DDoS Protection Plan to associate. |
+| [`dnsServers`](#parameter-vnetdefinitiondnsservers) | array | Custom DNS server IP addresses for the VNet. |
+| [`name`](#parameter-vnetdefinitionname) | string | VNet name. If empty, a deterministic name is generated. |
+| [`tags`](#parameter-vnetdefinitiontags) | object | Tags to apply to the VNet. |
+
+### Parameter: `vnetDefinition.addressSpace`
+
+VNet CIDR address space (e.g., 192.168.0.0/16).
+
+- Required: Yes
+- Type: string
+
+### Parameter: `vnetDefinition.subnets`
+
+Subnet definitions for the VNet.
+
+- Required: Yes
+- Type: array
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`addressPrefix`](#parameter-vnetdefinitionsubnetsaddressprefix) | string | Subnet address prefix in CIDR notation (e.g., 10.0.1.0/24). |
+| [`enabled`](#parameter-vnetdefinitionsubnetsenabled) | bool | Enables (true) or disables (false) creation/use of this subnet. |
+| [`name`](#parameter-vnetdefinitionsubnetsname) | string | Subnet name. |
+
+**Conditional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`privateEndpointNetworkPolicies`](#parameter-vnetdefinitionsubnetsprivateendpointnetworkpolicies) | string | Whether private endpoint network policies are Enabled or Disabled. Required if the subnet will host Private Endpoints and you need policies Disabled. |
+| [`privateLinkServiceNetworkPolicies`](#parameter-vnetdefinitionsubnetsprivatelinkservicenetworkpolicies) | string | Whether private link service network policies are Enabled or Disabled. Required if the subnet will host a Private Link Service and you need policies Disabled. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`delegation`](#parameter-vnetdefinitionsubnetsdelegation) | string | Service delegation for the subnet (resource provider/type). |
+| [`natGatewayResourceId`](#parameter-vnetdefinitionsubnetsnatgatewayresourceid) | string | Resource ID of an associated NAT Gateway. |
+| [`serviceEndpoints`](#parameter-vnetdefinitionsubnetsserviceendpoints) | array | Service endpoints to enable for this subnet. |
+
+### Parameter: `vnetDefinition.subnets.addressPrefix`
+
+Subnet address prefix in CIDR notation (e.g., 10.0.1.0/24).
+
+- Required: Yes
+- Type: string
+
+### Parameter: `vnetDefinition.subnets.enabled`
+
+Enables (true) or disables (false) creation/use of this subnet.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `vnetDefinition.subnets.name`
+
+Subnet name.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `vnetDefinition.subnets.privateEndpointNetworkPolicies`
+
+Whether private endpoint network policies are Enabled or Disabled. Required if the subnet will host Private Endpoints and you need policies Disabled.
+
+- Required: No
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Disabled'
+    'Enabled'
+  ]
+  ```
+
+### Parameter: `vnetDefinition.subnets.privateLinkServiceNetworkPolicies`
+
+Whether private link service network policies are Enabled or Disabled. Required if the subnet will host a Private Link Service and you need policies Disabled.
+
+- Required: No
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Disabled'
+    'Enabled'
+  ]
+  ```
+
+### Parameter: `vnetDefinition.subnets.delegation`
+
+Service delegation for the subnet (resource provider/type).
+
+- Required: No
+- Type: string
+
+### Parameter: `vnetDefinition.subnets.natGatewayResourceId`
+
+Resource ID of an associated NAT Gateway.
+
+- Required: No
+- Type: string
+
+### Parameter: `vnetDefinition.subnets.serviceEndpoints`
+
+Service endpoints to enable for this subnet.
+
+- Required: No
+- Type: array
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration`
+
+Peering configuration to another VNet (hub/spoke). Required if the template establishes hub–spoke peering for this VNet.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`allowForwardedTraffic`](#parameter-vnetdefinitionvnetpeeringconfigurationallowforwardedtraffic) | bool | Allow forwarded traffic across the peering. |
+| [`allowGatewayTransit`](#parameter-vnetdefinitionvnetpeeringconfigurationallowgatewaytransit) | bool | Allow gateway transit across the peering. |
+| [`allowVirtualNetworkAccess`](#parameter-vnetdefinitionvnetpeeringconfigurationallowvirtualnetworkaccess) | bool | Allow virtual network access across the peering. |
+| [`createReversePeering`](#parameter-vnetdefinitionvnetpeeringconfigurationcreatereversepeering) | bool | Create the reverse peering from hub back to this VNet. |
+| [`peerVnetResourceId`](#parameter-vnetdefinitionvnetpeeringconfigurationpeervnetresourceid) | string | Resource ID of the peer virtual network. |
+| [`reverseAllowForwardedTraffic`](#parameter-vnetdefinitionvnetpeeringconfigurationreverseallowforwardedtraffic) | bool | Reverse peering: allow forwarded traffic. |
+| [`reverseAllowGatewayTransit`](#parameter-vnetdefinitionvnetpeeringconfigurationreverseallowgatewaytransit) | bool | Reverse peering: allow gateway transit. |
+| [`reverseAllowVirtualNetworkAccess`](#parameter-vnetdefinitionvnetpeeringconfigurationreverseallowvirtualnetworkaccess) | bool | Reverse peering: allow virtual network access. |
+| [`reverseUseRemoteGateways`](#parameter-vnetdefinitionvnetpeeringconfigurationreverseuseremotegateways) | bool | Reverse peering: use remote gateways. |
+| [`useRemoteGateways`](#parameter-vnetdefinitionvnetpeeringconfigurationuseremotegateways) | bool | Use remote gateways on the spoke peering. |
+
+**Conditional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`firewallIpAddress`](#parameter-vnetdefinitionvnetpeeringconfigurationfirewallipaddress) | string | Hub firewall private IP address used for routing (if applicable). Required if the peering must route via a hub firewall. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`name`](#parameter-vnetdefinitionvnetpeeringconfigurationname) | string | Name of the spoke-to-hub peering. |
+| [`reverseName`](#parameter-vnetdefinitionvnetpeeringconfigurationreversename) | string | Name of the reverse peering (hub->spoke). |
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.allowForwardedTraffic`
+
+Allow forwarded traffic across the peering.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.allowGatewayTransit`
+
+Allow gateway transit across the peering.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.allowVirtualNetworkAccess`
+
+Allow virtual network access across the peering.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.createReversePeering`
+
+Create the reverse peering from hub back to this VNet.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.peerVnetResourceId`
+
+Resource ID of the peer virtual network.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.reverseAllowForwardedTraffic`
+
+Reverse peering: allow forwarded traffic.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.reverseAllowGatewayTransit`
+
+Reverse peering: allow gateway transit.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.reverseAllowVirtualNetworkAccess`
+
+Reverse peering: allow virtual network access.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.reverseUseRemoteGateways`
+
+Reverse peering: use remote gateways.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.useRemoteGateways`
+
+Use remote gateways on the spoke peering.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.firewallIpAddress`
+
+Hub firewall private IP address used for routing (if applicable). Required if the peering must route via a hub firewall.
+
+- Required: No
+- Type: string
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.name`
+
+Name of the spoke-to-hub peering.
+
+- Required: No
+- Type: string
+
+### Parameter: `vnetDefinition.vnetPeeringConfiguration.reverseName`
+
+Name of the reverse peering (hub->spoke).
+
+- Required: No
+- Type: string
+
+### Parameter: `vnetDefinition.vwanHubPeeringConfiguration`
+
+Peering configuration to a Virtual WAN hub. Required if the template establishes a Virtual WAN hub peering.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`peerVwanHubResourceId`](#parameter-vnetdefinitionvwanhubpeeringconfigurationpeervwanhubresourceid) | string | Resource ID of the target Virtual WAN hub. |
+
+### Parameter: `vnetDefinition.vwanHubPeeringConfiguration.peerVwanHubResourceId`
+
+Resource ID of the target Virtual WAN hub.
+
+- Required: Yes
+- Type: string
+
+### Parameter: `vnetDefinition.ddosProtectionPlanResourceId`
+
+Resource ID of an existing DDoS Protection Plan to associate.
+
+- Required: No
+- Type: string
+
+### Parameter: `vnetDefinition.dnsServers`
+
+Custom DNS server IP addresses for the VNet.
+
+- Required: No
+- Type: array
+
+### Parameter: `vnetDefinition.name`
+
+VNet name. If empty, a deterministic name is generated.
+
+- Required: No
+- Type: string
+
+### Parameter: `vnetDefinition.tags`
+
+Tags to apply to the VNet.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`>Any_other_property<`](#parameter-vnetdefinitiontags>any_other_property<) | string | Arbitrary key for each tag. |
+
+### Parameter: `vnetDefinition.tags.>Any_other_property<`
+
+Arbitrary key for each tag.
+
+- Required: Yes
+- Type: string
+
 ### Parameter: `wafPolicyDefinition`
 
- Web Application Firewall (WAF) policy configuration (required when Application Gateway with WAF is deployed).
+Web Application Firewall (WAF) policy configuration. Required if deployToggles.wafPolicy is true and you are deploying Application Gateway via this template.
 
 - Required: No
 - Type: object
@@ -7176,283 +7691,6 @@ PAT used to register the Azure DevOps agent (when runner = azdo).
 - Type: string
 - Default: `[substring(parameters('resourceToken'), 0, 12)]`
 
-### Parameter: `buildVmDefinition`
-
- Build VM configuration to support CI/CD workers (Linux).
-
-- Required: No
-- Type: object
-- Default:
-  ```Bicep
-  {
-      adminUsername: 'azureuser'
-      azdo: {
-        orgUrl: 'https://dev.azure.com/<org>'
-        pool: 'Default'
-      }
-      enableTelemetry: '[parameters(\'enableTelemetry\')]'
-      name: ''
-      runner: 'azdo'
-      sku: 'Standard_D2s_v5'
-      sshPublicKey: ''
-      tags: {}
-  }
-  ```
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`adminUsername`](#parameter-buildvmdefinitionadminusername) | string | Admin username to create (e.g., azureuser). |
-| [`runner`](#parameter-buildvmdefinitionrunner) | string | Which agent to install. |
-| [`sku`](#parameter-buildvmdefinitionsku) | string | VM size SKU (e.g., Standard_B2s). |
-| [`sshPublicKey`](#parameter-buildvmdefinitionsshpublickey) | string | SSH public key for the admin user. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`azdo`](#parameter-buildvmdefinitionazdo) | object | Azure DevOps settings (required when runner = azdo). |
-| [`enableTelemetry`](#parameter-buildvmdefinitionenabletelemetry) | bool | Enable AVM telemetry. |
-| [`github`](#parameter-buildvmdefinitiongithub) | object | GitHub settings (required when runner = github). |
-| [`imageReference`](#parameter-buildvmdefinitionimagereference) | object | Marketplace image reference for the VM. |
-| [`name`](#parameter-buildvmdefinitionname) | string | VM name. |
-| [`osType`](#parameter-buildvmdefinitionostype) | string | OS type for the VM. |
-| [`tags`](#parameter-buildvmdefinitiontags) | object | Tags to apply to the Build VM resource. |
-
-### Parameter: `buildVmDefinition.adminUsername`
-
-Admin username to create (e.g., azureuser).
-
-- Required: Yes
-- Type: string
-
-### Parameter: `buildVmDefinition.runner`
-
-Which agent to install.
-
-- Required: Yes
-- Type: string
-- Allowed:
-  ```Bicep
-  [
-    'azdo'
-    'github'
-  ]
-  ```
-
-### Parameter: `buildVmDefinition.sku`
-
-VM size SKU (e.g., Standard_B2s).
-
-- Required: Yes
-- Type: string
-
-### Parameter: `buildVmDefinition.sshPublicKey`
-
-SSH public key for the admin user.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `buildVmDefinition.azdo`
-
-Azure DevOps settings (required when runner = azdo).
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`orgUrl`](#parameter-buildvmdefinitionazdoorgurl) | string | Azure DevOps organization URL (e.g., https://dev.azure.com/contoso). |
-| [`pool`](#parameter-buildvmdefinitionazdopool) | string | Agent pool name. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`agentName`](#parameter-buildvmdefinitionazdoagentname) | string | Agent name. |
-| [`workFolder`](#parameter-buildvmdefinitionazdoworkfolder) | string | Working folder. |
-
-### Parameter: `buildVmDefinition.azdo.orgUrl`
-
-Azure DevOps organization URL (e.g., https://dev.azure.com/contoso).
-
-- Required: Yes
-- Type: string
-
-### Parameter: `buildVmDefinition.azdo.pool`
-
-Agent pool name.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `buildVmDefinition.azdo.agentName`
-
-Agent name.
-
-- Required: No
-- Type: string
-
-### Parameter: `buildVmDefinition.azdo.workFolder`
-
-Working folder.
-
-- Required: No
-- Type: string
-
-### Parameter: `buildVmDefinition.enableTelemetry`
-
-Enable AVM telemetry.
-
-- Required: No
-- Type: bool
-
-### Parameter: `buildVmDefinition.github`
-
-GitHub settings (required when runner = github).
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`owner`](#parameter-buildvmdefinitiongithubowner) | string | GitHub owner (org or user). |
-| [`repo`](#parameter-buildvmdefinitiongithubrepo) | string | Repository name. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`agentName`](#parameter-buildvmdefinitiongithubagentname) | string | Runner name. |
-| [`labels`](#parameter-buildvmdefinitiongithublabels) | string | Runner labels (comma-separated). |
-| [`workFolder`](#parameter-buildvmdefinitiongithubworkfolder) | string | Working folder. |
-
-### Parameter: `buildVmDefinition.github.owner`
-
-GitHub owner (org or user).
-
-- Required: Yes
-- Type: string
-
-### Parameter: `buildVmDefinition.github.repo`
-
-Repository name.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `buildVmDefinition.github.agentName`
-
-Runner name.
-
-- Required: No
-- Type: string
-
-### Parameter: `buildVmDefinition.github.labels`
-
-Runner labels (comma-separated).
-
-- Required: No
-- Type: string
-
-### Parameter: `buildVmDefinition.github.workFolder`
-
-Working folder.
-
-- Required: No
-- Type: string
-
-### Parameter: `buildVmDefinition.imageReference`
-
-Marketplace image reference for the VM.
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`offer`](#parameter-buildvmdefinitionimagereferenceoffer) | string | Offer name. |
-| [`publisher`](#parameter-buildvmdefinitionimagereferencepublisher) | string | Publisher name. |
-| [`sku`](#parameter-buildvmdefinitionimagereferencesku) | string | SKU name. |
-| [`version`](#parameter-buildvmdefinitionimagereferenceversion) | string | Image version (e.g., latest). |
-
-### Parameter: `buildVmDefinition.imageReference.offer`
-
-Offer name.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `buildVmDefinition.imageReference.publisher`
-
-Publisher name.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `buildVmDefinition.imageReference.sku`
-
-SKU name.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `buildVmDefinition.imageReference.version`
-
-Image version (e.g., latest).
-
-- Required: Yes
-- Type: string
-
-### Parameter: `buildVmDefinition.name`
-
-VM name.
-
-- Required: No
-- Type: string
-
-### Parameter: `buildVmDefinition.osType`
-
-OS type for the VM.
-
-- Required: No
-- Type: string
-- Allowed:
-  ```Bicep
-  [
-    'Linux'
-    'Windows'
-  ]
-  ```
-
-### Parameter: `buildVmDefinition.tags`
-
-Tags to apply to the Build VM resource.
-
-- Required: Yes
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`>Any_other_property<`](#parameter-buildvmdefinitiontags>any_other_property<) | string | Arbitrary key for each tag. |
-
-### Parameter: `buildVmDefinition.tags.>Any_other_property<`
-
-Arbitrary key for each tag.
-
-- Required: Yes
-- Type: string
-
 ### Parameter: `containerAppsList`
 
 List of Container Apps to create.
@@ -7477,8 +7715,8 @@ List of Container Apps to create.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`app_id`](#parameter-containerappslistapp_id) | string |  Logical app identifier (used for Dapr and container name). |
-| [`external`](#parameter-containerappslistexternal) | bool |  Whether to expose through the environment’s external ingress. |
+| [`app_id`](#parameter-containerappslistapp_id) | string | Logical app identifier (used for Dapr and container name). |
+| [`external`](#parameter-containerappslistexternal) | bool | Whether to expose through the environment’s external ingress. |
 | [`max_replicas`](#parameter-containerappslistmax_replicas) | int | Maximum number of replicas. |
 | [`min_replicas`](#parameter-containerappslistmin_replicas) | int | Minimum number of replicas. |
 | [`profile_name`](#parameter-containerappslistprofile_name) | string | Workload profile name to schedule to. |
@@ -7491,16 +7729,16 @@ List of Container Apps to create.
 
 ### Parameter: `containerAppsList.app_id`
 
- Logical app identifier (used for Dapr and container name).
+Logical app identifier (used for Dapr and container name).
 
 - Required: Yes
 - Type: string
 
 ### Parameter: `containerAppsList.external`
 
- Whether to expose through the environment’s external ingress.
+Whether to expose through the environment’s external ingress.
 
-- Required: No
+- Required: Yes
 - Type: bool
 
 ### Parameter: `containerAppsList.max_replicas`
@@ -7979,217 +8217,6 @@ PAT used to request a GitHub runner registration token (when runner = github).
 - Required: No
 - Type: securestring
 - Default: `''`
-
-### Parameter: `groundingWithBingDefinition`
-
- Grounding with Bing Configuration.
-
-- Required: No
-- Type: object
-- Default:
-  ```Bicep
-  {
-      name: ''
-      sku: 'G1'
-      tags: {}
-  }
-  ```
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`sku`](#parameter-groundingwithbingdefinitionsku) | string | Bing Grounding resource SKU. |
-| [`tags`](#parameter-groundingwithbingdefinitiontags) | object | Tags to apply to the Bing Grounding resource. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`name`](#parameter-groundingwithbingdefinitionname) | string | Bing Grounding resource name. |
-
-### Parameter: `groundingWithBingDefinition.sku`
-
-Bing Grounding resource SKU.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `groundingWithBingDefinition.tags`
-
-Tags to apply to the Bing Grounding resource.
-
-- Required: Yes
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`>Any_other_property<`](#parameter-groundingwithbingdefinitiontags>any_other_property<) | string | Arbitrary key for each tag. |
-
-### Parameter: `groundingWithBingDefinition.tags.>Any_other_property<`
-
-Arbitrary key for each tag.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `groundingWithBingDefinition.name`
-
-Bing Grounding resource name.
-
-- Required: No
-- Type: string
-
-### Parameter: `jumpVmDefinition`
-
- Jump (bastion) VM configuration (Windows).
-
-- Required: No
-- Type: object
-- Default:
-  ```Bicep
-  {
-      adminUsername: 'azureuser'
-      enableTelemetry: '[parameters(\'enableTelemetry\')]'
-      name: ''
-      sku: 'Standard_D2s_v5'
-      tags: {}
-      vmKeyVaultSecName: 'jump-admin-password'
-  }
-  ```
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`adminUsername`](#parameter-jumpvmdefinitionadminusername) | string | Admin username. |
-| [`enableTelemetry`](#parameter-jumpvmdefinitionenabletelemetry) | bool | Enable telemetry for helper scripts. |
-| [`sku`](#parameter-jumpvmdefinitionsku) | string | VM size SKU (e.g., Standard_D2s_v5). |
-| [`tags`](#parameter-jumpvmdefinitiontags) | object | Tags to apply to the Jump VM. |
-| [`vmKeyVaultSecName`](#parameter-jumpvmdefinitionvmkeyvaultsecname) | string | Name of the admin password secret in the Bastion Key Vault. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`imageReference`](#parameter-jumpvmdefinitionimagereference) | object | Marketplace image reference for the VM. |
-| [`name`](#parameter-jumpvmdefinitionname) | string | VM resource name. |
-| [`osType`](#parameter-jumpvmdefinitionostype) | string | OS type for the VM. |
-
-### Parameter: `jumpVmDefinition.adminUsername`
-
-Admin username.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `jumpVmDefinition.enableTelemetry`
-
-Enable telemetry for helper scripts.
-
-- Required: Yes
-- Type: bool
-
-### Parameter: `jumpVmDefinition.sku`
-
-VM size SKU (e.g., Standard_D2s_v5).
-
-- Required: Yes
-- Type: string
-
-### Parameter: `jumpVmDefinition.tags`
-
-Tags to apply to the Jump VM.
-
-- Required: Yes
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`>Any_other_property<`](#parameter-jumpvmdefinitiontags>any_other_property<) | string | Arbitrary key for each tag. |
-
-### Parameter: `jumpVmDefinition.tags.>Any_other_property<`
-
-Arbitrary key for each tag.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `jumpVmDefinition.vmKeyVaultSecName`
-
-Name of the admin password secret in the Bastion Key Vault.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `jumpVmDefinition.imageReference`
-
-Marketplace image reference for the VM.
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`offer`](#parameter-jumpvmdefinitionimagereferenceoffer) | string | Offer name. |
-| [`publisher`](#parameter-jumpvmdefinitionimagereferencepublisher) | string | Publisher name. |
-| [`sku`](#parameter-jumpvmdefinitionimagereferencesku) | string | SKU name. |
-| [`version`](#parameter-jumpvmdefinitionimagereferenceversion) | string | Image version (e.g., latest). |
-
-### Parameter: `jumpVmDefinition.imageReference.offer`
-
-Offer name.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `jumpVmDefinition.imageReference.publisher`
-
-Publisher name.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `jumpVmDefinition.imageReference.sku`
-
-SKU name.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `jumpVmDefinition.imageReference.version`
-
-Image version (e.g., latest).
-
-- Required: Yes
-- Type: string
-
-### Parameter: `jumpVmDefinition.name`
-
-VM resource name.
-
-- Required: No
-- Type: string
-
-### Parameter: `jumpVmDefinition.osType`
-
-OS type for the VM.
-
-- Required: No
-- Type: string
-- Allowed:
-  ```Bicep
-  [
-    'Linux'
-    'Windows'
-  ]
-  ```
 
 ### Parameter: `networkIsolation`
 

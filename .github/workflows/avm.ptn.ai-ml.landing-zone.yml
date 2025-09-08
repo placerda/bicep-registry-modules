@@ -29,8 +29,9 @@ on:
       - ".github/workflows/avm.template.module.yml"
       - ".github/workflows/avm.ptn.ai-ml.landing-zone.yml"
       - "avm/ptn/ai-ml/landing-zone/**"
-      - "utilities/pipelines/**"
-      - "!*/**/README.md"
+      - "avm/utilities/pipelines/**"
+      - "!avm/utilities/pipelines/platform/**"
+      - "!**/README.md"
 
 env:
   modulePath: "avm/ptn/ai-ml/landing-zone"
