@@ -144,11 +144,124 @@ The following section provides usage examples for the module, which were used to
 >**Note**: To reference the module, please use the following syntax `br/public:avm/ptn/ai-ml/landing-zone:<version>`.
 
 - [Landing Zone - Defaults](#example-1-landing-zone---defaults)
-- [Landing Zone - BYO Associated Resources](#example-2-landing-zone---byo-associated-resources)
+- [Landing Zone - WAF Aligned](#example-2-landing-zone---waf-aligned)
 
 ### Example 1: _Landing Zone - Defaults_
 
 Deploys the landing zone with defaults.
+
+
+<details>
+
+<summary>via Bicep module</summary>
+
+```bicep
+module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
+  name: 'landingZoneDeployment'
+  params: {
+    aiFoundryDefinition: {
+      aiFoundryConfiguration: {
+        createCapabilityHosts: false
+      }
+      aiModelDeployments: []
+      aiProjects: []
+      aiSearchConfiguration: {}
+      cosmosDbConfiguration: {}
+      includeAssociatedResources: false
+      keyVaultConfiguration: {}
+      lock: {
+        kind: 'None'
+        name: ''
+      }
+      storageAccountConfiguration: {}
+    }
+    baseName: '<baseName>'
+    jumpVmAdminPassword: '<StrongP@ssw0rd!>'
+    networkIsolation: false
+  }
+}
+```
+
+</details>
+<p>
+
+<details>
+
+<summary>via JSON parameters file</summary>
+
+```json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "aiFoundryDefinition": {
+      "value": {
+        "aiFoundryConfiguration": {
+          "createCapabilityHosts": false
+        },
+        "aiModelDeployments": [],
+        "aiProjects": [],
+        "aiSearchConfiguration": {},
+        "cosmosDbConfiguration": {},
+        "includeAssociatedResources": false,
+        "keyVaultConfiguration": {},
+        "lock": {
+          "kind": "None",
+          "name": ""
+        },
+        "storageAccountConfiguration": {}
+      }
+    },
+    "baseName": {
+      "value": "<baseName>"
+    },
+    "jumpVmAdminPassword": {
+      "value": "<StrongP@ssw0rd!>"
+    },
+    "networkIsolation": {
+      "value": false
+    }
+  }
+}
+```
+
+</details>
+<p>
+
+<details>
+
+<summary>via Bicep parameters file</summary>
+
+```bicep-params
+using 'br/public:avm/ptn/ai-ml/landing-zone:<version>'
+
+param aiFoundryDefinition = {
+  aiFoundryConfiguration: {
+    createCapabilityHosts: false
+  }
+  aiModelDeployments: []
+  aiProjects: []
+  aiSearchConfiguration: {}
+  cosmosDbConfiguration: {}
+  includeAssociatedResources: false
+  keyVaultConfiguration: {}
+  lock: {
+    kind: 'None'
+    name: ''
+  }
+  storageAccountConfiguration: {}
+}
+param baseName = '<baseName>'
+param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
+param networkIsolation = false
+```
+
+</details>
+<p>
+
+### Example 2: _Landing Zone - WAF Aligned_
+
+Deploys the landing zone with WAF alignment.
 
 
 <details>
@@ -294,180 +407,6 @@ param aiFoundryDefinition = {
     name: ''
   }
   storageAccountConfiguration: {}
-}
-param baseName = '<baseName>'
-param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
-```
-
-</details>
-<p>
-
-### Example 2: _Landing Zone - BYO Associated Resources_
-
-Deploys landing zone; AI Foundry uses existing Search/Storage/Cosmos. Runs twice (init + idem).
-
-
-<details>
-
-<summary>via Bicep module</summary>
-
-```bicep
-module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
-  name: 'landingZoneDeployment'
-  params: {
-    aiFoundryDefinition: {
-      aiFoundryConfiguration: {
-        createCapabilityHosts: true
-      }
-      aiModelDeployments: [
-        {
-          model: {
-            format: 'OpenAI'
-            name: 'gpt-4o'
-            version: '2024-11-20'
-          }
-          name: 'gpt-4o'
-          scale: {
-            capacity: 1
-            family: ''
-            size: ''
-            tier: ''
-            type: 'Standard'
-          }
-        }
-      ]
-      aiProjects: []
-      aiSearchConfiguration: {
-        existingResourceId: '<existingResourceId>'
-      }
-      cosmosDbConfiguration: {
-        existingResourceId: '<existingResourceId>'
-      }
-      includeAssociatedResources: true
-      keyVaultConfiguration: {}
-      lock: {
-        kind: 'None'
-        name: ''
-      }
-      storageAccountConfiguration: {
-        existingResourceId: '<existingResourceId>'
-      }
-    }
-    baseName: '<baseName>'
-    jumpVmAdminPassword: '<StrongP@ssw0rd!>'
-  }
-}
-```
-
-</details>
-<p>
-
-<details>
-
-<summary>via JSON parameters file</summary>
-
-```json
-{
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "aiFoundryDefinition": {
-      "value": {
-        "aiFoundryConfiguration": {
-          "createCapabilityHosts": true
-        },
-        "aiModelDeployments": [
-          {
-            "model": {
-              "format": "OpenAI",
-              "name": "gpt-4o",
-              "version": "2024-11-20"
-            },
-            "name": "gpt-4o",
-            "scale": {
-              "capacity": 1,
-              "family": "",
-              "size": "",
-              "tier": "",
-              "type": "Standard"
-            }
-          }
-        ],
-        "aiProjects": [],
-        "aiSearchConfiguration": {
-          "existingResourceId": "<existingResourceId>"
-        },
-        "cosmosDbConfiguration": {
-          "existingResourceId": "<existingResourceId>"
-        },
-        "includeAssociatedResources": true,
-        "keyVaultConfiguration": {},
-        "lock": {
-          "kind": "None",
-          "name": ""
-        },
-        "storageAccountConfiguration": {
-          "existingResourceId": "<existingResourceId>"
-        }
-      }
-    },
-    "baseName": {
-      "value": "<baseName>"
-    },
-    "jumpVmAdminPassword": {
-      "value": "<StrongP@ssw0rd!>"
-    }
-  }
-}
-```
-
-</details>
-<p>
-
-<details>
-
-<summary>via Bicep parameters file</summary>
-
-```bicep-params
-using 'br/public:avm/ptn/ai-ml/landing-zone:<version>'
-
-param aiFoundryDefinition = {
-  aiFoundryConfiguration: {
-    createCapabilityHosts: true
-  }
-  aiModelDeployments: [
-    {
-      model: {
-        format: 'OpenAI'
-        name: 'gpt-4o'
-        version: '2024-11-20'
-      }
-      name: 'gpt-4o'
-      scale: {
-        capacity: 1
-        family: ''
-        size: ''
-        tier: ''
-        type: 'Standard'
-      }
-    }
-  ]
-  aiProjects: []
-  aiSearchConfiguration: {
-    existingResourceId: '<existingResourceId>'
-  }
-  cosmosDbConfiguration: {
-    existingResourceId: '<existingResourceId>'
-  }
-  includeAssociatedResources: true
-  keyVaultConfiguration: {}
-  lock: {
-    kind: 'None'
-    name: ''
-  }
-  storageAccountConfiguration: {
-    existingResourceId: '<existingResourceId>'
-  }
 }
 param baseName = '<baseName>'
 param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
@@ -8459,7 +8398,7 @@ This section gives you an overview of all local-referenced module files (i.e., o
 | Reference | Type |
 | :-- | :-- |
 | `br/public:avm/res/api-management/service:0.11.0` | Remote reference |
-| `br/public:avm/res/app-configuration/configuration-store:0.9.1` | Remote reference |
+| `br/public:avm/res/app-configuration/configuration-store:0.9.2` | Remote reference |
 | `br/public:avm/res/app/container-app:0.18.1` | Remote reference |
 | `br/public:avm/res/app/managed-environment:0.11.3` | Remote reference |
 | `br/public:avm/res/cognitive-services/account:0.12.0` | Remote reference |

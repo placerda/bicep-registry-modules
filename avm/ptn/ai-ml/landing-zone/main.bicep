@@ -2018,7 +2018,7 @@ resource existingAppConfig 'Microsoft.AppConfiguration/configurationStores@2024-
   scope: resourceGroup(_existingAppcsSub, _existingAppcsRg)
 }
 
-module configurationStore 'br/public:avm/res/app-configuration/configuration-store:0.9.1' = if (_deployAppConfig) {
+module configurationStore 'br/public:avm/res/app-configuration/configuration-store:0.9.2' = if (_deployAppConfig) {
   name: 'configurationStoreDeployment'
   params: {
     name: _appConfigName

@@ -2,16 +2,16 @@
 // Create-or-reuse a Bing Grounding account and always create the Cognitive Services connection
 // to be used by Azure AI Foundry. No Microsoft.Resources/links used here.
 
-@description('The name of the Azure Cognitive Services account to be used for the Bing Search tool.')
+@description('Conditional. Required when `enableBingSearchConnection` is true. The name of the Azure Cognitive Services account to be used for the Bing Search tool.')
 param account_name string
 
-@description('The name of the Azure Cognitive Services Project.')
+@description('Conditional. Required when `enableBingSearchConnection` is true. The name of the Azure Cognitive Services Project.')
 param project_name string
 
-@description('The name to assign to the Bing Search resource instance (used when creating a new account).')
+@description('Conditional. Required when `enableBingSearchConnection` is true. The name to assign to the Bing Search resource instance (used when creating a new account).')
 param bingSearchName string
 
-@description('The name to assign to the Bing Search connection in the project.')
+@description('Conditional. Required when `enableBingSearchConnection` is true. The name to assign to the Bing Search connection in the project.')
 param bingConnectionName string = '${bingSearchName}-connection'
 
 @description('Optional. Existing Bing Grounding account resource ID to reuse instead of creating a new one.')
@@ -21,7 +21,7 @@ param existingResourceId string = ''
 var _isReuse = !empty(existingResourceId)
 var _idSegs = split(existingResourceId, '/')
 var _exSub = length(_idSegs) >= 3 ? _idSegs[2] : ''
-var _exRg  = length(_idSegs) >= 5 ? _idSegs[4] : ''
+var _exRg = length(_idSegs) >= 5 ? _idSegs[4] : ''
 var _exName = length(_idSegs) >= 1 ? last(_idSegs) : ''
 
 // Cognitive Services account (same resource group as current deployment)
