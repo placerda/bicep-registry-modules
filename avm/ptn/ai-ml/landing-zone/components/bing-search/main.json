@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "6924606239721136283"
+      "templateHash": "5607186588961465502"
     },
     "name": "bing-search",
     "description": "Create-or-reuse a Bing Grounding account and its Cognitive Services connection to be used by Azure AI Foundry."
@@ -45,16 +45,16 @@
     }
   },
   "variables": {
-    "_isReuse": "[not(empty(parameters('existingResourceId')))]",
-    "_idSegs": "[split(parameters('existingResourceId'), '/')]",
-    "_exSub": "[if(greaterOrEquals(length(variables('_idSegs')), 3), variables('_idSegs')[2], '')]",
-    "_exRg": "[if(greaterOrEquals(length(variables('_idSegs')), 5), variables('_idSegs')[4], '')]",
-    "_exName": "[if(greaterOrEquals(length(variables('_idSegs')), 1), last(variables('_idSegs')), '')]",
-    "_bingId": "[if(variables('_isReuse'), parameters('existingResourceId'), resourceId('Microsoft.Bing/accounts', parameters('bingSearchName')))]"
+    "varIsReuse": "[not(empty(parameters('existingResourceId')))]",
+    "varIdSegs": "[split(parameters('existingResourceId'), '/')]",
+    "varExSub": "[if(greaterOrEquals(length(variables('varIdSegs')), 3), variables('varIdSegs')[2], '')]",
+    "varExRg": "[if(greaterOrEquals(length(variables('varIdSegs')), 5), variables('varIdSegs')[4], '')]",
+    "varExName": "[if(greaterOrEquals(length(variables('varIdSegs')), 1), last(variables('varIdSegs')), '')]",
+    "varBingId": "[if(variables('varIsReuse'), parameters('existingResourceId'), resourceId('Microsoft.Bing/accounts', parameters('bingSearchName')))]"
   },
   "resources": [
     {
-      "condition": "[not(variables('_isReuse'))]",
+      "condition": "[not(variables('varIsReuse'))]",
       "type": "Microsoft.Bing/accounts",
       "apiVersion": "2025-05-01-preview",
       "name": "[parameters('bingSearchName')]",
@@ -70,16 +70,16 @@
       "name": "[format('{0}/{1}', parameters('accountName'), parameters('bingConnectionName'))]",
       "properties": {
         "category": "GroundingWithBingSearch",
-        "target": "[if(variables('_isReuse'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('_exSub'), variables('_exRg')), 'Microsoft.Bing/accounts', variables('_exName')), '2025-05-01-preview').endpoint, reference(resourceId('Microsoft.Bing/accounts', parameters('bingSearchName')), '2025-05-01-preview').endpoint)]",
+        "target": "[if(variables('varIsReuse'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExSub'), variables('varExRg')), 'Microsoft.Bing/accounts', variables('varExName')), '2025-05-01-preview').endpoint, reference(resourceId('Microsoft.Bing/accounts', parameters('bingSearchName')), '2025-05-01-preview').endpoint)]",
         "authType": "ApiKey",
         "credentials": {
-          "key": "[if(variables('_isReuse'), listKeys(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('_exSub'), variables('_exRg')), 'Microsoft.Bing/accounts', variables('_exName')), '2025-05-01-preview').key1, listKeys(resourceId('Microsoft.Bing/accounts', parameters('bingSearchName')), '2025-05-01-preview').key1)]"
+          "key": "[if(variables('varIsReuse'), listKeys(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExSub'), variables('varExRg')), 'Microsoft.Bing/accounts', variables('varExName')), '2025-05-01-preview').key1, listKeys(resourceId('Microsoft.Bing/accounts', parameters('bingSearchName')), '2025-05-01-preview').key1)]"
         },
         "isSharedToAll": true,
         "metadata": {
           "ApiType": "Azure",
-          "Location": "[if(variables('_isReuse'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('_exSub'), variables('_exRg')), 'Microsoft.Bing/accounts', variables('_exName')), '2025-05-01-preview', 'full').location, 'global')]",
-          "ResourceId": "[variables('_bingId')]"
+          "Location": "[if(variables('varIsReuse'), reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExSub'), variables('varExRg')), 'Microsoft.Bing/accounts', variables('varExName')), '2025-05-01-preview', 'full').location, 'global')]",
+          "ResourceId": "[variables('varBingId')]"
         }
       },
       "dependsOn": [
@@ -93,7 +93,7 @@
       "metadata": {
         "description": "Resource ID of the Bing Grounding account (created or reused)."
       },
-      "value": "[variables('_bingId')]"
+      "value": "[variables('varBingId')]"
     },
     "bingConnectionId": {
       "type": "string",

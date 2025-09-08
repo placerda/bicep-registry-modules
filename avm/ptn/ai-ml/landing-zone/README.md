@@ -418,12 +418,6 @@ param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
 
 ## Parameters
 
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`location`](#parameter-location) | string |  Azure region for AI Foundry resources. Defaults to the resource group location. |
-
 **Conditional parameters**
 
 | Parameter | Type | Description |
@@ -461,22 +455,15 @@ param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
 | [`containerAppsList`](#parameter-containerappslist) | array | List of Container Apps to create. |
 | [`deployGenAiAppBackingServices`](#parameter-deploygenaiappbackingservices) | bool |  Deploy GenAI app services; defaults to true. |
 | [`deployToggles`](#parameter-deploytoggles) | object |  Per-service deployment toggles; set false to skip creating a service. Reuse still works via resourceIds. |
-| [`enableTelemetry`](#parameter-enabletelemetry) | bool |  Enable module telemetry. See https://aka.ms/avm/telemetryinfo. |
+| [`enableTelemetry`](#parameter-enabletelemetry) | bool | Enable/Disable usage telemetry for module. |
 | [`firewallPolicyDefinition`](#parameter-firewallpolicydefinition) | object |  Azure Firewall Policy configuration (only used if your deployment wires a policy). |
 | [`flagPlatformLandingZone`](#parameter-flagplatformlandingzone) | bool |  Enable platform landing zone integration. |
 | [`githubPat`](#parameter-githubpat) | securestring | PAT used to request a GitHub runner registration token (when runner = github). |
+| [`location`](#parameter-location) | string | Azure region for AI Foundry resources. Defaults to the resource group location. |
 | [`networkIsolation`](#parameter-networkisolation) | bool | Enable network isolation posture (Private Endpoints + Private DNS). |
 | [`resourceIds`](#parameter-resourceids) | object |  Existing resource IDs to reuse; leave empty to create new resources. |
 | [`resourceToken`](#parameter-resourcetoken) | string |  Deterministic token for resource names; auto-generated if not provided. |
 | [`tags`](#parameter-tags) | object |  Tags applied to all deployed resources. |
-
-### Parameter: `location`
-
- Azure region for AI Foundry resources. Defaults to the resource group location.
-
-- Required: No
-- Type: string
-- Default: `[resourceGroup().location]`
 
 ### Parameter: `apimDefinition`
 
@@ -4552,7 +4539,6 @@ Azure Firewall configuration. Required if deployToggles.firewall is true and res
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`sku`](#parameter-firewalldefinitionsku) | string | Azure Firewall SKU (e.g., AZFW_VNet). |
-| [`tier`](#parameter-firewalldefinitiontier) | string | Azure Firewall tier (Standard/Premium/Basic). |
 | [`zones`](#parameter-firewalldefinitionzones) | array | Availability zones to use (if any). |
 
 **Optional parameters**
@@ -4561,6 +4547,7 @@ Azure Firewall configuration. Required if deployToggles.firewall is true and res
 | :-- | :-- | :-- |
 | [`name`](#parameter-firewalldefinitionname) | string | Azure Firewall name. |
 | [`tags`](#parameter-firewalldefinitiontags) | object | Tags to apply to the firewall. |
+| [`tier`](#parameter-firewalldefinitiontier) | string | Azure Firewall tier. Allowed values: Standard or Premium. |
 
 ### Parameter: `firewallDefinition.sku`
 
@@ -4568,21 +4555,6 @@ Azure Firewall SKU (e.g., AZFW_VNet).
 
 - Required: Yes
 - Type: string
-
-### Parameter: `firewallDefinition.tier`
-
-Azure Firewall tier (Standard/Premium/Basic).
-
-- Required: No
-- Type: string
-- Allowed:
-  ```Bicep
-  [
-    'Basic'
-    'Premium'
-    'Standard'
-  ]
-  ```
 
 ### Parameter: `firewallDefinition.zones`
 
@@ -4617,6 +4589,21 @@ Arbitrary key for each tag.
 
 - Required: Yes
 - Type: string
+
+### Parameter: `firewallDefinition.tier`
+
+Azure Firewall tier. Allowed values: Standard or Premium.
+
+- Required: No
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Basic'
+    'Premium'
+    'Standard'
+  ]
+  ```
 
 ### Parameter: `groundingWithBingDefinition`
 
@@ -7701,12 +7688,12 @@ List of Container Apps to create.
   ```Bicep
   [
     {
-      app_id: 'hello-world'
+      appId: 'hello-world'
       external: true
-      max_replicas: 1
-      min_replicas: 1
+      maxReplicas: 1
+      minReplicas: 1
       name: ''
-      profile_name: 'default'
+      profileName: 'default'
     }
   ]
   ```
@@ -7715,11 +7702,11 @@ List of Container Apps to create.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`app_id`](#parameter-containerappslistapp_id) | string | Logical app identifier (used for Dapr and container name). |
+| [`appId`](#parameter-containerappslistappid) | string | Logical app identifier (used for Dapr and container name). |
 | [`external`](#parameter-containerappslistexternal) | bool | Whether to expose through the environment’s external ingress. |
-| [`max_replicas`](#parameter-containerappslistmax_replicas) | int | Maximum number of replicas. |
-| [`min_replicas`](#parameter-containerappslistmin_replicas) | int | Minimum number of replicas. |
-| [`profile_name`](#parameter-containerappslistprofile_name) | string | Workload profile name to schedule to. |
+| [`maxReplicas`](#parameter-containerappslistmaxreplicas) | int | Maximum number of replicas. |
+| [`minReplicas`](#parameter-containerappslistminreplicas) | int | Minimum number of replicas. |
+| [`profileName`](#parameter-containerappslistprofilename) | string | Workload profile name to schedule to. |
 
 **Optional parameters**
 
@@ -7727,7 +7714,7 @@ List of Container Apps to create.
 | :-- | :-- | :-- |
 | [`name`](#parameter-containerappslistname) | string | Container App resource name. |
 
-### Parameter: `containerAppsList.app_id`
+### Parameter: `containerAppsList.appId`
 
 Logical app identifier (used for Dapr and container name).
 
@@ -7741,21 +7728,21 @@ Whether to expose through the environment’s external ingress.
 - Required: Yes
 - Type: bool
 
-### Parameter: `containerAppsList.max_replicas`
+### Parameter: `containerAppsList.maxReplicas`
 
 Maximum number of replicas.
 
 - Required: Yes
 - Type: int
 
-### Parameter: `containerAppsList.min_replicas`
+### Parameter: `containerAppsList.minReplicas`
 
 Minimum number of replicas.
 
 - Required: Yes
 - Type: int
 
-### Parameter: `containerAppsList.profile_name`
+### Parameter: `containerAppsList.profileName`
 
 Workload profile name to schedule to.
 
@@ -7958,7 +7945,7 @@ Toggle to deploy an Application Gateway WAF policy (true) or not (false).
 
 ### Parameter: `enableTelemetry`
 
- Enable module telemetry. See https://aka.ms/avm/telemetryinfo.
+Enable/Disable usage telemetry for module.
 
 - Required: No
 - Type: bool
@@ -8218,6 +8205,14 @@ PAT used to request a GitHub runner registration token (when runner = github).
 - Type: securestring
 - Default: `''`
 
+### Parameter: `location`
+
+Azure region for AI Foundry resources. Defaults to the resource group location.
+
+- Required: No
+- Type: string
+- Default: `[resourceGroup().location]`
+
 ### Parameter: `networkIsolation`
 
 Enable network isolation posture (Private Endpoints + Private DNS).
@@ -8396,27 +8391,27 @@ Existing VNet resource ID to reuse; leave empty to create a new VNet.
 
 ## Outputs
 
-| Output | Type |
-| :-- | :-- |
-| `apimServiceResourceId` | string |
-| `appConfigResourceId` | string |
-| `applicationGatewayResourceId` | string |
-| `applicationInsightsResourceId` | string |
-| `containerEnvResourceId` | string |
-| `containerRegistryResourceId` | string |
-| `dbAccountResourceId` | string |
-| `firewallResourceId` | string |
-| `groundingServiceResourceId` | string |
-| `keyVaultResourceId` | string |
-| `location` | string |
-| `logAnalyticsWorkspaceResourceId` | string |
-| `resourceGroupName` | string |
-| `searchServiceResourceId` | string |
-| `storageAccountResourceId` | string |
-| `subscriptionId` | string |
-| `tenantId` | string |
-| `virtualNetworkResourceId` | string |
-| `wafPolicyResourceId` | string |
+| Output | Type | Description |
+| :-- | :-- | :-- |
+| `apimServiceResourceId` | string | API Management service resource ID. |
+| `appConfigResourceId` | string | App Configuration store resource ID. |
+| `applicationGatewayResourceId` | string | Application Gateway resource ID. |
+| `applicationInsightsResourceId` | string | Application Insights resource ID. |
+| `containerEnvResourceId` | string | Container Apps Environment resource ID. |
+| `containerRegistryResourceId` | string | Container registry resource ID. |
+| `dbAccountResourceId` | string | Cosmos DB account resource ID. |
+| `firewallResourceId` | string | Azure Firewall resource ID. |
+| `groundingServiceResourceId` | string | Grounding (Bing Search) resource ID. |
+| `keyVaultResourceId` | string | Key Vault resource ID. |
+| `location` | string | Deployment location. |
+| `logAnalyticsWorkspaceResourceId` | string | Log Analytics workspace resource ID. |
+| `resourceGroupName` | string | Resource group name. |
+| `searchServiceResourceId` | string | Azure AI Search service resource ID. |
+| `storageAccountResourceId` | string | Storage account resource ID. |
+| `subscriptionId` | string | Subscription ID. |
+| `tenantId` | string | Tenant ID. |
+| `virtualNetworkResourceId` | string | Virtual network resource ID. |
+| `wafPolicyResourceId` | string | Web Application Firewall (WAF) policy resource ID. |
 
 ## Cross-referenced modules
 
