@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "5607186588961465502"
+      "templateHash": "8457176760634283787"
     },
     "name": "bing-search",
     "description": "Create-or-reuse a Bing Grounding account and its Cognitive Services connection to be used by Azure AI Foundry."
@@ -101,6 +101,13 @@
         "description": "Connection ID path under the AI services project."
       },
       "value": "[format('/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.CognitiveServices/accounts/{2}/projects/{3}/connections/{4}', subscription().subscriptionId, resourceGroup().name, parameters('accountName'), parameters('projectName'), parameters('bingConnectionName'))]"
+    },
+    "resourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the resource group where the Bing Grounding account is deployed (same as the deployment resource group when creating a new account, or the existing account resource group when reusing)."
+      },
+      "value": "[resourceGroup().name]"
     }
   }
 }

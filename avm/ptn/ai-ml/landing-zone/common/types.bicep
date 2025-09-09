@@ -1,5 +1,5 @@
 @export()
-@description('Optional existing resource IDs to reuse; leave empty to create new resources.')
+@description('Existing resource IDs to reuse; leave empty to create new resources.')
 type resourceIdsType = {
   @description('Optional. Existing VNet resource ID to reuse; leave empty to create a new VNet.')
   virtualNetworkResourceId: string?
@@ -134,7 +134,7 @@ type vNetSubnetType = {
 }
 
 @export()
-@description('Conditional. Peering with another VNet (hub/spoke). Required if the template establishes hub–spoke peering for this VNet.')
+@description('Peering with another VNet (hub/spoke).')
 type vNetPeeringConfigurationType = {
   @description('Required. Resource ID of the peer virtual network.')
   peerVnetResourceId: string
@@ -177,14 +177,14 @@ type vNetPeeringConfigurationType = {
 }
 
 @export()
-@description('Conditional. Peering with a Virtual WAN hub. Required if the template establishes a Virtual WAN hub peering.')
+@description('Peering with a Virtual WAN hub.')
 type vWanHubPeeringConfigurationType = {
   @description('Required. Resource ID of the target Virtual WAN hub.')
   peerVwanHubResourceId: string
 }
 
 @export()
-@description('Conditional. Configuration object for the Virtual Network to be deployed. Required if the template deploys a new VNet (deployToggles.virtualNetwork is true) and resourceIds.virtualNetworkResourceId is empty.')
+@description('Configuration object for the Virtual Network to be deployed.')
 type vNetDefinitionType = {
   @description('Optional. VNet name. If empty, a deterministic name is generated.')
   name: string?
@@ -215,7 +215,7 @@ type vNetDefinitionType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Log Analytics Workspace to be created for monitoring and logging. Required if the template deploys Log Analytics (deployToggles.logAnalytics is true) and resourceIds.logAnalyticsWorkspaceResourceId is empty, or if Application Insights is deployed and no workspace is reused.')
+@description('Configuration object for the Log Analytics Workspace to be created for monitoring and logging.')
 type logAnalyticsWorkspaceDefinitionType = {
   @description('Optional. Workspace name. If empty, a deterministic name is used.')
   name: string?
@@ -234,7 +234,7 @@ type logAnalyticsWorkspaceDefinitionType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Application Insights component to be created or reused. Required if the template deploys Application Insights (deployToggles.appInsights is true) and resourceIds.appInsightsResourceId is empty.')
+@description('Configuration object for the Application Insights component to be created or reused.')
 type appInsightsDefinitionType = {
   @description('Optional. Application Insights resource name.')
   name: string?
@@ -256,7 +256,7 @@ type appInsightsDefinitionType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Container App Environment to be created for GenAI services. Required if the template deploys a new environment (deployGenAiAppBackingServices and deployToggles.containerEnv are true) and resourceIds.containerEnvResourceId is empty.')
+@description('Configuration object for the Container App Environment to be created for GenAI services.')
 type containerAppEnvDefinitionType = {
   @description('Optional. Container Apps Environment name.')
   name: string?
@@ -319,7 +319,7 @@ type containerAppEnvDefinitionType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Azure Container Registry to be created for GenAI services. Required if the template deploys ACR (deployGenAiAppBackingServices and deployToggles.containerRegistry are true) and resourceIds.containerRegistryResourceId is empty.')
+@description('Configuration object for the Azure Container Registry to be created for GenAI services.')
 type containerRegistryDefinitionType = {
   @description('Optional. Data plane proxy configuration.')
   dataPlaneProxy: {
@@ -363,7 +363,7 @@ type containerAppDefinitionType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Azure Cosmos DB account to be created for GenAI services. Required if the template deploys Cosmos DB (deployGenAiAppBackingServices and deployToggles.cosmosDb are true) and resourceIds.dbAccountResourceId is empty.')
+@description('Configuration object for the Azure Cosmos DB account to be created for GenAI services.')
 type genAIAppCosmosDbDefinitionType = {
   @description('Optional. Cosmos DB account name.')
   name: string?
@@ -460,7 +460,7 @@ type genAIAppCosmosDbDefinitionType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Azure Key Vault to be created. Required if the template deploys a Key Vault (deployGenAiAppBackingServices and deployToggles.keyVault are true and resourceIds.keyVaultResourceId is empty), or if a dedicated Bastion Key Vault is deployed for the Jump VM.')
+@description('Configuration object for the Azure Key Vault to be created.')
 type keyVaultDefinitionType = {
   @description('Optional. Key Vault name.')
   name: string?
@@ -499,7 +499,7 @@ type keyVaultDefinitionType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Azure Storage Account to be created for GenAI services. Required if the template deploys a Storage Account (deployGenAiAppBackingServices and deployToggles.storageAccount are true) and resourceIds.storageAccountResourceId is empty.')
+@description('Configuration object for the Azure Storage Account to be created for GenAI services.')
 type storageAccountDefinitionType = {
   @description('Optional. Storage account name.')
   name: string?
@@ -553,7 +553,7 @@ type storageAccountDefinitionType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Azure AI Search service to be deployed. Required if the template deploys Azure AI Search (deployGenAiAppBackingServices and deployToggles.searchService are true) and resourceIds.searchServiceResourceId is empty.')
+@description('Configuration object for the Azure AI Search service to be deployed.')
 type kSAISearchDefinitionType = {
   @description('Optional. Search service name.')
   name: string?
@@ -618,7 +618,7 @@ type kSGroundingWithBingDefinitionType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Azure App Configuration store for the GenAI app. Required if the template deploys App Configuration (deployGenAiAppBackingServices and deployToggles.appConfig are true) and resourceIds.appConfigResourceId is empty.')
+@description('Configuration object for the Azure App Configuration store for the GenAI app.')
 type appConfigurationDefinitionType = {
   @description('Optional. Data plane proxy configuration (auth and Private Link delegation).')
   dataPlaneProxy: {
@@ -1040,7 +1040,7 @@ type bastionDefinitionType = {
   tags: {
     @description('Required. Arbitrary key for each tag.')
     *: string
-  }
+  }?
   @description('Required. Availability zones to use for Bastion (if supported).')
   zones: string[]
 }
@@ -1065,38 +1065,38 @@ type nSGDefinitionsType = {
       @description('Required. Protocol (Tcp, Udp, or *).')
       protocol: string
       @description('Optional. Source address prefix.')
-      sourceAddressPrefix: string
+      sourceAddressPrefix: string?
       @description('Optional. Source address prefixes.')
-      sourceAddressPrefixes: string[]
+      sourceAddressPrefixes: string[]?
       @description('Optional. Source application security group IDs.')
-      sourceApplicationSecurityGroupIds: string[]
+      sourceApplicationSecurityGroupIds: string[]?
       @description('Optional. Source port range.')
-      sourcePortRange: string
+      sourcePortRange: string?
       @description('Optional. Source port ranges.')
-      sourcePortRanges: string[]
+      sourcePortRanges: string[]?
       @description('Optional. Destination address prefix.')
-      destinationAddressPrefix: string
+      destinationAddressPrefix: string?
       @description('Optional. Destination address prefixes.')
-      destinationAddressPrefixes: string[]
+      destinationAddressPrefixes: string[]?
       @description('Optional. Destination application security group IDs.')
-      destinationApplicationSecurityGroupIds: string[]
+      destinationApplicationSecurityGroupIds: string[]?
       @description('Optional. Destination port range.')
-      destinationPortRange: string
+      destinationPortRange: string?
       @description('Optional. Destination port ranges.')
-      destinationPortRanges: string[]
+      destinationPortRanges: string[]?
       @description('Optional. Rule description.')
-      description: string
+      description: string?
       @description('Optional. Operation timeouts.')
       timeouts: {
         @description('Optional. Create operation timeout (e.g., PT30M).')
-        create: string
+        create: string?
         @description('Optional. Read operation timeout (e.g., PT5M).')
-        read: string
+        read: string?
         @description('Optional. Update operation timeout (e.g., PT30M).')
-        update: string
+        update: string?
         @description('Optional. Delete operation timeout (e.g., PT30M).')
-        delete: string
-      }
+        delete: string?
+      }?
     }
   }
 }
@@ -1113,7 +1113,7 @@ type privateDnsZoneNetworkLinkType = {
 }
 
 @export()
-@description('Conditional. Configuration for Private DNS Zones and VNet links. Required if the template creates Private DNS zones (network isolation is enabled and corresponding zone IDs are not provided).')
+@description('Configuration for Private DNS Zones and VNet links.')
 type privateDnsZoneDefinitionsType = {
   @description('Optional. Resource ID of the resource group that hosts existing Private DNS zones.')
   existingZonesResourceGroupResourceId: string?
@@ -1127,7 +1127,7 @@ type privateDnsZoneDefinitionsType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Web Application Firewall (WAF) Policy to be deployed. Required if the template deploys an Application Gateway WAF policy (deployToggles.applicationGateway and deployToggles.wafPolicy are true).')
+@description('Configuration object for the Web Application Firewall (WAF) Policy to be deployed.')
 type wafPolicyDefinitionsType = {
   @description('Required. WAF policy resource name.')
   name: string
@@ -1197,7 +1197,7 @@ type wafPolicyDefinitionsType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Azure Application Gateway to be deployed. Required if the template deploys an Application Gateway (deployToggles.applicationGateway is true) and resourceIds.applicationGatewayResourceId is empty.')
+@description('Configuration object for the Azure Application Gateway to be deployed.')
 type appGatewayDefinitionType = {
   @description('Optional. Application Gateway name.')
   name: string?
@@ -1278,8 +1278,8 @@ type appGatewayDefinitionType = {
       protocol: string
       @description('Optional. Custom affinity cookie name.')
       affinityCookieName: string?
-      @description('Optional. Host head?er to use when forwarding.')
-      hostName: string
+      @description('Optional. Host header to use when forwarding.')
+      hostName: string?
       @description('Optional. Path to append when forwarding.')
       path: string?
       @description('Optional. Use backend address as host header (true/false).')
@@ -1347,7 +1347,7 @@ type appGatewayDefinitionType = {
       @description('Required. Probe name.')
       name: string
       @description('Optional. Host header to send in probe requests.')
-      host: string
+      host: string?
       @description('Required. Probe interval in seconds.')
       interval: int
       @description('Required. Probe timeout in seconds.')
@@ -1357,15 +1357,15 @@ type appGatewayDefinitionType = {
       @description('Required. Protocol for the probe (Http/Https/Tcp).')
       protocol: string
       @description('Optional. Backend port to probe.')
-      port: int
+      port: int?
       @description('Optional. Path to probe (for HTTP/S).')
-      path: string
+      path: string?
       @description('Optional. Use host name from backend HTTP settings.')
-      pickHostNameFromBackendHttpSettings: bool
+      pickHostNameFromBackendHttpSettings: bool?
       @description('Optional. Minimum servers that must be healthy.')
-      minimumServers: int
+      minimumServers: int?
       @description('Optional. Match conditions for HTTP probe response.')
-      match: object
+      match: object?
     }
   }
 
@@ -1374,17 +1374,17 @@ type appGatewayDefinitionType = {
     @description('Required. Arbitrary key for each redirect configuration.')
     *: {
       @description('Optional. Include the path in the redirect.')
-      includePath: bool
+      includePath: bool?
       @description('Optional. Include the query string in the redirect.')
-      includeQueryString: bool
+      includeQueryString: bool?
       @description('Required. Redirect configuration name.')
       name: string
       @description('Required. Redirect type (Permanent, Found, Temporary, SeeOther).')
       redirectType: string
       @description('Optional. Target listener name for listener redirect.')
-      targetListenerName: string
+      targetListenerName: string?
       @description('Optional. Target URL for external redirect.')
-      targetUrl: string
+      targetUrl: string?
     }
   }
 
@@ -1399,15 +1399,15 @@ type appGatewayDefinitionType = {
       @description('Required. HTTP listener name to attach to.')
       httpListenerName: string
       @description('Optional. Backend address pool name to route to.')
-      backendAddressPoolName: string
+      backendAddressPoolName: string?
       @description('Optional. Rule priority (1-20000).')
-      priority: int
+      priority: int?
       @description('Optional. URL path map name for path-based rules.')
-      urlPathMapName: string
+      urlPathMapName: string?
       @description('Optional. Backend HTTP settings name to use.')
-      backendHttpSettingsName: string
+      backendHttpSettingsName: string?
       @description('Optional. Redirect configuration name to use.')
-      redirectConfigurationName: string
+      redirectConfigurationName: string?
       @description('Optional. Rewrite rule set name to apply.')
       rewriteRuleSetName: string?
     }
@@ -1423,9 +1423,9 @@ type appGatewayDefinitionType = {
       rewriteRules: {
         @description('Required. Arbitrary key for each rewrite rule entry.')
         *: object
-      }
+      }?
     }
-  }
+  }?
 
   @description('Optional. SSL certificates.')
   sslCertificates: {
@@ -1434,11 +1434,11 @@ type appGatewayDefinitionType = {
       @description('Required. Certificate name.')
       name: string
       @description('Optional. Base64-encoded PFX certificate data.')
-      data: string
+      data: string?
       @description('Optional. PFX password (if data provided).')
-      password: string
+      password: string?
       @description('Optional. Key Vault secret ID for the certificate.')
-      keyVaultSecretId: string
+      keyVaultSecretId: string?
     }
   }?
 
@@ -1449,24 +1449,24 @@ type appGatewayDefinitionType = {
       @description('Required. SSL profile name.')
       name: string
       @description('Optional. Trusted client certificate names to require.')
-      trustedClientCertificateNames: string[]
+      trustedClientCertificateNames: string[]?
       @description('Optional. Verify client certificate issuer DN.')
-      verifyClientCertIssuerDn: bool
+      verifyClientCertIssuerDn: bool?
       @description('Optional. Client certificate revocation check setting.')
-      verifyClientCertificateRevocation: string
+      verifyClientCertificateRevocation: string?
       @description('Optional. SSL policy for the profile.')
       sslPolicy: {
         @description('Optional. Allowed cipher suites.')
-        cipherSuites: string[]
+        cipherSuites: string[]?
         @description('Optional. Disabled protocol versions.')
-        disabledProtocols: string[]
+        disabledProtocols: string[]?
         @description('Optional. Minimum TLS version.')
-        minProtocolVersion: string
+        minProtocolVersion: string?
         @description('Optional. Predefined policy name.')
-        policyName: string
+        policyName: string?
         @description('Optional. Policy type (Predefined/Custom).')
-        policyType: string
-      }
+        policyType: string?
+      }?
     }
   }?
 
@@ -1486,9 +1486,9 @@ type appGatewayDefinitionType = {
     @description('Required. Arbitrary key for each trusted root certificate.')
     *: {
       @description('Optional. Base64-encoded certificate data.')
-      data: string
+      data: string?
       @description('Optional. Key Vault secret ID for the certificate.')
-      keyVaultSecretId: string
+      keyVaultSecretId: string?
       @description('Required. Certificate name.')
       name: string
     }
@@ -1501,13 +1501,13 @@ type appGatewayDefinitionType = {
       @description('Required. URL path map name.')
       name: string
       @description('Optional. Default redirect configuration name.')
-      defaultRedirectConfigurationName: string
+      defaultRedirectConfigurationName: string?
       @description('Optional. Default rewrite rule set name.')
-      defaultRewriteRuleSetName: string
+      defaultRewriteRuleSetName: string?
       @description('Optional. Default backend HTTP settings name.')
-      defaultBackendHttpSettingsName: string
+      defaultBackendHttpSettingsName: string?
       @description('Optional. Default backend address pool name.')
-      defaultBackendAddressPoolName: string
+      defaultBackendAddressPoolName: string?
       @description('Required. Path rules for this map.')
       pathRules: {
         @description('Required. Arbitrary key for each path rule.')
@@ -1517,13 +1517,13 @@ type appGatewayDefinitionType = {
           @description('Required. Paths to match (e.g., /images/*).')
           paths: string[]
           @description('Optional. Backend address pool name for the rule.')
-          backendAddressPoolName: string
+          backendAddressPoolName: string?
           @description('Optional. Backend HTTP settings name for the rule.')
-          backendHttpSettingsName: string
+          backendHttpSettingsName: string?
           @description('Optional. Redirect configuration name for the rule.')
-          redirectConfigurationName: string
+          redirectConfigurationName: string?
           @description('Optional. Rewrite rule set name for the rule.')
-          rewriteRuleSetName: string
+          rewriteRuleSetName: string?
         }
       }
     }
@@ -1557,7 +1557,7 @@ type appGatewayDefinitionType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Azure API Management service to be deployed. Required if the template deploys API Management (deployToggles.apiManagement is true) and resourceIds.apimServiceResourceId is empty.')
+@description('Configuration object for the Azure API Management service to be deployed.')
 type apimDefinitionType = {
   @description('Optional. API Management service name.')
   name: string?
@@ -1621,17 +1621,17 @@ type apimDefinitionType = {
         @description('Required. Host name to bind.')
         hostName: string
         @description('Optional. Key Vault secret ID for the certificate.')
-        keyVaultId: string
+        keyVaultId: string?
         @description('Optional. Inline certificate as base64.')
-        certificate: string
+        certificate: string?
         @description('Optional. Password for the inline certificate (if provided).')
-        certificatePassword: string
+        certificatePassword: string?
         @description('Optional. Negotiate client certificate on TLS.')
-        negotiateClientCertificate: bool
+        negotiateClientCertificate: bool?
         @description('Optional. Client ID of the Key Vault identity used for SSL.')
-        sslKeyvaultIdentityClientId: string
+        sslKeyvaultIdentityClientId: string?
         @description('Optional. Set this binding as default for the endpoint.')
-        defaultSslBinding: bool
+        defaultSslBinding: bool?
       }
     }?
 
@@ -1646,7 +1646,7 @@ type apimDefinitionType = {
         @description('Optional. Inline certificate as base64.')
         certificate: string?
         @description('Optional. Password for the inline certificate (if provided).')
-        certificatePassword: string
+        certificatePassword: string?
         @description('Optional. Negotiate client certificate on TLS.')
         negotiateClientCertificate: bool?
         @description('Optional. Client ID of the Key Vault identity used for SSL.')
@@ -1788,7 +1788,7 @@ type apimDefinitionType = {
 }
 
 @export()
-@description('Conditional. Configuration object for the Azure Firewall to be deployed. Required if the template deploys Azure Firewall (deployToggles.firewall is true) and resourceIds.firewallResourceId is empty.')
+@description('Configuration object for the Azure Firewall to be deployed.')
 type firewallDefinitionType = {
   @description('Optional. Azure Firewall name.')
   name: string?
@@ -1796,7 +1796,7 @@ type firewallDefinitionType = {
   @description('Required. Azure Firewall SKU (e.g., AZFW_VNet).')
   sku: string
 
-  @description('Optional. Azure Firewall tier. Allowed values: Standard or Premium.')
+  @description('Optional. Azure Firewall tier. Allowed values: Basic, Standard or Premium.')
   tier: 'Basic' | 'Premium' | 'Standard'?
 
   @description('Required. Availability zones to use (if any).')
@@ -1810,11 +1810,12 @@ type firewallDefinitionType = {
 }
 
 @export()
+@description('Represents a single firewall policy rule defining its name, addresses, ports and allowed protocols.')
 type firewallPolicyRuleType = {
   @description('Required. Rule name.')
   name: string
   @description('Optional. Rule description.')
-  description: string
+  description: string?
   @description('Required. Destination IP addresses.')
   destinationAddresses: string[]
   @description('Required. Destination ports.')
@@ -1835,7 +1836,13 @@ type firewallPolicyRuleCollectionInputType = {
   action: 'Allow' | 'Deny'
 
   @description('Required. List of rules contained in this rule collection.')
-  rules: firewallPolicyRuleType[]
+  rules: {
+    @description('Required. Rule name.')
+    name: string
+
+    @description('Optional. Rule description.')
+    description: string?
+  }[]
 }
 
 @export()
@@ -1869,7 +1876,7 @@ type firewallPolicyDefinitionType = {
 }
 
 @export()
-@description('Conditional. Configuration object for VNet peering with a hub network. Required if the template establishes hub–spoke peering via hubVnetPeeringDefinition.')
+@description('Configuration object for VNet peering with a hub network.')
 type huVnetPeeringDefinitionType = {
   @description('Required. Resource ID of the hub (peer) VNet.')
   peerVnetResourceId: string

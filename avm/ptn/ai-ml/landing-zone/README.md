@@ -961,42 +961,42 @@ Host name to bind.
 
 Inline certificate as base64.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<.certificatePassword`
 
 Password for the inline certificate (if provided).
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<.defaultSslBinding`
 
 Set this binding as default for the endpoint.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<.keyVaultId`
 
 Key Vault secret ID for the certificate.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<.negotiateClientCertificate`
 
 Negotiate client certificate on TLS.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<.sslKeyvaultIdentityClientId`
 
 Client ID of the Key Vault identity used for SSL.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.portal`
@@ -1054,7 +1054,7 @@ Inline certificate as base64.
 
 Password for the inline certificate (if provided).
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<.defaultSslBinding`
@@ -1908,7 +1908,7 @@ Arbitrary key for each backend HTTP setting.
 | [`affinityCookieName`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<affinitycookiename) | string | Custom affinity cookie name. |
 | [`authenticationCertificate`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<authenticationcertificate) | array | Authentication certificate names to present to backend. |
 | [`connectionDraining`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<connectiondraining) | object | Connection draining settings (enable and drain timeout in seconds). |
-| [`hostName`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<hostname) | string | Host head?er to use when forwarding. |
+| [`hostName`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<hostname) | string | Host header to use when forwarding. |
 | [`path`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<path) | string | Path to append when forwarding. |
 | [`pickHostNameFromBackendAddress`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<pickhostnamefrombackendaddress) | bool | Use backend address as host header (true/false). |
 | [`probeName`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<probename) | string | Probe name to associate. |
@@ -1993,9 +1993,9 @@ Enable connection draining for backend HTTP settings.
 
 ### Parameter: `appGatewayDefinition.backendHttpSettings.>Any_other_property<.hostName`
 
-Host head?er to use when forwarding.
+Host header to use when forwarding.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.backendHttpSettings.>Any_other_property<.path`
@@ -2264,42 +2264,42 @@ Consecutive failures before marking unhealthy.
 
 Host header to send in probe requests.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.probeConfigurations.>Any_other_property<.match`
 
 Match conditions for HTTP probe response.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 ### Parameter: `appGatewayDefinition.probeConfigurations.>Any_other_property<.minimumServers`
 
 Minimum servers that must be healthy.
 
-- Required: Yes
+- Required: No
 - Type: int
 
 ### Parameter: `appGatewayDefinition.probeConfigurations.>Any_other_property<.path`
 
 Path to probe (for HTTP/S).
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.probeConfigurations.>Any_other_property<.pickHostNameFromBackendHttpSettings`
 
 Use host name from backend HTTP settings.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `appGatewayDefinition.probeConfigurations.>Any_other_property<.port`
 
 Backend port to probe.
 
-- Required: Yes
+- Required: No
 - Type: int
 
 ### Parameter: `appGatewayDefinition.redirectConfiguration`
@@ -2356,28 +2356,28 @@ Redirect type (Permanent, Found, Temporary, SeeOther).
 
 Include the path in the redirect.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `appGatewayDefinition.redirectConfiguration.>Any_other_property<.includeQueryString`
 
 Include the query string in the redirect.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `appGatewayDefinition.redirectConfiguration.>Any_other_property<.targetListenerName`
 
 Target listener name for listener redirect.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.redirectConfiguration.>Any_other_property<.targetUrl`
 
 Target URL for external redirect.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.requestRoutingRules`
@@ -2444,28 +2444,28 @@ Rule type (Basic or PathBasedRouting).
 
 Backend address pool name to route to.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.requestRoutingRules.>Any_other_property<.backendHttpSettingsName`
 
 Backend HTTP settings name to use.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.requestRoutingRules.>Any_other_property<.priority`
 
 Rule priority (1-20000).
 
-- Required: Yes
+- Required: No
 - Type: int
 
 ### Parameter: `appGatewayDefinition.requestRoutingRules.>Any_other_property<.redirectConfigurationName`
 
 Redirect configuration name to use.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.requestRoutingRules.>Any_other_property<.rewriteRuleSetName`
@@ -2479,7 +2479,7 @@ Rewrite rule set name to apply.
 
 URL path map name for path-based rules.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.sku`
@@ -2629,7 +2629,7 @@ Application Gateway name.
 
 Rewrite rule sets.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -2668,7 +2668,7 @@ Rewrite rule set name.
 
 Rewrite rules contained in this set.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -2826,21 +2826,21 @@ Certificate name.
 
 Base64-encoded PFX certificate data.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.sslCertificates.>Any_other_property<.keyVaultSecretId`
 
 Key Vault secret ID for the certificate.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.sslCertificates.>Any_other_property<.password`
 
 PFX password (if data provided).
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.sslProfile`
@@ -2889,7 +2889,7 @@ SSL profile name.
 
 SSL policy for the profile.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Optional parameters**
@@ -2906,56 +2906,56 @@ SSL policy for the profile.
 
 Allowed cipher suites.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 ### Parameter: `appGatewayDefinition.sslProfile.>Any_other_property<.sslPolicy.disabledProtocols`
 
 Disabled protocol versions.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 ### Parameter: `appGatewayDefinition.sslProfile.>Any_other_property<.sslPolicy.minProtocolVersion`
 
 Minimum TLS version.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.sslProfile.>Any_other_property<.sslPolicy.policyName`
 
 Predefined policy name.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.sslProfile.>Any_other_property<.sslPolicy.policyType`
 
 Policy type (Predefined/Custom).
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.sslProfile.>Any_other_property<.trustedClientCertificateNames`
 
 Trusted client certificate names to require.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 ### Parameter: `appGatewayDefinition.sslProfile.>Any_other_property<.verifyClientCertificateRevocation`
 
 Client certificate revocation check setting.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.sslProfile.>Any_other_property<.verifyClientCertIssuerDn`
 
 Verify client certificate issuer DN.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `appGatewayDefinition.tags`
@@ -3063,14 +3063,14 @@ Certificate name.
 
 Base64-encoded certificate data.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.trustedRootCertificate.>Any_other_property<.keyVaultSecretId`
 
 Key Vault secret ID for the certificate.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.urlPathMapConfigurations`
@@ -3170,56 +3170,56 @@ Paths to match (e.g., /images/*).
 
 Backend address pool name for the rule.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.urlPathMapConfigurations.>Any_other_property<.pathRules.>Any_other_property<.backendHttpSettingsName`
 
 Backend HTTP settings name for the rule.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.urlPathMapConfigurations.>Any_other_property<.pathRules.>Any_other_property<.redirectConfigurationName`
 
 Redirect configuration name for the rule.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.urlPathMapConfigurations.>Any_other_property<.pathRules.>Any_other_property<.rewriteRuleSetName`
 
 Rewrite rule set name for the rule.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.urlPathMapConfigurations.>Any_other_property<.defaultBackendAddressPoolName`
 
 Default backend address pool name.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.urlPathMapConfigurations.>Any_other_property<.defaultBackendHttpSettingsName`
 
 Default backend HTTP settings name.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.urlPathMapConfigurations.>Any_other_property<.defaultRedirectConfigurationName`
 
 Default redirect configuration name.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.urlPathMapConfigurations.>Any_other_property<.defaultRewriteRuleSetName`
 
 Default rewrite rule set name.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appInsightsDefinition`
@@ -4538,7 +4538,7 @@ Azure Firewall configuration. Required if deployToggles.firewall is true and res
 | :-- | :-- | :-- |
 | [`name`](#parameter-firewalldefinitionname) | string | Azure Firewall name. |
 | [`tags`](#parameter-firewalldefinitiontags) | object | Tags to apply to the firewall. |
-| [`tier`](#parameter-firewalldefinitiontier) | string | Azure Firewall tier. Allowed values: Standard or Premium. |
+| [`tier`](#parameter-firewalldefinitiontier) | string | Azure Firewall tier. Allowed values: Basic, Standard or Premium. |
 
 ### Parameter: `firewallDefinition.sku`
 
@@ -4583,7 +4583,7 @@ Arbitrary key for each tag.
 
 ### Parameter: `firewallDefinition.tier`
 
-Azure Firewall tier. Allowed values: Standard or Premium.
+Azure Firewall tier. Allowed values: Basic, Standard or Premium.
 
 - Required: No
 - Type: string
@@ -8017,7 +8017,7 @@ Source IP addresses.
 
 Rule description.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `firewallPolicyDefinition.ruleCollectionGroups`
@@ -8082,31 +8082,13 @@ List of rules contained in this rule collection.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`destinationAddresses`](#parameter-firewallpolicydefinitionrulecollectiongroupscollectionsrulesdestinationaddresses) | array | Destination IP addresses. |
-| [`destinationPorts`](#parameter-firewallpolicydefinitionrulecollectiongroupscollectionsrulesdestinationports) | array | Destination ports. |
 | [`name`](#parameter-firewallpolicydefinitionrulecollectiongroupscollectionsrulesname) | string | Rule name. |
-| [`protocols`](#parameter-firewallpolicydefinitionrulecollectiongroupscollectionsrulesprotocols) | array | Allowed protocols (e.g., TCP, UDP, ICMP, Any). |
-| [`sourceAddresses`](#parameter-firewallpolicydefinitionrulecollectiongroupscollectionsrulessourceaddresses) | array | Source IP addresses. |
 
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`description`](#parameter-firewallpolicydefinitionrulecollectiongroupscollectionsrulesdescription) | string | Rule description. |
-
-### Parameter: `firewallPolicyDefinition.ruleCollectionGroups.collections.rules.destinationAddresses`
-
-Destination IP addresses.
-
-- Required: Yes
-- Type: array
-
-### Parameter: `firewallPolicyDefinition.ruleCollectionGroups.collections.rules.destinationPorts`
-
-Destination ports.
-
-- Required: Yes
-- Type: array
 
 ### Parameter: `firewallPolicyDefinition.ruleCollectionGroups.collections.rules.name`
 
@@ -8115,25 +8097,11 @@ Rule name.
 - Required: Yes
 - Type: string
 
-### Parameter: `firewallPolicyDefinition.ruleCollectionGroups.collections.rules.protocols`
-
-Allowed protocols (e.g., TCP, UDP, ICMP, Any).
-
-- Required: Yes
-- Type: array
-
-### Parameter: `firewallPolicyDefinition.ruleCollectionGroups.collections.rules.sourceAddresses`
-
-Source IP addresses.
-
-- Required: Yes
-- Type: array
-
 ### Parameter: `firewallPolicyDefinition.ruleCollectionGroups.collections.rules.description`
 
 Rule description.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `firewallPolicyDefinition.ruleCollectionGroups.name`

@@ -74,4 +74,5 @@ Existing Bing Grounding account resource ID to reuse instead of creating a new o
 | Output | Type | Description |
 | :-- | :-- | :-- |
 | `bingConnectionId` | string | Connection ID path under the AI services project. |
+| `resourceGroupName` | string | Name of the resource group where the Bing Grounding account is deployed (same as the deployment resource group when creating a new account, or the existing account resource group when reusing). |
 | `resourceId` | string | Resource ID of the Bing Grounding account (created or reused). |

@@ -1120,7 +1120,7 @@ var varNetworkRulesForModule = [
   for r in firewallPolicyDefinition.networkRules!: {
     name: r.name
     ruleType: 'NetworkRule'
-    ...(empty(r.description) ? {} : { description: r.description })
+    ...(empty(r.description!) ? {} : { description: r.description! })
     sourceAddresses: r.sourceAddresses
     destinationAddresses: r.destinationAddresses
     destinationPorts: r.destinationPorts
