@@ -66,7 +66,7 @@ param deployGenAiAppBackingServices bool = true
 
 // 1.3 Reuse Existing Services (resource IDs to reuse, leave empty to create)
 @description('Optional.  Existing resource IDs to reuse; leave empty to create new resources.')
-param resourceIds types.ResourceIdsType = {
+param resourceIds types.resourceIdsType = {
   virtualNetworkResourceId: ''
   logAnalyticsWorkspaceResourceId: ''
   appInsightsResourceId: ''
@@ -86,7 +86,7 @@ param resourceIds types.ResourceIdsType = {
 
 // 1.4 Deploy Toggles (per-service on/off; reuse still works via resourceIds)
 @description('Optional.  Per-service deployment toggles; set false to skip creating a service. Reuse still works via resourceIds.')
-param deployToggles types.DeployTogglesType = {
+param deployToggles types.deployTogglesType = {
   logAnalytics: true
   appInsights: true
 
@@ -114,7 +114,7 @@ param deployToggles types.DeployTogglesType = {
 // 1.5 Service Definitions
 // 1.5.1 Virtual Network
 @description('Conditional. Virtual Network configuration. Required if deployToggles.virtualNetwork is true and resourceIds.virtualNetworkResourceId is empty.')
-param vnetDefinition types.VNetDefinitionType = {
+param vnetDefinition types.vNetDefinitionType = {
   name: ''
   addressSpace: '192.168.0.0/16'
   dnsServers: []
@@ -197,7 +197,7 @@ param vnetDefinition types.VNetDefinitionType = {
 
 // 1.5.2 Log Analytics Workspace
 @description('Conditional. Log Analytics Workspace configuration. Required if deployToggles.logAnalytics is true and resourceIds.logAnalyticsWorkspaceResourceId is empty.')
-param logAnalyticsDefinition types.LogAnalyticsWorkspaceDefinitionType = {
+param logAnalyticsDefinition types.logAnalyticsWorkspaceDefinitionType = {
   name: ''
   retention: 30
   sku: 'PerGB2018'
@@ -206,7 +206,7 @@ param logAnalyticsDefinition types.LogAnalyticsWorkspaceDefinitionType = {
 
 // 1.5.3 Application Insights
 @description('Conditional. Application Insights configuration. Required if deployToggles.appInsights is true and resourceIds.appInsightsResourceId is empty; a Log Analytics workspace must exist or be deployed.')
-param appInsightsDefinition types.AppInsightsDefinitionType = {
+param appInsightsDefinition types.appInsightsDefinitionType = {
   name: ''
   applicationType: 'web'
   kind: 'web'
@@ -216,7 +216,7 @@ param appInsightsDefinition types.AppInsightsDefinitionType = {
 
 // 1.5.4 Container App Environment
 @description('Conditional. Container Apps Environment configuration. Required if deployGenAiAppBackingServices is true, deployToggles.containerEnv is true, and resourceIds.containerEnvResourceId is empty.')
-param containerAppEnvDefinition types.ContainerAppEnvDefinitionType = {
+param containerAppEnvDefinition types.containerAppEnvDefinitionType = {
   name: ''
   tags: {}
   subnetName: 'aca-environment-subnet'
@@ -242,7 +242,7 @@ param containerAppEnvDefinition types.ContainerAppEnvDefinitionType = {
 
 // 1.5.5 Container Apps
 @description('Optional. List of Container Apps to create.')
-param containerAppsList types.ContainerAppDefinitionType[] = [
+param containerAppsList types.containerAppDefinitionType[] = [
   {
     name: ''
     appId: 'hello-world'
@@ -255,7 +255,7 @@ param containerAppsList types.ContainerAppDefinitionType[] = [
 
 // 1.5.6 Container Registry
 @description('Conditional. Container Registry configuration. Required if deployGenAiAppBackingServices is true, deployToggles.containerRegistry is true, and resourceIds.containerRegistryResourceId is empty.')
-param containerRegistryDefinition types.ContainerRegistryDefinitionType = {
+param containerRegistryDefinition types.containerRegistryDefinitionType = {
   name: ''
   sku: 'Premium'
   tags: {}
@@ -263,7 +263,7 @@ param containerRegistryDefinition types.ContainerRegistryDefinitionType = {
 
 // 1.5.7 Cosmos DB Account (GenAI app scope)
 @description('Conditional. Cosmos DB account configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.cosmosDb is true, and resourceIds.dbAccountResourceId is empty.')
-param cosmosDbDefinition types.GenAIAppCosmosDbDefinitionType = {
+param cosmosDbDefinition types.genAIAppCosmosDbDefinitionType = {
   name: ''
   publicNetworkAccessEnabled: false
   automaticFailoverEnabled: true
@@ -271,7 +271,7 @@ param cosmosDbDefinition types.GenAIAppCosmosDbDefinitionType = {
 
 // 1.5.8 Key Vault (GenAI app scope)
 @description('Conditional. Key Vault configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.keyVault is true, and resourceIds.keyVaultResourceId is empty.')
-param keyVaultDefinition types.KeyVaultDefinitionType = {
+param keyVaultDefinition types.keyVaultDefinitionType = {
   name: ''
   sku: 'standard'
   tenantId: subscription().tenantId
@@ -281,7 +281,7 @@ param keyVaultDefinition types.KeyVaultDefinitionType = {
 
 // 1.5.9 Storage Account (GenAI app scope)
 @description('Conditional. Storage Account configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.storageAccount is true, and resourceIds.storageAccountResourceId is empty.')
-param storageAccountDefinition types.StorageAccountDefinitionType = {
+param storageAccountDefinition types.storageAccountDefinitionType = {
   name: ''
   accountKind: 'StorageV2'
   accountTier: 'Standard'
@@ -291,7 +291,7 @@ param storageAccountDefinition types.StorageAccountDefinitionType = {
 
 // 1.5.10 AI Search (GenAI app scope)
 @description('Conditional. Azure AI Search configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.searchService is true, and resourceIds.searchServiceResourceId is empty.')
-param searchDefinition types.KSAISearchDefinitionType = {
+param searchDefinition types.kSAISearchDefinitionType = {
   name: ''
   sku: 'standard'
   publicNetworkAccessEnabled: false
@@ -305,7 +305,7 @@ param searchDefinition types.KSAISearchDefinitionType = {
 
 // 1.5.11 App Configuration
 @description('Conditional. App Configuration store settings. Required if deployGenAiAppBackingServices is true, deployToggles.appConfig is true, and resourceIds.appConfigResourceId is empty.')
-param appConfigurationDefinition types.AppConfigurationDefinitionType = {
+param appConfigurationDefinition types.appConfigurationDefinitionType = {
   name: ''
   sku: 'standard'
   localAuthEnabled: false
@@ -334,7 +334,7 @@ param privateDnsZoneIds object = {
 
 // 1.5.12b Private DNS Zones (creation + VNet links)
 @description('Conditional. Private DNS Zones and VNet links configuration. Required if networkIsolation is true, flagPlatformLandingZone is false, and you want this template to create zones for services not supplied in privateDnsZoneIds.')
-param privateDnsZones types.PrivateDnsZoneDefinitionsType = {
+param privateDnsZones types.privateDnsZoneDefinitionsType = {
   existingZonesResourceGroupResourceId: ''
   allowInternetResolutionFallback: false
   networkLinks: [
@@ -349,11 +349,11 @@ param privateDnsZones types.PrivateDnsZoneDefinitionsType = {
 
 // 1.5.13 AI Foundry
 @description('Optional.  AI Foundry project configuration (account/project, networking, associated resources, and deployments).')
-param aiFoundryDefinition types.AiFoundryDefinitionType?
+param aiFoundryDefinition types.aiFoundryDefinitionType?
 
 // 1.5.14 Grounding with Bing
 @description('Conditional. Grounding with Bing configuration. Required if deployToggles.groundingWithBingSearch is true and resourceIds.groundingServiceResourceId is empty.')
-param groundingWithBingDefinition types.KSGroundingWithBingDefinitionType = {
+param groundingWithBingDefinition types.kSGroundingWithBingDefinitionType = {
   name: ''
   sku: 'G1'
   tags: {}
@@ -361,7 +361,7 @@ param groundingWithBingDefinition types.KSGroundingWithBingDefinitionType = {
 
 // 1.5.15 WAF Policy
 @description('Conditional. Web Application Firewall (WAF) policy configuration. Required if deployToggles.wafPolicy is true and you are deploying Application Gateway via this template.')
-param wafPolicyDefinition types.WafPolicyDefinitionsType = {
+param wafPolicyDefinition types.wafPolicyDefinitionsType = {
   name: ''
   policySettings: {
     enabledState: 'Enabled'
@@ -385,7 +385,7 @@ param wafPolicyDefinition types.WafPolicyDefinitionsType = {
 
 // 1.5.16 Application Gateway
 @description('Conditional. Application Gateway configuration. Required if deployToggles.applicationGateway is true and resourceIds.applicationGatewayResourceId is empty.')
-param appGatewayDefinition types.AppGatewayDefinitionType = {
+param appGatewayDefinition types.appGatewayDefinitionType = {
   name: ''
   http2Enable: true
   authenticationCertificate: {}
@@ -470,7 +470,7 @@ param appGatewayDefinition types.AppGatewayDefinitionType = {
 
 // 1.5.17 API Management
 @description('Conditional. API Management configuration. Required if deployToggles.apiManagement is true and resourceIds.apimServiceResourceId is empty.')
-param apimDefinition types.ApimDefinitionType = {
+param apimDefinition types.apimDefinitionType = {
   name: ''
   publisherEmail: 'admin@example.com'
   publisherName: 'Contoso'
@@ -492,7 +492,7 @@ param apimDefinition types.ApimDefinitionType = {
 
 // 1.5.18 Azure Firewall
 @description('Conditional. Azure Firewall configuration. Required if deployToggles.firewall is true and resourceIds.firewallResourceId is empty.')
-param firewallDefinition types.FirewallDefinitionType = {
+param firewallDefinition types.firewallDefinitionType = {
   name: ''
   sku: 'AZFW_VNet'
   tier: 'Standard'
@@ -502,7 +502,7 @@ param firewallDefinition types.FirewallDefinitionType = {
 
 // 1.5.19 Azure Firewall Policy
 @description('Optional.  Azure Firewall Policy configuration (only used if your deployment wires a policy).')
-param firewallPolicyDefinition types.FirewallPolicyDefinitionType = {
+param firewallPolicyDefinition types.firewallPolicyDefinitionType = {
   networkPolicyRuleCollectionGroupName: null
   networkPolicyRuleCollectionGroupPriority: 100
   networkRules: []
@@ -510,7 +510,7 @@ param firewallPolicyDefinition types.FirewallPolicyDefinitionType = {
 
 // 1.5.20 Hub VNet Peering
 @description('Conditional. Hub VNet peering configuration. Required if you plan to establish hub–spoke peering.')
-param hubVnetPeeringDefinition types.HuVnetPeeringDefinitionType = {
+param hubVnetPeeringDefinition types.huVnetPeeringDefinitionType = {
   name: ''
   peerVnetResourceId: ''
   firewallIpAddress: ''
@@ -528,7 +528,7 @@ param hubVnetPeeringDefinition types.HuVnetPeeringDefinitionType = {
 
 // 1.5.21 Build VM configuration
 @description('Conditional. Build VM configuration to support CI/CD workers (Linux). Required if deployToggles.buildVm is true and you intend to deploy the Build VM (sshPublicKey must be provided).')
-param buildVmDefinition types.BuildVmDefinitionType = {
+param buildVmDefinition types.buildVmDefinitionType = {
   name: ''
   sku: 'Standard_D2s_v5'
   adminUsername: 'azureuser'
@@ -543,7 +543,7 @@ param buildVmDefinition types.BuildVmDefinitionType = {
 
 // 1.5.22 Jump VM configuration (Windows, Bastion-accessed)
 @description('Conditional. Jump (bastion) VM configuration (Windows). Required if deployToggles.jumpVm is true.')
-param jumpVmDefinition types.JumpVmDefinitionType = {
+param jumpVmDefinition types.jumpVmDefinitionType = {
   name: ''
   sku: 'Standard_D2s_v5'
   adminUsername: 'azureuser'
@@ -553,7 +553,7 @@ param jumpVmDefinition types.JumpVmDefinitionType = {
 
 // 1.5.23 Dedicated Key Vault for JumpVM password (public network access for convenience with Bastion operators)
 @description('Conditional. Jump (bastion) VM configuration (Windows). Required if deployToggles.jumpVm is true.')
-param bastionKeyVaultDefinition types.KeyVaultDefinitionType = {
+param bastionKeyVaultDefinition types.keyVaultDefinitionType = {
   name: ''
   sku: 'standard'
   tenantId: subscription().tenantId
@@ -1111,13 +1111,13 @@ var varWafPolicyResourceId = varDeployWafPolicy ? wafPolicy!.outputs.resourceId 
 var varAgwPipName = '${varPip}${varAgw}${baseName}'
 
 // Firewall policy wiring and rules (optional)
-var varDeployAfwPolicy = varDeployFirewall && (length(firewallPolicyDefinition.networkRules) > 0 || !empty(firewallPolicyDefinition.networkPolicyRuleCollectionGroupName!))
+var varDeployAfwPolicy = varDeployFirewall && (length(firewallPolicyDefinition.networkRules!) > 0 || !empty(firewallPolicyDefinition.networkPolicyRuleCollectionGroupName!))
 var varRcgName = empty(firewallPolicyDefinition.networkPolicyRuleCollectionGroupName!)
   ? 'networkRules'
   : firewallPolicyDefinition.networkPolicyRuleCollectionGroupName!
 var varRcgPriority = firewallPolicyDefinition.networkPolicyRuleCollectionGroupPriority! ?? 100
 var varNetworkRulesForModule = [
-  for r in firewallPolicyDefinition.networkRules: {
+  for r in firewallPolicyDefinition.networkRules!: {
     name: r.name
     ruleType: 'NetworkRule'
     ...(empty(r.description) ? {} : { description: r.description })

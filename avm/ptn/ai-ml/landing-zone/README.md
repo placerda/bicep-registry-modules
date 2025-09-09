@@ -669,7 +669,7 @@ Enable tenant access for the management plane.
 
 Additional regions for API Management.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -719,21 +719,21 @@ Location for the additional APIM instance.
 
 Disable gateway in this region.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `apimDefinition.additionalLocations.>Any_other_property<.publicIpAddressId`
 
 Public IP address resource ID to bind.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.additionalLocations.>Any_other_property<.virtualNetworkConfiguration`
 
 VNet configuration for the region.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -753,14 +753,14 @@ Subnet resource ID used by APIM in this region.
 
 Availability zones for the region.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 ### Parameter: `apimDefinition.certificate`
 
 Certificates for API Management endpoints.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -807,14 +807,14 @@ Store name to import to (e.g., CertificateAuthority).
 
 Certificate password.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration`
 
 Hostname configuration for all endpoints.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Optional parameters**
@@ -831,7 +831,7 @@ Hostname configuration for all endpoints.
 
 Hostname configuration map for the Legacy Developer Portal (deprecated in some SKUs).
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -875,49 +875,49 @@ Host name to bind.
 
 Inline certificate as base64.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<.certificatePassword`
 
 Password for the inline certificate (if provided).
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<.defaultSslBinding`
 
 Set this binding as default for the endpoint.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<.keyVaultId`
 
 Key Vault secret ID for the certificate.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<.negotiateClientCertificate`
 
 Negotiate client certificate on TLS.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<.sslKeyvaultIdentityClientId`
 
 Client ID of the Key Vault identity used for SSL.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.management`
 
 Hostname configuration map for the Management endpoint.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -1003,7 +1003,7 @@ Client ID of the Key Vault identity used for SSL.
 
 Hostname configuration map for the Developer Portal.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -1047,7 +1047,7 @@ Host name to bind.
 
 Inline certificate as base64.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<.certificatePassword`
@@ -1061,35 +1061,35 @@ Password for the inline certificate (if provided).
 
 Set this binding as default for the endpoint.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<.keyVaultId`
 
 Key Vault secret ID for the certificate.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<.negotiateClientCertificate`
 
 Negotiate client certificate on TLS.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<.sslKeyvaultIdentityClientId`
 
 Client ID of the Key Vault identity used for SSL.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.proxy`
 
 Hostname configuration map for the Gateway/Proxy endpoint.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -1133,49 +1133,49 @@ Host name to bind.
 
 Inline certificate as base64.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<.certificatePassword`
 
 Password for the inline certificate (if provided).
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<.defaultSslBinding`
 
 Set this binding as default for the endpoint.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<.keyVaultId`
 
 Key Vault secret ID for the certificate.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<.negotiateClientCertificate`
 
 Negotiate client certificate on TLS.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<.sslKeyvaultIdentityClientId`
 
 Client ID of the Key Vault identity used for SSL.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.scm`
 
 Hostname configuration map for the SCM endpoint.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -1219,42 +1219,42 @@ Host name to bind.
 
 Inline certificate as base64.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<.certificatePassword`
 
 Password for the inline certificate (if provided).
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<.defaultSslBinding`
 
 Set this binding as default for the endpoint.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<.keyVaultId`
 
 Key Vault secret ID for the certificate.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<.negotiateClientCertificate`
 
 Negotiate client certificate on TLS.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<.sslKeyvaultIdentityClientId`
 
 Client ID of the Key Vault identity used for SSL.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.minApiVersion`
@@ -1282,10 +1282,10 @@ Sender email address used by APIM system notifications.
 
 Protocol options.
 
-- Required: Yes
+- Required: No
 - Type: object
 
-**Optional parameters**
+**Required parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
@@ -1302,7 +1302,7 @@ Enable HTTP/2 for API traffic.
 
 Role assignments to create on the API Management service.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 **Required parameters**
@@ -1418,7 +1418,7 @@ SKU for API Management (Developer/Basic/Standard/Premium/Consumption/V2 variants
 
 Tags to apply to the API Management service.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -1484,14 +1484,14 @@ Data plane proxy configuration (auth and Private Link delegation).
 
 Authentication mode for data plane proxy.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appConfigurationDefinition.dataPlaneProxy.privateLinkDelegation`
 
 Private Link delegation for data plane proxy.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appConfigurationDefinition.localAuthEnabled`
@@ -1861,14 +1861,14 @@ Pool name.
 
 Backend FQDNs.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 ### Parameter: `appGatewayDefinition.backendAddressPools.>Any_other_property<.ipAddresses`
 
 Backend IP addresses.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 ### Parameter: `appGatewayDefinition.backendHttpSettings`
@@ -1908,7 +1908,7 @@ Arbitrary key for each backend HTTP setting.
 | [`affinityCookieName`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<affinitycookiename) | string | Custom affinity cookie name. |
 | [`authenticationCertificate`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<authenticationcertificate) | array | Authentication certificate names to present to backend. |
 | [`connectionDraining`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<connectiondraining) | object | Connection draining settings (enable and drain timeout in seconds). |
-| [`hostName`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<hostname) | string | Host header to use when forwarding. |
+| [`hostName`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<hostname) | string | Host head?er to use when forwarding. |
 | [`path`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<path) | string | Path to append when forwarding. |
 | [`pickHostNameFromBackendAddress`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<pickhostnamefrombackendaddress) | bool | Use backend address as host header (true/false). |
 | [`probeName`](#parameter-appgatewaydefinitionbackendhttpsettings>any_other_property<probename) | string | Probe name to associate. |
@@ -1953,21 +1953,21 @@ Request timeout in seconds.
 
 Custom affinity cookie name.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.backendHttpSettings.>Any_other_property<.authenticationCertificate`
 
 Authentication certificate names to present to backend.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 ### Parameter: `appGatewayDefinition.backendHttpSettings.>Any_other_property<.connectionDraining`
 
 Connection draining settings (enable and drain timeout in seconds).
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -1993,7 +1993,7 @@ Enable connection draining for backend HTTP settings.
 
 ### Parameter: `appGatewayDefinition.backendHttpSettings.>Any_other_property<.hostName`
 
-Host header to use when forwarding.
+Host head?er to use when forwarding.
 
 - Required: Yes
 - Type: string
@@ -2002,28 +2002,28 @@ Host header to use when forwarding.
 
 Path to append when forwarding.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.backendHttpSettings.>Any_other_property<.pickHostNameFromBackendAddress`
 
 Use backend address as host header (true/false).
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `appGatewayDefinition.backendHttpSettings.>Any_other_property<.probeName`
 
 Probe name to associate.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.backendHttpSettings.>Any_other_property<.trustedRootCertificateNames`
 
 Trusted root certificate names to use.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 ### Parameter: `appGatewayDefinition.frontendPorts`
@@ -2132,56 +2132,56 @@ Listener name.
 
 Custom error configuration entries.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 ### Parameter: `appGatewayDefinition.httpListeners.>Any_other_property<.firewallPolicyId`
 
 Resource ID of the associated WAF policy.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.httpListeners.>Any_other_property<.frontendIpConfigurationName`
 
 Name of the frontend IP configuration to use.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.httpListeners.>Any_other_property<.hostName`
 
 Host name for the listener.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.httpListeners.>Any_other_property<.hostNames`
 
 Multiple host names for the listener.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 ### Parameter: `appGatewayDefinition.httpListeners.>Any_other_property<.requireSni`
 
 Require SNI for TLS.
 
-- Required: Yes
+- Required: No
 - Type: bool
 
 ### Parameter: `appGatewayDefinition.httpListeners.>Any_other_property<.sslCertificateName`
 
 SSL certificate name to bind to the listener.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.httpListeners.>Any_other_property<.sslProfileName`
 
 SSL profile name to use.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.probeConfigurations`
@@ -2472,7 +2472,7 @@ Redirect configuration name to use.
 
 Rewrite rule set name to apply.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `appGatewayDefinition.requestRoutingRules.>Any_other_property<.urlPathMapName`
@@ -2574,7 +2574,7 @@ Policy type (Predefined/Custom).
 
 Authentication certificates to attach to the gateway.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -2688,7 +2688,7 @@ Arbitrary key for each rewrite rule entry.
 
 Role assignments to create on the gateway.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 **Required parameters**
@@ -2785,7 +2785,7 @@ Role assignment name.
 
 SSL certificates.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -2847,7 +2847,7 @@ PFX password (if data provided).
 
 SSL profiles.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -2962,7 +2962,7 @@ Verify client certificate issuer DN.
 
 Tags to apply to the Application Gateway.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -2982,7 +2982,7 @@ Arbitrary key for each tag.
 
 Trusted client certificates.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -3023,7 +3023,7 @@ Certificate name.
 
 Trusted root certificates.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -3077,7 +3077,7 @@ Key Vault secret ID for the certificate.
 
 URL path map configurations.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -3495,7 +3495,6 @@ Build VM configuration to support CI/CD workers (Linux). Required if deployToggl
         orgUrl: 'https://dev.azure.com/<org>'
         pool: 'Default'
       }
-      enableTelemetry: false
       name: ''
       runner: 'azdo'
       sku: 'Standard_D2s_v5'
@@ -3518,7 +3517,6 @@ Build VM configuration to support CI/CD workers (Linux). Required if deployToggl
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`azdo`](#parameter-buildvmdefinitionazdo) | object | Azure DevOps settings (required when runner = azdo). |
-| [`enableTelemetry`](#parameter-buildvmdefinitionenabletelemetry) | bool | Enable AVM telemetry. |
 | [`github`](#parameter-buildvmdefinitiongithub) | object | GitHub settings (required when runner = github). |
 | [`imageReference`](#parameter-buildvmdefinitionimagereference) | object | Marketplace image reference for the VM. |
 | [`name`](#parameter-buildvmdefinitionname) | string | VM name. |
@@ -3608,13 +3606,6 @@ Working folder.
 
 - Required: No
 - Type: string
-
-### Parameter: `buildVmDefinition.enableTelemetry`
-
-Enable AVM telemetry.
-
-- Required: No
-- Type: bool
 
 ### Parameter: `buildVmDefinition.github`
 
@@ -3742,7 +3733,7 @@ OS type for the VM.
 
 Tags to apply to the Build VM resource.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -3931,7 +3922,7 @@ Container Apps Environment name.
 
 Role assignments to create on the environment.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 **Required parameters**
@@ -4089,14 +4080,14 @@ Data plane proxy configuration.
 
 Authentication mode for data plane proxy.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `containerRegistryDefinition.dataPlaneProxy.privateLinkDelegation`
 
 Private Link delegation setting for data plane proxy.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `containerRegistryDefinition.localAuthEnabled`
@@ -4275,7 +4266,7 @@ Backup type (e.g., Periodic/Continuous).
 
 Backup tier (if applicable).
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `cosmosDbDefinition.consistencyPolicy`
@@ -4574,7 +4565,7 @@ Azure Firewall name.
 
 Tags to apply to the firewall.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -4824,7 +4815,6 @@ Jump (bastion) VM configuration (Windows). Required if deployToggles.jumpVm is t
   ```Bicep
   {
       adminUsername: 'azureuser'
-      enableTelemetry: false
       name: ''
       sku: 'Standard_D2s_v5'
       tags: {}
@@ -4837,7 +4827,6 @@ Jump (bastion) VM configuration (Windows). Required if deployToggles.jumpVm is t
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`adminUsername`](#parameter-jumpvmdefinitionadminusername) | string | Admin username. |
-| [`enableTelemetry`](#parameter-jumpvmdefinitionenabletelemetry) | bool | Enable telemetry for helper scripts. |
 | [`sku`](#parameter-jumpvmdefinitionsku) | string | VM size SKU (e.g., Standard_D2s_v5). |
 | [`tags`](#parameter-jumpvmdefinitiontags) | object | Tags to apply to the Jump VM. |
 | [`vmKeyVaultSecName`](#parameter-jumpvmdefinitionvmkeyvaultsecname) | string | Name of the admin password secret in the Bastion Key Vault. |
@@ -4856,13 +4845,6 @@ Admin username.
 
 - Required: Yes
 - Type: string
-
-### Parameter: `jumpVmDefinition.enableTelemetry`
-
-Enable telemetry for helper scripts.
-
-- Required: Yes
-- Type: bool
 
 ### Parameter: `jumpVmDefinition.sku`
 
@@ -5351,7 +5333,6 @@ Azure AI Search configuration for the GenAI app. Required if deployGenAiAppBacki
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`enableTelemetry`](#parameter-searchdefinitionenabletelemetry) | bool | Enable module telemetry. |
 | [`localAuthenticationEnabled`](#parameter-searchdefinitionlocalauthenticationenabled) | bool | Enable local (admin keys) authentication. |
 | [`name`](#parameter-searchdefinitionname) | string | Search service name. |
 | [`partitionCount`](#parameter-searchdefinitionpartitioncount) | int | Number of partitions. |
@@ -5361,13 +5342,6 @@ Azure AI Search configuration for the GenAI app. Required if deployGenAiAppBacki
 | [`semanticSearchSku`](#parameter-searchdefinitionsemanticsearchsku) | string | Semantic search SKU (e.g., standard). |
 | [`sku`](#parameter-searchdefinitionsku) | string | Search SKU (e.g., basic/standard). |
 | [`tags`](#parameter-searchdefinitiontags) | object | Tags to apply to the search service. |
-
-### Parameter: `searchDefinition.enableTelemetry`
-
-Enable module telemetry.
-
-- Required: No
-- Type: bool
 
 ### Parameter: `searchDefinition.localAuthenticationEnabled`
 
@@ -5408,7 +5382,7 @@ Number of replicas.
 
 Role assignments to create on the search service.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 **Required parameters**
@@ -6234,7 +6208,7 @@ Rule set version.
 
 Overrides for specific rule groups.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 **Required parameters**
@@ -6291,7 +6265,7 @@ Name of the rule group.
 
 Exclusions for specific rules or variables.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 **Required parameters**
@@ -6333,7 +6307,7 @@ Selector match operator (e.g., Equals, Contains).
 
 Specific managed rule set exclusion details.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -6367,7 +6341,7 @@ Rule set version (e.g., 3.2).
 
 Rule groups to exclude.
 
-- Required: Yes
+- Required: No
 - Type: array
 
 ### Parameter: `wafPolicyDefinition.name`
@@ -6447,7 +6421,7 @@ Enable request body inspection.
 
 Tags to apply to the WAF Policy.
 
-- Required: Yes
+- Required: No
 - Type: object
 
 **Required parameters**
@@ -6481,7 +6455,6 @@ Arbitrary key for each tag.
 | [`baseUniqueName`](#parameter-aifoundrydefinitionbaseuniquename) | string | Base unique name used for related resources. |
 | [`cosmosDbConfiguration`](#parameter-aifoundrydefinitioncosmosdbconfiguration) | object | Cosmos DB configuration (reuse or create) for AI Foundry associated resources. |
 | [`createByor`](#parameter-aifoundrydefinitioncreatebyor) | bool | Create BYOR (bring-your-own resource) links where applicable. |
-| [`enableTelemetry`](#parameter-aifoundrydefinitionenabletelemetry) | bool | Enable telemetry for the pattern modules. |
 | [`includeAssociatedResources`](#parameter-aifoundrydefinitionincludeassociatedresources) | bool | Include associated resources (Search/Cosmos/Storage/KV) in the deployment. |
 | [`keyVaultConfiguration`](#parameter-aifoundrydefinitionkeyvaultconfiguration) | object | Key Vault configuration (reuse or create) for AI Foundry associated resources. |
 | [`location`](#parameter-aifoundrydefinitionlocation) | string | Location/region for the AI Foundry resources. |
@@ -7322,13 +7295,6 @@ Create BYOR (bring-your-own resource) links where applicable.
 - Required: No
 - Type: bool
 
-### Parameter: `aiFoundryDefinition.enableTelemetry`
-
-Enable telemetry for the pattern modules.
-
-- Required: No
-- Type: bool
-
 ### Parameter: `aiFoundryDefinition.includeAssociatedResources`
 
 Include associated resources (Search/Cosmos/Storage/KV) in the deployment.
@@ -7966,25 +7932,34 @@ Enable/Disable usage telemetry for module.
   }
   ```
 
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`networkRules`](#parameter-firewallpolicydefinitionnetworkrules) | array | Network rules to include in the policy (can be empty). |
-
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`networkPolicyRuleCollectionGroupName`](#parameter-firewallpolicydefinitionnetworkpolicyrulecollectiongroupname) | string | Name of the Network Rule Collection Group. |
 | [`networkPolicyRuleCollectionGroupPriority`](#parameter-firewallpolicydefinitionnetworkpolicyrulecollectiongrouppriority) | int | Priority for the Network Rule Collection Group. |
+| [`networkRules`](#parameter-firewallpolicydefinitionnetworkrules) | array | Network rules to include in the policy (can be empty). |
 | [`ruleCollectionGroups`](#parameter-firewallpolicydefinitionrulecollectiongroups) | array | List of custom Rule Collection Groups with collections and rules. |
+
+### Parameter: `firewallPolicyDefinition.networkPolicyRuleCollectionGroupName`
+
+Name of the Network Rule Collection Group.
+
+- Required: No
+- Type: string
+
+### Parameter: `firewallPolicyDefinition.networkPolicyRuleCollectionGroupPriority`
+
+Priority for the Network Rule Collection Group.
+
+- Required: No
+- Type: int
 
 ### Parameter: `firewallPolicyDefinition.networkRules`
 
 Network rules to include in the policy (can be empty).
 
-- Required: Yes
+- Required: No
 - Type: array
 
 **Required parameters**
@@ -8044,20 +8019,6 @@ Rule description.
 
 - Required: Yes
 - Type: string
-
-### Parameter: `firewallPolicyDefinition.networkPolicyRuleCollectionGroupName`
-
-Name of the Network Rule Collection Group.
-
-- Required: No
-- Type: string
-
-### Parameter: `firewallPolicyDefinition.networkPolicyRuleCollectionGroupPriority`
-
-Priority for the Network Rule Collection Group.
-
-- Required: No
-- Type: int
 
 ### Parameter: `firewallPolicyDefinition.ruleCollectionGroups`
 
@@ -8272,105 +8233,105 @@ Enable network isolation posture (Private Endpoints + Private DNS).
 
 Existing API Management service resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.appConfigResourceId`
 
 Existing App Configuration store resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.appInsightsResourceId`
 
 Existing Application Insights resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.applicationGatewayResourceId`
 
 Existing Application Gateway resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.bastionHostResourceId`
 
 Existing Azure Bastion resource ID to reuse; leave empty to skip.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.containerEnvResourceId`
 
 Existing Container Apps Environment resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.containerRegistryResourceId`
 
 Existing Azure Container Registry resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.dbAccountResourceId`
 
 Existing Cosmos DB account resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.firewallResourceId`
 
 Existing Azure Firewall resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.groundingServiceResourceId`
 
 Existing Grounding service resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.keyVaultResourceId`
 
 Existing Key Vault resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.logAnalyticsWorkspaceResourceId`
 
 Existing Log Analytics Workspace resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.searchServiceResourceId`
 
 Existing Azure AI Search service resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.storageAccountResourceId`
 
 Existing Storage Account resource ID to reuse.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceIds.virtualNetworkResourceId`
 
 Existing VNet resource ID to reuse; leave empty to create a new VNet.
 
-- Required: Yes
+- Required: No
 - Type: string
 
 ### Parameter: `resourceToken`

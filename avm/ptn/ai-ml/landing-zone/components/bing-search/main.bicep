@@ -81,3 +81,6 @@ output resourceId string = varBingId
 
 @description('Connection ID path under the AI services project.')
 output bingConnectionId string = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.CognitiveServices/accounts/${accountName}/projects/${projectName}/connections/${bingConnectionName}'
+
+@description('Name of the resource group where the Bing Grounding account is deployed (same as the deployment resource group when creating a new account, or the existing account resource group when reusing).')
+output resourceGroupName string = resourceGroup().name
