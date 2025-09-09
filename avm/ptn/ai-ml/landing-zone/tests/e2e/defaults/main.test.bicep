@@ -34,27 +34,16 @@ module testDeployment '../../../main.bicep' = [
     params: {
       baseName: workloadName
       location: consts.enforcedLocation
-      // Minimal Foundry: project-only (no agent hosts, no auto-deps, no models)
       aiFoundryDefinition: {
-        lock: { kind: 'None', name: '' }
-        aiProjects: []
         includeAssociatedResources: false
+        aiProjects: []
+        aiModelDeployments: []
         aiFoundryConfiguration: {
           createCapabilityHosts: false
         }
-        aiSearchConfiguration: {}
-        storageAccountConfiguration: {}
-        cosmosDbConfiguration: {}
-        keyVaultConfiguration: {}
-        aiModelDeployments: [] // none
       }
-
-      // If your root module exposes this, pass it to avoid PE/PDNS setup in CI
-      // (keeps the test small/fast). If not available, omit this line.
       networkIsolation: false
-
-      // Keep if the param is required by the module—even if no VM is created.
-      jumpVmAdminPassword: '<StrongP@ssw0rd!>'
+      deployGenAiAppBackingServices: false
     }
   }
 ]

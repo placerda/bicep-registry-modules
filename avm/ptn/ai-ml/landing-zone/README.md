@@ -166,18 +166,10 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
       }
       aiModelDeployments: []
       aiProjects: []
-      aiSearchConfiguration: {}
-      cosmosDbConfiguration: {}
       includeAssociatedResources: false
-      keyVaultConfiguration: {}
-      lock: {
-        kind: 'None'
-        name: ''
-      }
-      storageAccountConfiguration: {}
     }
     baseName: '<baseName>'
-    jumpVmAdminPassword: '<StrongP@ssw0rd!>'
+    deployGenAiAppBackingServices: false
     location: '<location>'
     networkIsolation: false
   }
@@ -203,22 +195,14 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
         },
         "aiModelDeployments": [],
         "aiProjects": [],
-        "aiSearchConfiguration": {},
-        "cosmosDbConfiguration": {},
-        "includeAssociatedResources": false,
-        "keyVaultConfiguration": {},
-        "lock": {
-          "kind": "None",
-          "name": ""
-        },
-        "storageAccountConfiguration": {}
+        "includeAssociatedResources": false
       }
     },
     "baseName": {
       "value": "<baseName>"
     },
-    "jumpVmAdminPassword": {
-      "value": "<StrongP@ssw0rd!>"
+    "deployGenAiAppBackingServices": {
+      "value": false
     },
     "location": {
       "value": "<location>"
@@ -246,18 +230,10 @@ param aiFoundryDefinition = {
   }
   aiModelDeployments: []
   aiProjects: []
-  aiSearchConfiguration: {}
-  cosmosDbConfiguration: {}
   includeAssociatedResources: false
-  keyVaultConfiguration: {}
-  lock: {
-    kind: 'None'
-    name: ''
-  }
-  storageAccountConfiguration: {}
 }
 param baseName = '<baseName>'
-param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
+param deployGenAiAppBackingServices = false
 param location = '<location>'
 param networkIsolation = false
 ```
