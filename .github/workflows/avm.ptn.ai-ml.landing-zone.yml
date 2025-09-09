@@ -26,11 +26,14 @@ on:
     branches:
       - main
     paths:
-      - avm/ptn/ai-ml/landing-zone/**
-      - utilities/pipelines/**
-      - !utilities/pipelines/platform/**
-      - !*/**/child-module-publish-allowed-list.json
-      - !*/**/README.md
+      - ".github/actions/templates/avm-**"
+      - ".github/workflows/avm.template.module.yml"
+      - ".github/workflows/avm.ptn.ai-ml.landing-zone.yml"
+      - "avm/ptn/ai-ml/landing-zone/**"
+      - "utilities/pipelines/**"
+      - "!utilities/pipelines/platform/**"
+      - "!*/**/child-module-publish-allowed-list.json"
+      - "!*/**/README.md"
 
 env:
   modulePath: "avm/ptn/ai-ml/landing-zone"
