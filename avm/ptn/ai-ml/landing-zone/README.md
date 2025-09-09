@@ -178,6 +178,7 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
     }
     baseName: '<baseName>'
     jumpVmAdminPassword: '<StrongP@ssw0rd!>'
+    location: '<location>'
     networkIsolation: false
   }
 }
@@ -219,6 +220,9 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
     "jumpVmAdminPassword": {
       "value": "<StrongP@ssw0rd!>"
     },
+    "location": {
+      "value": "<location>"
+    },
     "networkIsolation": {
       "value": false
     }
@@ -254,6 +258,7 @@ param aiFoundryDefinition = {
 }
 param baseName = '<baseName>'
 param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
+param location = '<location>'
 param networkIsolation = false
 ```
 
@@ -307,6 +312,7 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
     }
     baseName: '<baseName>'
     jumpVmAdminPassword: '<StrongP@ssw0rd!>'
+    location: '<location>'
   }
 }
 ```
@@ -362,6 +368,9 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
     },
     "jumpVmAdminPassword": {
       "value": "<StrongP@ssw0rd!>"
+    },
+    "location": {
+      "value": "<location>"
     }
   }
 }
@@ -411,6 +420,7 @@ param aiFoundryDefinition = {
 }
 param baseName = '<baseName>'
 param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
+param location = '<location>'
 ```
 
 </details>

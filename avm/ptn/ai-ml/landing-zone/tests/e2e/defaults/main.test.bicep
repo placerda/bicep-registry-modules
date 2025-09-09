@@ -7,7 +7,7 @@ metadata description = 'Deploys the landing zone with defaults.'
 @maxLength(90)
 param resourceGroupName string = 'dep-${namePrefix}-bicep-${serviceShort}-rg'
 
-import { enforcedLocation } from '../../shared/constants.bicep'
+import * as consts from '../../shared/constants.bicep'
 
 @description('Optional. Short identifier for the test kind. Keep short to avoid name-length issues.')
 param serviceShort string = 'lzmin'
@@ -22,7 +22,7 @@ var workloadName = take(replace(replace(replace(replace(_seed, ' ', ''), '-', ''
 // RG for test
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
   name: resourceGroupName
-  location: enforcedLocation
+  location: consts.enforcedLocation
 }
 
 // Test execution (idempotency: init + idem)
@@ -30,10 +30,10 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
 module testDeployment '../../../main.bicep' = [
   for iteration in ['init', 'idem']: {
     scope: resourceGroup
-    name: '${uniqueString(deployment().name, enforcedLocation)}-test-${serviceShort}-${iteration}'
+    name: '${uniqueString(deployment().name, consts.enforcedLocation)}-test-${serviceShort}-${iteration}'
     params: {
       baseName: workloadName
-
+      location: consts.enforcedLocation
       // Minimal Foundry: project-only (no agent hosts, no auto-deps, no models)
       aiFoundryDefinition: {
         lock: { kind: 'None', name: '' }
