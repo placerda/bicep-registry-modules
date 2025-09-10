@@ -56,7 +56,7 @@ Deploys a secure AI/ML landing zone (resource groups, networking, AI services, p
 | `Microsoft.CognitiveServices/accounts/projects/connections` | 2025-04-01-preview | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.cognitiveservices_accounts_projects_connections.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.CognitiveServices/2025-04-01-preview/accounts/projects/connections)</li></ul> |
 | `Microsoft.Compute/disks` | 2024-03-02 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.compute_disks.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Compute/2024-03-02/disks)</li></ul> |
 | `Microsoft.Compute/virtualMachines` | 2024-07-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.compute_virtualmachines.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Compute/2024-07-01/virtualMachines)</li></ul> |
-| `Microsoft.Compute/virtualMachines/extensions` | 2022-11-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.compute_virtualmachines_extensions.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Compute/2022-11-01/virtualMachines/extensions)</li></ul> |
+| `Microsoft.Compute/virtualMachines/extensions` | 2024-11-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.compute_virtualmachines_extensions.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Compute/2024-11-01/virtualMachines/extensions)</li></ul> |
 | `Microsoft.ContainerRegistry/registries` | 2023-06-01-preview | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.containerregistry_registries.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.ContainerRegistry/2023-06-01-preview/registries)</li></ul> |
 | `Microsoft.ContainerRegistry/registries/cacheRules` | 2023-06-01-preview | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.containerregistry_registries_cacherules.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.ContainerRegistry/2023-06-01-preview/registries/cacheRules)</li></ul> |
 | `Microsoft.ContainerRegistry/registries/credentialSets` | 2023-11-01-preview | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.containerregistry_registries_credentialsets.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.ContainerRegistry/2023-11-01-preview/registries/credentialSets)</li></ul> |
@@ -75,7 +75,7 @@ Deploys a secure AI/ML landing zone (resource groups, networking, AI services, p
 | `Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments` | 2025-04-15 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.documentdb_databaseaccounts_sqlroleassignments.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.DocumentDB/2025-04-15/databaseAccounts/sqlRoleAssignments)</li></ul> |
 | `Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions` | 2024-11-15 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.documentdb_databaseaccounts_sqlroledefinitions.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.DocumentDB/2024-11-15/databaseAccounts/sqlRoleDefinitions)</li></ul> |
 | `Microsoft.DocumentDB/databaseAccounts/tables` | 2024-11-15 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.documentdb_databaseaccounts_tables.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.DocumentDB/2024-11-15/databaseAccounts/tables)</li></ul> |
-| `Microsoft.GuestConfiguration/guestConfigurationAssignments` | 2020-06-25 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.guestconfiguration_guestconfigurationassignments.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.GuestConfiguration/2020-06-25/guestConfigurationAssignments)</li></ul> |
+| `Microsoft.GuestConfiguration/guestConfigurationAssignments` | 2024-04-05 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.guestconfiguration_guestconfigurationassignments.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.GuestConfiguration/2024-04-05/guestConfigurationAssignments)</li></ul> |
 | `Microsoft.Insights/components` | 2020-02-02 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.insights_components.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Insights/2020-02-02/components)</li></ul> |
 | `microsoft.insights/components/linkedStorageAccounts` | 2020-03-01-preview | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.insights_components_linkedstorageaccounts.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/microsoft.insights/2020-03-01-preview/components/linkedStorageAccounts)</li></ul> |
 | `Microsoft.Insights/dataCollectionRuleAssociations` | 2023-03-11 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.insights_datacollectionruleassociations.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Insights/2023-03-11/dataCollectionRuleAssociations)</li></ul> |
@@ -118,7 +118,7 @@ Deploys a secure AI/ML landing zone (resource groups, networking, AI services, p
 | `Microsoft.OperationalInsights/workspaces/storageInsightConfigs` | 2025-02-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.operationalinsights_workspaces_storageinsightconfigs.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.OperationalInsights/2025-02-01/workspaces/storageInsightConfigs)</li></ul> |
 | `Microsoft.OperationalInsights/workspaces/tables` | 2025-02-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.operationalinsights_workspaces_tables.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.OperationalInsights/2025-02-01/workspaces/tables)</li></ul> |
 | `Microsoft.OperationsManagement/solutions` | 2015-11-01-preview | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.operationsmanagement_solutions.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.OperationsManagement/2015-11-01-preview/solutions)</li></ul> |
-| `Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems` | 2023-01-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.recoveryservices_vaults_backupfabrics_protectioncontainers_protecteditems.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.RecoveryServices/2023-01-01/vaults/backupFabrics/protectionContainers/protectedItems)</li></ul> |
+| `Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems` | 2025-02-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.recoveryservices_vaults_backupfabrics_protectioncontainers_protecteditems.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.RecoveryServices/2025-02-01/vaults/backupFabrics/protectionContainers/protectedItems)</li></ul> |
 | `Microsoft.Resources/deploymentScripts` | 2023-08-01 | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.resources_deploymentscripts.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Resources/2023-08-01/deploymentScripts)</li></ul> |
 | `Microsoft.Search/searchServices` | 2025-02-01-preview | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.search_searchservices.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Search/2025-02-01-preview/searchServices)</li></ul> |
 | `Microsoft.Search/searchServices/sharedPrivateLinkResources` | 2025-02-01-preview | <ul style="padding-left: 0px;"><li>[AzAdvertizer](https://www.azadvertizer.net/azresourcetypes/microsoft.search_searchservices_sharedprivatelinkresources.html)</li><li>[Template reference](https://learn.microsoft.com/en-us/azure/templates/Microsoft.Search/2025-02-01-preview/searchServices/sharedPrivateLinkResources)</li></ul> |
@@ -157,63 +157,40 @@ Deploys the landing zone with defaults.
 <summary>via Bicep module</summary>
 
 ```bicep
-targetScope = 'subscription'
-metadata name = 'Landing Zone - Defaults'
-metadata description = 'Deploys the landing zone with defaults.'
+module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
+  name: 'landingZoneDeployment'
+  params: {
 
-// Parameters
-@description('Optional. The name of the resource group to deploy for testing purposes.')
-@maxLength(90)
-param resourceGroupName string = 'dep-${namePrefix}-bicep-${serviceShort}-rg'
-
-import { enforcedLocation } from '../../shared/constants.bicep'
-
-@description('Optional. Short identifier for the test kind. Keep short to avoid name-length issues.')
-param serviceShort string = 'lzmin'
-
-@description('Optional. A token injected by CI for uniqueness.')
-param namePrefix string = '#_namePrefix_#'
-
-// Keep 12 chars to match baseName default constraints
-var _seed = toLower('${namePrefix}${serviceShort}')
-var workloadName = take(replace(replace(replace(replace(_seed, ' ', ''), '-', ''), '_', ''), '.', ''), 12)
-
-// RG for test
-resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
-  name: resourceGroupName
-  location: enforcedLocation
-}
-
-@batchSize(1)
-module testDeployment 'dummy.main.bicep' = [
-  for iteration in ['init', 'idem']: {
-    scope: resourceGroup
-    name: '${uniqueString(deployment().name, enforcedLocation)}-test-${serviceShort}-${iteration}'
   }
-]
+}
+```
 
-// Deploys the AI/ML landing zone with default settings and no model deployments, validating basic provisioning and idempotency.
-// @batchSize(1)
-// module testDeployment '../../../main.bicep' = [
-//   for iteration in ['init', 'idem']: {
-//     scope: resourceGroup
-//     name: '${uniqueString(deployment().name, enforcedLocation)}-test-${serviceShort}-${iteration}'
-//     params: {
-//       baseName: workloadName
-//       location: enforcedLocation
-//       aiFoundryDefinition: {
-//         includeAssociatedResources: false
-//         aiProjects: []
-//         aiModelDeployments: []
-//         aiFoundryConfiguration: {
-//           createCapabilityHosts: false
-//         }
-//       }
-//       networkIsolation: false
-//       deployGenAiAppBackingServices: false
-//     }
-//   }
-// ]
+</details>
+<p>
+
+<details>
+
+<summary>via JSON parameters file</summary>
+
+```json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {}
+}
+```
+
+</details>
+<p>
+
+<details>
+
+<summary>via Bicep parameters file</summary>
+
+```bicep-params
+using 'br/public:avm/ptn/ai-ml/landing-zone:<version>'
+
+
 ```
 
 </details>
@@ -229,75 +206,40 @@ Deploys the landing zone with WAF alignment.
 <summary>via Bicep module</summary>
 
 ```bicep
-targetScope = 'subscription'
-metadata name = 'Landing Zone - WAF Aligned'
-metadata description = 'Deploys the landing zone with WAF alignment.'
+module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
+  name: 'landingZoneDeployment'
+  params: {
 
-// Parameters
-@description('Optional. The name of the resource group to deploy for testing purposes.')
-@maxLength(90)
-param resourceGroupName string = 'dep-${namePrefix}-bicep-${serviceShort}-rg'
-
-import { enforcedLocation } from '../../shared/constants.bicep'
-
-@description('Optional. Short identifier for the test kind. Keep short to avoid name-length issues.')
-param serviceShort string = 'lzwaf'
-
-@description('Optional. A token injected by CI for uniqueness.')
-param namePrefix string = '#_namePrefix_#'
-
-// Keep 12 chars to match baseName default constraints
-var _seed = toLower('${namePrefix}${serviceShort}')
-var workloadName = take(replace(replace(replace(replace(_seed, ' ', ''), '-', ''), '_', ''), '.', ''), 12)
-
-// RG for test
-resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
-  name: resourceGroupName
-  location: enforcedLocation
-}
-
-@batchSize(1)
-module testDeployment 'dummy.main.bicep' = [
-  for iteration in ['init', 'idem']: {
-    scope: resourceGroup
-    name: '${uniqueString(deployment().name, enforcedLocation)}-test-${serviceShort}-${iteration}'
   }
-]
+}
+```
 
-// Deploys the AI/ML landing zone with a minimal AI Foundry setup, including core infra and a sample GPT-4o model, to validate idempotent provisioning.
-// @batchSize(1)
-// module testDeployment '../../../main.bicep' = [
-//   for iteration in ['init', 'idem']: {
-//     scope: resourceGroup
-//     name: '${uniqueString(deployment().name, enforcedLocation)}-test-${serviceShort}-${iteration}'
-//     params: {
-//       // Make baseName explicit for stability
-//       baseName: workloadName
-//       location: enforcedLocation
-//       // Minimal model to keep capacity small and deterministic
-//       aiFoundryDefinition: {
-//         lock: { kind: 'None', name: '' }
-//         aiProjects: []
-//         includeAssociatedResources: true
-//         aiFoundryConfiguration: {
-//           createCapabilityHosts: true
-//         }
-//         aiSearchConfiguration: {}
-//         storageAccountConfiguration: {}
-//         cosmosDbConfiguration: {}
-//         keyVaultConfiguration: {}
-//         aiModelDeployments: [
-//           {
-//             name: 'gpt-4o'
-//             model: { format: 'OpenAI', name: 'gpt-4o', version: '2024-11-20' }
-//             scale: { type: 'Standard', capacity: 1, family: '', size: '', tier: '' }
-//           }
-//         ]
-//       }
-//       jumpVmAdminPassword: '<StrongP@ssw0rd!>'
-//     }
-//   }
-// ]
+</details>
+<p>
+
+<details>
+
+<summary>via JSON parameters file</summary>
+
+```json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {}
+}
+```
+
+</details>
+<p>
+
+<details>
+
+<summary>via Bicep parameters file</summary>
+
+```bicep-params
+using 'br/public:avm/ptn/ai-ml/landing-zone:<version>'
+
+
 ```
 
 </details>
@@ -8241,7 +8183,7 @@ This section gives you an overview of all local-referenced module files (i.e., o
 | `br/public:avm/res/app/managed-environment:0.11.3` | Remote reference |
 | `br/public:avm/res/cognitive-services/account:0.12.0` | Remote reference |
 | `br/public:avm/res/cognitive-services/account:0.13.2` | Remote reference |
-| `br/public:avm/res/compute/virtual-machine:0.19.0` | Remote reference |
+| `br/public:avm/res/compute/virtual-machine:0.20.0` | Remote reference |
 | `br/public:avm/res/container-registry/registry:0.9.3` | Remote reference |
 | `br/public:avm/res/document-db/database-account:0.15.1` | Remote reference |
 | `br/public:avm/res/insights/component:0.6.0` | Remote reference |
