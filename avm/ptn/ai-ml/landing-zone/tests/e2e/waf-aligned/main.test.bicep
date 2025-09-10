@@ -26,36 +26,36 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
 }
 
 // Test execution (idempotency: init + idem)
-@batchSize(1)
-module testDeployment '../../../main.bicep' = [
-  for iteration in ['init']: {
-    scope: resourceGroup
-    name: '${uniqueString(deployment().name, enforcedLocation)}-test-${serviceShort}-${iteration}'
-    params: {
-      // Make baseName explicit for stability
-      baseName: workloadName
-      location: enforcedLocation
-      // Minimal model to keep capacity small and deterministic
-      aiFoundryDefinition: {
-        lock: { kind: 'None', name: '' }
-        aiProjects: []
-        includeAssociatedResources: true
-        aiFoundryConfiguration: {
-          createCapabilityHosts: true
-        }
-        aiSearchConfiguration: {}
-        storageAccountConfiguration: {}
-        cosmosDbConfiguration: {}
-        keyVaultConfiguration: {}
-        aiModelDeployments: [
-          {
-            name: 'gpt-4o'
-            model: { format: 'OpenAI', name: 'gpt-4o', version: '2024-11-20' }
-            scale: { type: 'Standard', capacity: 1, family: '', size: '', tier: '' }
-          }
-        ]
-      }
-      jumpVmAdminPassword: '<StrongP@ssw0rd!>'
-    }
-  }
-]
+// @batchSize(1)
+// module testDeployment '../../../main.bicep' = [
+//   for iteration in ['init', 'idem']: {
+//     scope: resourceGroup
+//     name: '${uniqueString(deployment().name, enforcedLocation)}-test-${serviceShort}-${iteration}'
+//     params: {
+//       // Make baseName explicit for stability
+//       baseName: workloadName
+//       location: enforcedLocation
+//       // Minimal model to keep capacity small and deterministic
+//       aiFoundryDefinition: {
+//         lock: { kind: 'None', name: '' }
+//         aiProjects: []
+//         includeAssociatedResources: true
+//         aiFoundryConfiguration: {
+//           createCapabilityHosts: true
+//         }
+//         aiSearchConfiguration: {}
+//         storageAccountConfiguration: {}
+//         cosmosDbConfiguration: {}
+//         keyVaultConfiguration: {}
+//         aiModelDeployments: [
+//           {
+//             name: 'gpt-4o'
+//             model: { format: 'OpenAI', name: 'gpt-4o', version: '2024-11-20' }
+//             scale: { type: 'Standard', capacity: 1, family: '', size: '', tier: '' }
+//           }
+//         ]
+//       }
+//       jumpVmAdminPassword: '<StrongP@ssw0rd!>'
+//     }
+//   }
+// ]

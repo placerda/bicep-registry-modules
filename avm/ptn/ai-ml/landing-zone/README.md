@@ -157,85 +157,55 @@ Deploys the landing zone with defaults.
 <summary>via Bicep module</summary>
 
 ```bicep
-module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
-  name: 'landingZoneDeployment'
-  params: {
-    aiFoundryDefinition: {
-      aiFoundryConfiguration: {
-        createCapabilityHosts: false
-      }
-      aiModelDeployments: []
-      aiProjects: []
-      includeAssociatedResources: false
-    }
-    baseName: '<baseName>'
-    deployGenAiAppBackingServices: false
-    location: '<location>'
-    networkIsolation: false
-  }
+targetScope = 'subscription'
+metadata name = 'Landing Zone - Defaults'
+metadata description = 'Deploys the landing zone with defaults.'
+
+// Parameters
+@description('Optional. The name of the resource group to deploy for testing purposes.')
+@maxLength(90)
+param resourceGroupName string = 'dep-${namePrefix}-bicep-${serviceShort}-rg'
+
+import { enforcedLocation } from '../../shared/constants.bicep'
+
+@description('Optional. Short identifier for the test kind. Keep short to avoid name-length issues.')
+param serviceShort string = 'lzmin'
+
+@description('Optional. A token injected by CI for uniqueness.')
+param namePrefix string = '#_namePrefix_#'
+
+// Keep 12 chars to match baseName default constraints
+var _seed = toLower('${namePrefix}${serviceShort}')
+var workloadName = take(replace(replace(replace(replace(_seed, ' ', ''), '-', ''), '_', ''), '.', ''), 12)
+
+// RG for test
+resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
+  name: resourceGroupName
+  location: enforcedLocation
 }
-```
 
-</details>
-<p>
-
-<details>
-
-<summary>via JSON parameters file</summary>
-
-```json
-{
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "aiFoundryDefinition": {
-      "value": {
-        "aiFoundryConfiguration": {
-          "createCapabilityHosts": false
-        },
-        "aiModelDeployments": [],
-        "aiProjects": [],
-        "includeAssociatedResources": false
-      }
-    },
-    "baseName": {
-      "value": "<baseName>"
-    },
-    "deployGenAiAppBackingServices": {
-      "value": false
-    },
-    "location": {
-      "value": "<location>"
-    },
-    "networkIsolation": {
-      "value": false
-    }
-  }
-}
-```
-
-</details>
-<p>
-
-<details>
-
-<summary>via Bicep parameters file</summary>
-
-```bicep-params
-using 'br/public:avm/ptn/ai-ml/landing-zone:<version>'
-
-param aiFoundryDefinition = {
-  aiFoundryConfiguration: {
-    createCapabilityHosts: false
-  }
-  aiModelDeployments: []
-  aiProjects: []
-  includeAssociatedResources: false
-}
-param baseName = '<baseName>'
-param deployGenAiAppBackingServices = false
-param location = '<location>'
-param networkIsolation = false
+// Test execution (idempotency: init + idem)
+// @batchSize(1)
+// module testDeployment '../../../main.bicep' = [
+//   for iteration in ['init', 'idem']: {
+//     scope: resourceGroup
+//     name: '${uniqueString(deployment().name, enforcedLocation)}-test-${serviceShort}-${iteration}'
+//     params: {
+//       baseName: workloadName
+//       location: enforcedLocation
+//       aiFoundryDefinition: {
+//         includeAssociatedResources: false
+//         aiProjects: []
+//         aiModelDeployments: []
+//         aiFoundryConfiguration: {
+//           createCapabilityHosts: false
+//         }
+//       }
+//       networkIsolation: false
+//       deployGenAiAppBackingServices: false
+//     }
+//   }
+// ]
 ```
 
 </details>
@@ -251,152 +221,67 @@ Deploys the landing zone with WAF alignment.
 <summary>via Bicep module</summary>
 
 ```bicep
-module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
-  name: 'landingZoneDeployment'
-  params: {
-    aiFoundryDefinition: {
-      aiFoundryConfiguration: {
-        createCapabilityHosts: true
-      }
-      aiModelDeployments: [
-        {
-          model: {
-            format: 'OpenAI'
-            name: 'gpt-4o'
-            version: '2024-11-20'
-          }
-          name: 'gpt-4o'
-          scale: {
-            capacity: 1
-            family: ''
-            size: ''
-            tier: ''
-            type: 'Standard'
-          }
-        }
-      ]
-      aiProjects: []
-      aiSearchConfiguration: {}
-      cosmosDbConfiguration: {}
-      includeAssociatedResources: true
-      keyVaultConfiguration: {}
-      lock: {
-        kind: 'None'
-        name: ''
-      }
-      storageAccountConfiguration: {}
-    }
-    baseName: '<baseName>'
-    jumpVmAdminPassword: '<StrongP@ssw0rd!>'
-    location: '<location>'
-  }
+targetScope = 'subscription'
+metadata name = 'Landing Zone - WAF Aligned'
+metadata description = 'Deploys the landing zone with WAF alignment.'
+
+// Parameters
+@description('Optional. The name of the resource group to deploy for testing purposes.')
+@maxLength(90)
+param resourceGroupName string = 'dep-${namePrefix}-bicep-${serviceShort}-rg'
+
+import { enforcedLocation } from '../../shared/constants.bicep'
+
+@description('Optional. Short identifier for the test kind. Keep short to avoid name-length issues.')
+param serviceShort string = 'lzwaf'
+
+@description('Optional. A token injected by CI for uniqueness.')
+param namePrefix string = '#_namePrefix_#'
+
+// Keep 12 chars to match baseName default constraints
+var _seed = toLower('${namePrefix}${serviceShort}')
+var workloadName = take(replace(replace(replace(replace(_seed, ' ', ''), '-', ''), '_', ''), '.', ''), 12)
+
+// RG for test
+resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
+  name: resourceGroupName
+  location: enforcedLocation
 }
-```
 
-</details>
-<p>
-
-<details>
-
-<summary>via JSON parameters file</summary>
-
-```json
-{
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "aiFoundryDefinition": {
-      "value": {
-        "aiFoundryConfiguration": {
-          "createCapabilityHosts": true
-        },
-        "aiModelDeployments": [
-          {
-            "model": {
-              "format": "OpenAI",
-              "name": "gpt-4o",
-              "version": "2024-11-20"
-            },
-            "name": "gpt-4o",
-            "scale": {
-              "capacity": 1,
-              "family": "",
-              "size": "",
-              "tier": "",
-              "type": "Standard"
-            }
-          }
-        ],
-        "aiProjects": [],
-        "aiSearchConfiguration": {},
-        "cosmosDbConfiguration": {},
-        "includeAssociatedResources": true,
-        "keyVaultConfiguration": {},
-        "lock": {
-          "kind": "None",
-          "name": ""
-        },
-        "storageAccountConfiguration": {}
-      }
-    },
-    "baseName": {
-      "value": "<baseName>"
-    },
-    "jumpVmAdminPassword": {
-      "value": "<StrongP@ssw0rd!>"
-    },
-    "location": {
-      "value": "<location>"
-    }
-  }
-}
-```
-
-</details>
-<p>
-
-<details>
-
-<summary>via Bicep parameters file</summary>
-
-```bicep-params
-using 'br/public:avm/ptn/ai-ml/landing-zone:<version>'
-
-param aiFoundryDefinition = {
-  aiFoundryConfiguration: {
-    createCapabilityHosts: true
-  }
-  aiModelDeployments: [
-    {
-      model: {
-        format: 'OpenAI'
-        name: 'gpt-4o'
-        version: '2024-11-20'
-      }
-      name: 'gpt-4o'
-      scale: {
-        capacity: 1
-        family: ''
-        size: ''
-        tier: ''
-        type: 'Standard'
-      }
-    }
-  ]
-  aiProjects: []
-  aiSearchConfiguration: {}
-  cosmosDbConfiguration: {}
-  includeAssociatedResources: true
-  keyVaultConfiguration: {}
-  lock: {
-    kind: 'None'
-    name: ''
-  }
-  storageAccountConfiguration: {}
-}
-param baseName = '<baseName>'
-param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
-param location = '<location>'
+// Test execution (idempotency: init + idem)
+// @batchSize(1)
+// module testDeployment '../../../main.bicep' = [
+//   for iteration in ['init', 'idem']: {
+//     scope: resourceGroup
+//     name: '${uniqueString(deployment().name, enforcedLocation)}-test-${serviceShort}-${iteration}'
+//     params: {
+//       // Make baseName explicit for stability
+//       baseName: workloadName
+//       location: enforcedLocation
+//       // Minimal model to keep capacity small and deterministic
+//       aiFoundryDefinition: {
+//         lock: { kind: 'None', name: '' }
+//         aiProjects: []
+//         includeAssociatedResources: true
+//         aiFoundryConfiguration: {
+//           createCapabilityHosts: true
+//         }
+//         aiSearchConfiguration: {}
+//         storageAccountConfiguration: {}
+//         cosmosDbConfiguration: {}
+//         keyVaultConfiguration: {}
+//         aiModelDeployments: [
+//           {
+//             name: 'gpt-4o'
+//             model: { format: 'OpenAI', name: 'gpt-4o', version: '2024-11-20' }
+//             scale: { type: 'Standard', capacity: 1, family: '', size: '', tier: '' }
+//           }
+//         ]
+//       }
+//       jumpVmAdminPassword: '<StrongP@ssw0rd!>'
+//     }
+//   }
+// ]
 ```
 
 </details>
