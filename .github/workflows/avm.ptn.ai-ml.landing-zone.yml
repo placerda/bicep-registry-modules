@@ -78,8 +78,7 @@ jobs:
     name: "PSRule (module-only) — extended timeout"
     runs-on: ubuntu-latest
     needs: [ job_initialize_pipeline ]
-    # Honor your input flag
-    if: ${{ fromJson(needs.job_initialize_pipeline.outputs.workflowInput).staticValidation == true }}
+    if: ${{ github.event_name == 'push' || fromJson(needs.job_initialize_pipeline.outputs.workflowInput).staticValidation }}
     steps:
       - uses: actions/checkout@v4
 
@@ -102,7 +101,7 @@ jobs:
     permissions:
       id-token: write
       contents: write
-    needs: [ job_initialize_pipeline, psrule_static_validation  ]
+    needs: [ job_initialize_pipeline ]
     uses: ./.github/workflows/avm.template.module.yml
     with:
       workflowInput: "${{ needs.job_initialize_pipeline.outputs.workflowInput }}"
