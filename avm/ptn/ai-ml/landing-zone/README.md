@@ -8340,7 +8340,7 @@ This section gives you an overview of all local-referenced module files (i.e., o
 | `br/public:avm/res/app/managed-environment:0.11.3` | Remote reference |
 | `br/public:avm/res/cognitive-services/account:0.12.0` | Remote reference |
 | `br/public:avm/res/cognitive-services/account:0.13.2` | Remote reference |
-| `br/public:avm/res/compute/virtual-machine:0.18.0` | Remote reference |
+| `br/public:avm/res/compute/virtual-machine:0.19.0` | Remote reference |
 | `br/public:avm/res/container-registry/registry:0.9.3` | Remote reference |
 | `br/public:avm/res/document-db/database-account:0.15.1` | Remote reference |
 | `br/public:avm/res/insights/component:0.6.0` | Remote reference |

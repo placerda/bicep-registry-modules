@@ -2420,7 +2420,7 @@ resource bastionVaultSecret 'Microsoft.KeyVault/vaults/secrets@2024-11-01' = if 
   dependsOn: [bastionVault]
 }
 
-module jumpVm 'br/public:avm/res/compute/virtual-machine:0.18.0' = if (varDeployJumpVm) {
+module jumpVm 'br/public:avm/res/compute/virtual-machine:0.19.0' = if (varDeployJumpVm) {
   name: 'jumpVmDeployment'
   params: {
     name: empty(jumpVmDefinition.name!) ? '${varVm}${baseName}-jump' : jumpVmDefinition.name!
@@ -2461,7 +2461,7 @@ module jumpVm 'br/public:avm/res/compute/virtual-machine:0.18.0' = if (varDeploy
 }
 
 // Only deploy Build VM when an SSH key is provided
-module buildVm 'br/public:avm/res/compute/virtual-machine:0.18.0' = if (varDeployBuildVm && !empty(buildVmDefinition.sshPublicKey)) {
+module buildVm 'br/public:avm/res/compute/virtual-machine:0.19.0' = if (varDeployBuildVm && !empty(buildVmDefinition.sshPublicKey)) {
   name: 'buildVmDeployment'
   params: {
     name: empty(buildVmDefinition.name!) ? '${varVm}${baseName}-build' : buildVmDefinition.name!
