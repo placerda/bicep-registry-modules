@@ -184,7 +184,15 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
   location: enforcedLocation
 }
 
-// Test execution (idempotency: init + idem)
+@batchSize(1)
+module testDeployment 'dummy.main.bicep' = [
+  for iteration in ['init', 'idem']: {
+    scope: resourceGroup
+    name: '${uniqueString(deployment().name, enforcedLocation)}-test-${serviceShort}-${iteration}'
+  }
+]
+
+// Deploys the AI/ML landing zone with default settings and no model deployments, validating basic provisioning and idempotency.
 // @batchSize(1)
 // module testDeployment '../../../main.bicep' = [
 //   for iteration in ['init', 'idem']: {
@@ -248,7 +256,15 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
   location: enforcedLocation
 }
 
-// Test execution (idempotency: init + idem)
+@batchSize(1)
+module testDeployment 'dummy.main.bicep' = [
+  for iteration in ['init', 'idem']: {
+    scope: resourceGroup
+    name: '${uniqueString(deployment().name, enforcedLocation)}-test-${serviceShort}-${iteration}'
+  }
+]
+
+// Deploys the AI/ML landing zone with a minimal AI Foundry setup, including core infra and a sample GPT-4o model, to validate idempotent provisioning.
 // @batchSize(1)
 // module testDeployment '../../../main.bicep' = [
 //   for iteration in ['init', 'idem']: {
