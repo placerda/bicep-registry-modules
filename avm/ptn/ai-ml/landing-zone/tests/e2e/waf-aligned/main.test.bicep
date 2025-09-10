@@ -34,7 +34,7 @@ module testDeployment '../../../main.bicep' = [
     params: {
       // Make baseName explicit for stability
       baseName: workloadName
-      location: consts.enforcedLocation
+      location: enforcedLocation
       // Minimal model to keep capacity small and deterministic
       aiFoundryDefinition: {
         lock: { kind: 'None', name: '' }
