@@ -23,15 +23,23 @@ on:
         description: "Default location overwrite (e.g., eastus)"
         required: false
   push:
-    branches: [ main ]
+    branches:
+      - main
     paths:
+      # - ".github/actions/templates/avm-**"
+      # - ".github/workflows/avm.template.module.yml"
+      # - ".github/workflows/avm.ptn.ai-ml.landing-zone.yml"
+      # - "avm/ptn/ai-ml/landing-zone/**"
+      # - "utilities/pipelines/**"
+      # - "!utilities/pipelines/platform/**"
+      # - "!*/**/child-module-publish-allowed-list.json"
+      # - "!*/**/README.md"
       - ".github/actions/templates/avm-**"
       - ".github/workflows/avm.template.module.yml"
       - ".github/workflows/avm.ptn.ai-ml.landing-zone.yml"
-      - "avm/ptn/ai-ml/landing-zone/**"
+      - "avm/ptn/ai-ml/**"
       - "utilities/pipelines/**"
       - "!utilities/pipelines/platform/**"
-      - "!*/**/child-module-publish-allowed-list.json"
       - "!*/**/README.md"
 
 env:
@@ -60,11 +68,19 @@ jobs:
         uses: ./.github/actions/templates/avm-getModuleTestFiles
         with:
           modulePath: "${{ env.modulePath }}"
+      - name: Log system info
+        run: |
+          lscpu
+          free -m
+          bicep --version
+      - name: Time Bicep build
+        run: time bicep build ./avm/ptn/ai-ml/landing-zone/tests/e2e/defaults/main.test.bicep
     outputs:
       workflowInput: ${{ steps.get-workflow-param.outputs.workflowInput }}
       moduleTestFilePaths: ${{ steps.get-module-test-file-paths.outputs.moduleTestFilePaths }}
       psRuleModuleTestFilePaths: ${{ steps.get-module-test-file-paths.outputs.psRuleModuleTestFilePaths }}
       modulePath: "${{ env.modulePath }}"
+
 
   call-workflow-passing-data:
     name: "Run"

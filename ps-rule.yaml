@@ -1,2 +1,0 @@
-configuration:
-  AZURE_BICEP_FILE_EXPANSION_TIMEOUT: 120
