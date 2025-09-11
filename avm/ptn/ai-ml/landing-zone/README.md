@@ -160,7 +160,18 @@ Deploys the landing zone with defaults.
 module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
   name: 'landingZoneDeployment'
   params: {
-
+    aiFoundryDefinition: {
+      aiFoundryConfiguration: {
+        createCapabilityHosts: false
+      }
+      aiModelDeployments: []
+      aiProjects: []
+      includeAssociatedResources: false
+    }
+    baseName: '<baseName>'
+    deployGenAiAppBackingServices: false
+    location: '<location>'
+    networkIsolation: false
   }
 }
 ```
@@ -176,7 +187,30 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {}
+  "parameters": {
+    "aiFoundryDefinition": {
+      "value": {
+        "aiFoundryConfiguration": {
+          "createCapabilityHosts": false
+        },
+        "aiModelDeployments": [],
+        "aiProjects": [],
+        "includeAssociatedResources": false
+      }
+    },
+    "baseName": {
+      "value": "<baseName>"
+    },
+    "deployGenAiAppBackingServices": {
+      "value": false
+    },
+    "location": {
+      "value": "<location>"
+    },
+    "networkIsolation": {
+      "value": false
+    }
+  }
 }
 ```
 
@@ -190,7 +224,18 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
 ```bicep-params
 using 'br/public:avm/ptn/ai-ml/landing-zone:<version>'
 
-
+param aiFoundryDefinition = {
+  aiFoundryConfiguration: {
+    createCapabilityHosts: false
+  }
+  aiModelDeployments: []
+  aiProjects: []
+  includeAssociatedResources: false
+}
+param baseName = '<baseName>'
+param deployGenAiAppBackingServices = false
+param location = '<location>'
+param networkIsolation = false
 ```
 
 </details>
@@ -209,7 +254,41 @@ Deploys the landing zone with WAF alignment.
 module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
   name: 'landingZoneDeployment'
   params: {
-
+    aiFoundryDefinition: {
+      aiFoundryConfiguration: {
+        createCapabilityHosts: true
+      }
+      aiModelDeployments: [
+        {
+          model: {
+            format: 'OpenAI'
+            name: 'gpt-4o'
+            version: '2024-11-20'
+          }
+          name: 'gpt-4o'
+          scale: {
+            capacity: 1
+            family: ''
+            size: ''
+            tier: ''
+            type: 'Standard'
+          }
+        }
+      ]
+      aiProjects: []
+      aiSearchConfiguration: {}
+      cosmosDbConfiguration: {}
+      includeAssociatedResources: true
+      keyVaultConfiguration: {}
+      lock: {
+        kind: 'None'
+        name: ''
+      }
+      storageAccountConfiguration: {}
+    }
+    baseName: '<baseName>'
+    jumpVmAdminPassword: '<StrongP@ssw0rd!>'
+    location: '<location>'
   }
 }
 ```
@@ -225,7 +304,51 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {}
+  "parameters": {
+    "aiFoundryDefinition": {
+      "value": {
+        "aiFoundryConfiguration": {
+          "createCapabilityHosts": true
+        },
+        "aiModelDeployments": [
+          {
+            "model": {
+              "format": "OpenAI",
+              "name": "gpt-4o",
+              "version": "2024-11-20"
+            },
+            "name": "gpt-4o",
+            "scale": {
+              "capacity": 1,
+              "family": "",
+              "size": "",
+              "tier": "",
+              "type": "Standard"
+            }
+          }
+        ],
+        "aiProjects": [],
+        "aiSearchConfiguration": {},
+        "cosmosDbConfiguration": {},
+        "includeAssociatedResources": true,
+        "keyVaultConfiguration": {},
+        "lock": {
+          "kind": "None",
+          "name": ""
+        },
+        "storageAccountConfiguration": {}
+      }
+    },
+    "baseName": {
+      "value": "<baseName>"
+    },
+    "jumpVmAdminPassword": {
+      "value": "<StrongP@ssw0rd!>"
+    },
+    "location": {
+      "value": "<location>"
+    }
+  }
 }
 ```
 
@@ -239,7 +362,41 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
 ```bicep-params
 using 'br/public:avm/ptn/ai-ml/landing-zone:<version>'
 
-
+param aiFoundryDefinition = {
+  aiFoundryConfiguration: {
+    createCapabilityHosts: true
+  }
+  aiModelDeployments: [
+    {
+      model: {
+        format: 'OpenAI'
+        name: 'gpt-4o'
+        version: '2024-11-20'
+      }
+      name: 'gpt-4o'
+      scale: {
+        capacity: 1
+        family: ''
+        size: ''
+        tier: ''
+        type: 'Standard'
+      }
+    }
+  ]
+  aiProjects: []
+  aiSearchConfiguration: {}
+  cosmosDbConfiguration: {}
+  includeAssociatedResources: true
+  keyVaultConfiguration: {}
+  lock: {
+    kind: 'None'
+    name: ''
+  }
+  storageAccountConfiguration: {}
+}
+param baseName = '<baseName>'
+param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
+param location = '<location>'
 ```
 
 </details>
@@ -288,7 +445,7 @@ using 'br/public:avm/ptn/ai-ml/landing-zone:<version>'
 | [`firewallPolicyDefinition`](#parameter-firewallpolicydefinition) | object |  Azure Firewall Policy configuration (only used if your deployment wires a policy). |
 | [`flagPlatformLandingZone`](#parameter-flagplatformlandingzone) | bool |  Enable platform landing zone integration. |
 | [`githubPat`](#parameter-githubpat) | securestring | PAT used to request a GitHub runner registration token (when runner = github). |
-| [`location`](#parameter-location) | string | Azure region for AI Foundry resources. Defaults to the resource group location. |
+| [`location`](#parameter-location) | string | Azure region for AI LZ resources. Defaults to the resource group location. |
 | [`networkIsolation`](#parameter-networkisolation) | bool | Enable network isolation posture (Private Endpoints + Private DNS). |
 | [`resourceIds`](#parameter-resourceids) | object |  Existing resource IDs to reuse; leave empty to create new resources. |
 | [`resourceToken`](#parameter-resourcetoken) | string |  Deterministic token for resource names; auto-generated if not provided. |
@@ -7965,7 +8122,7 @@ PAT used to request a GitHub runner registration token (when runner = github).
 
 ### Parameter: `location`
 
-Azure region for AI Foundry resources. Defaults to the resource group location.
+Azure region for AI LZ resources. Defaults to the resource group location.
 
 - Required: No
 - Type: string

@@ -40,7 +40,7 @@ metadata description = 'Deploys a secure AI/ML landing zone (resource groups, ne
 import * as types from 'common/types.bicep'
 
 // 1.2 General Configuration (location, tags, naming token, global flags)
-@description('Optional. Azure region for AI Foundry resources. Defaults to the resource group location.')
+@description('Optional. Azure region for AI LZ resources. Defaults to the resource group location.')
 param location string = resourceGroup().location
 
 @description('Optional.  Tags applied to all deployed resources.')
