@@ -64,8 +64,8 @@ param flagPlatformLandingZone bool = false
 @description('Optional.  Deploy GenAI app services; defaults to true.')
 param deployGenAiAppBackingServices bool = true
 
-@description('Conditional. Availability zones to use for Public IPs (Application Gateway and Firewall). Specify only zones that exist in the selected region. Leave empty for regions that do not support availability zones. Required if Deploy App Gateway and Create App Gateway Public Frontend is true or Deploy Firewall is true')
-param publicIpAvailabilityZones int[] = []
+@description('Conditional. Availability zones to use for Public IPs (Application Gateway and Firewall). Specify only zones that exist in the selected region. Leave empty for regions that do not support availability zones. Required if Deploy App Gateway and Create App Gateway Public Frontend is true or Deploy Firewall is true.')
+param publicIpAvailabilityZones int[] = [1, 2, 3]
 
 // 1.3 Reuse Existing Services (resource IDs to reuse, leave empty to create)
 @description('Optional.  Existing resource IDs to reuse; leave empty to create new resources.')
@@ -309,6 +309,11 @@ param searchDefinition types.kSAISearchDefinitionType = {
   roleAssignments: []
   tags: {}
 }
+// helpers to keep the expression readable
+var varAppConfigSkuLower = toLower(appConfigurationDefinition.sku ?? 'standard')
+var varAppConfigReplicaInput = (varAppConfigSkuLower == 'free')
+  ? []
+  : (appConfigurationDefinition.replicaLocations! ?? [])
 
 // 1.5.11 App Configuration
 @description('Conditional. App Configuration store settings. Required if deployGenAiAppBackingServices is true, deployToggles.appConfig is true, and resourceIds.appConfigResourceId is empty.')
@@ -484,7 +489,7 @@ param apimDefinition types.apimDefinitionType = {
   name: ''
   publisherEmail: 'admin@example.com'
   publisherName: 'Contoso'
-  additionalLocations: {}
+  additionalLocations: []
   certificate: {}
   clientCertificateEnabled: false
   hostnameConfiguration: { management: {}, portal: {}, developerPortal: {}, proxy: {}, scm: {} }
@@ -498,6 +503,7 @@ param apimDefinition types.apimDefinitionType = {
   signUp: { enabled: false, termsOfService: { consentRequired: false, enabled: false, text: '' } }
   tags: {}
   tenantAccess: { enabled: true }
+  zones: [1, 2, 3]
 }
 
 // 1.5.18 Azure Firewall
@@ -562,7 +568,7 @@ param jumpVmDefinition types.jumpVmDefinitionType = {
 }
 
 // 1.5.23 Dedicated Key Vault for JumpVM password (public network access for convenience with Bastion operators)
-@description('Conditional. Jump (bastion) VM configuration (Windows). Required if deployToggles.jumpVm is true.')
+@description('Conditional. Dedicated Key Vault used to store the Jump VM password for Bastion operators. Required if deployToggles.jumpVm is true.')
 param bastionKeyVaultDefinition types.keyVaultDefinitionType = {
   name: ''
   sku: 'standard'
@@ -2062,11 +2068,11 @@ module configurationStore 'br/public:avm/res/app-configuration/configuration-sto
     enablePurgeProtection: appConfigurationDefinition.purgeProtectionEnabled! ?? true
     softDeleteRetentionInDays: appConfigurationDefinition.softDeleteRetentionInDays! ?? 7
     replicaLocations: [
-      for r in (toLower(appConfigurationDefinition.sku! ?? 'standard') == 'free'
-        ? []
-        : (appConfigurationDefinition.replicaLocations! ?? [])): {
-        name: empty(r.name!) ? 'rep-${replace(r.replicaLocation, ' ', '')}' : r.name!
-        replicaLocation: r.replicaLocation
+      for r in varAppConfigReplicaInput: {
+        name: (contains(r, 'name') && !empty(string(r.name!)))
+          ? string(r.name!)
+          : 'rep-${replace(string(r.replicaLocation), ' ', '')}'
+        replicaLocation: string(r.replicaLocation)
       }
     ]
 
@@ -2348,6 +2354,32 @@ module azureFirewall_withPolicy 'br/public:avm/res/network/azure-firewall:0.8.0'
   ]
 }
 
+// Use caller-specified zones for PIPs as the APIM zone set, or fall back to [1,2]
+var varApimZones = length(publicIpAvailabilityZones) >= 2 ? publicIpAvailabilityZones : [1, 2]
+
+// Build additional APIM locations in the shape the AVM module/ARM expects
+var varApimAdditionalLocations = [
+  for l in (apimDefinition.additionalLocations! ?? []): {
+    location: l.location
+    // SKU must be embedded here (don’t put skuCapacity at this level)
+    sku: {
+      name: apimDefinition.skuRoot!
+      capacity: apimDefinition.skuCapacity
+    }
+    // property name is zones in ARM; AVM normalizes it
+    zones: (contains(l, 'availabilityZones') && length(l.availabilityZones! ?? []) > 0)
+      ? l.availabilityZones!
+      : varApimZones
+
+    // optional pass-throughs
+    ...(contains(l, 'disableGateway') && l.disableGateway! != null ? { disableGateway: l.disableGateway! } : {})
+    ...(contains(l, 'natGatewayState') && l.natGatewayState! != null ? { natGatewayState: l.natGatewayState! } : {})
+    ...(contains(l, 'publicIpAddressResourceId') && !empty(string(l.publicIpAddressResourceId!))
+      ? { publicIpAddressResourceId: l.publicIpAddressResourceId! }
+      : {})
+  }
+]
+
 #disable-next-line BCP081
 module apim 'br/public:avm/res/api-management/service:0.11.0' = if (varDeployApim) {
   name: 'apimDeployment'
@@ -2368,12 +2400,14 @@ module apim 'br/public:avm/res/api-management/service:0.11.0' = if (varDeployApi
       ? { 'Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2': 'true' }
       : {}
 
+    additionalLocations: varApimAdditionalLocations!
+    availabilityZones: varApimZones
+
     enableTelemetry: enableTelemetry
     // Optional:
     // minApiVersion: apimDefinition.minApiVersion
     // notificationSenderEmail: apimDefinition.notificationSenderEmail
     // hostnameConfigurations: apimDefinition.hostnameConfiguration
-    // additionalLocations: apimDefinition.additionalLocations
   }
 }
 

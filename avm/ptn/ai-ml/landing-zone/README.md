@@ -510,7 +510,7 @@ param publicIpAvailabilityZones = [
 | [`appConfigurationDefinition`](#parameter-appconfigurationdefinition) | object | App Configuration store settings. Required if deployGenAiAppBackingServices is true, deployToggles.appConfig is true, and resourceIds.appConfigResourceId is empty. |
 | [`appGatewayDefinition`](#parameter-appgatewaydefinition) | object | Application Gateway configuration. Required if deployToggles.applicationGateway is true and resourceIds.applicationGatewayResourceId is empty. |
 | [`appInsightsDefinition`](#parameter-appinsightsdefinition) | object | Application Insights configuration. Required if deployToggles.appInsights is true and resourceIds.appInsightsResourceId is empty; a Log Analytics workspace must exist or be deployed. |
-| [`bastionKeyVaultDefinition`](#parameter-bastionkeyvaultdefinition) | object | Jump (bastion) VM configuration (Windows). Required if deployToggles.jumpVm is true. |
+| [`bastionKeyVaultDefinition`](#parameter-bastionkeyvaultdefinition) | object | Dedicated Key Vault used to store the Jump VM password for Bastion operators. Required if deployToggles.jumpVm is true. |
 | [`buildVmDefinition`](#parameter-buildvmdefinition) | object | Build VM configuration to support CI/CD workers (Linux). Required if deployToggles.buildVm is true and you intend to deploy the Build VM (sshPublicKey must be provided). |
 | [`containerAppEnvDefinition`](#parameter-containerappenvdefinition) | object | Container Apps Environment configuration. Required if deployGenAiAppBackingServices is true, deployToggles.containerEnv is true, and resourceIds.containerEnvResourceId is empty. |
 | [`containerRegistryDefinition`](#parameter-containerregistrydefinition) | object | Container Registry configuration. Required if deployGenAiAppBackingServices is true, deployToggles.containerRegistry is true, and resourceIds.containerRegistryResourceId is empty. |
@@ -524,7 +524,7 @@ param publicIpAvailabilityZones = [
 | [`logAnalyticsDefinition`](#parameter-loganalyticsdefinition) | object | Log Analytics Workspace configuration. Required if deployToggles.logAnalytics is true and resourceIds.logAnalyticsWorkspaceResourceId is empty. |
 | [`privateDnsZoneIds`](#parameter-privatednszoneids) | object | Existing Private DNS Zone resource IDs per service. Required if networkIsolation is true and you plan to reuse existing zones for any service. |
 | [`privateDnsZones`](#parameter-privatednszones) | object | Private DNS Zones and VNet links configuration. Required if networkIsolation is true, flagPlatformLandingZone is false, and you want this template to create zones for services not supplied in privateDnsZoneIds. |
-| [`publicIpAvailabilityZones`](#parameter-publicipavailabilityzones) | array | Availability zones to use for Public IPs (Application Gateway and Firewall). Specify only zones that exist in the selected region. Leave empty for regions that do not support availability zones. Required if Deploy App Gateway and Create App Gateway Public Frontend is true or Deploy Firewall is true |
+| [`publicIpAvailabilityZones`](#parameter-publicipavailabilityzones) | array | Availability zones to use for Public IPs (Application Gateway and Firewall). Specify only zones that exist in the selected region. Leave empty for regions that do not support availability zones. Required if Deploy App Gateway and Create App Gateway Public Frontend is true or Deploy Firewall is true. |
 | [`searchDefinition`](#parameter-searchdefinition) | object | Azure AI Search configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.searchService is true, and resourceIds.searchServiceResourceId is empty. |
 | [`storageAccountDefinition`](#parameter-storageaccountdefinition) | object | Storage Account configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.storageAccount is true, and resourceIds.storageAccountResourceId is empty. |
 | [`vnetDefinition`](#parameter-vnetdefinition) | object | Virtual Network configuration. Required if deployToggles.virtualNetwork is true and resourceIds.virtualNetworkResourceId is empty. |
@@ -559,7 +559,7 @@ API Management configuration. Required if deployToggles.apiManagement is true an
 - Default:
   ```Bicep
   {
-      additionalLocations: {}
+      additionalLocations: []
       certificate: {}
       clientCertificateEnabled: false
       hostnameConfiguration: {
@@ -595,6 +595,11 @@ API Management configuration. Required if deployToggles.apiManagement is true an
       tenantAccess: {
         enabled: true
       }
+      zones: [
+        1
+        2
+        3
+      ]
   }
   ```
 
@@ -614,7 +619,7 @@ API Management configuration. Required if deployToggles.apiManagement is true an
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`additionalLocations`](#parameter-apimdefinitionadditionallocations) | object | Additional regions for API Management. |
+| [`additionalLocations`](#parameter-apimdefinitionadditionallocations) | array | Additional regions for API Management. |
 | [`certificate`](#parameter-apimdefinitioncertificate) | object | Certificates for API Management endpoints. |
 | [`hostnameConfiguration`](#parameter-apimdefinitionhostnameconfiguration) | object | Hostname configuration for all endpoints. |
 | [`minApiVersion`](#parameter-apimdefinitionminapiversion) | string | Minimum ARM API version to use for APIM operations. |
@@ -624,6 +629,7 @@ API Management configuration. Required if deployToggles.apiManagement is true an
 | [`roleAssignments`](#parameter-apimdefinitionroleassignments) | array | Role assignments to create on the API Management service. |
 | [`skuRoot`](#parameter-apimdefinitionskuroot) | string | SKU for API Management (Developer/Basic/Standard/Premium/Consumption/V2 variants). |
 | [`tags`](#parameter-apimdefinitiontags) | object | Tags to apply to the API Management service. |
+| [`zones`](#parameter-apimdefinitionzones) | array | Availability zones to use (if any). |
 
 ### Parameter: `apimDefinition.clientCertificateEnabled`
 
@@ -755,91 +761,64 @@ Enable tenant access for the management plane.
 Additional regions for API Management.
 
 - Required: No
-- Type: object
+- Type: array
 
 **Required parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`>Any_other_property<`](#parameter-apimdefinitionadditionallocations>any_other_property<) | object | Arbitrary key for each additional location entry. |
-
-### Parameter: `apimDefinition.additionalLocations.>Any_other_property<`
-
-Arbitrary key for each additional location entry.
-
-- Required: Yes
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`capacity`](#parameter-apimdefinitionadditionallocations>any_other_property<capacity) | int | Capacity for the region. |
-| [`location`](#parameter-apimdefinitionadditionallocations>any_other_property<location) | string | Location for the additional APIM instance. |
+| [`location`](#parameter-apimdefinitionadditionallocationslocation) | string | Azure region for this additional APIM location (e.g., westus2). |
 
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`gatewayDisabled`](#parameter-apimdefinitionadditionallocations>any_other_property<gatewaydisabled) | bool | Disable gateway in this region. |
-| [`publicIpAddressId`](#parameter-apimdefinitionadditionallocations>any_other_property<publicipaddressid) | string | Public IP address resource ID to bind. |
-| [`virtualNetworkConfiguration`](#parameter-apimdefinitionadditionallocations>any_other_property<virtualnetworkconfiguration) | object | VNet configuration for the region. |
-| [`zones`](#parameter-apimdefinitionadditionallocations>any_other_property<zones) | array | Availability zones for the region. |
+| [`availabilityZones`](#parameter-apimdefinitionadditionallocationsavailabilityzones) | array | Availability zones to use in this region (e.g., [1,2]). |
+| [`disableGateway`](#parameter-apimdefinitionadditionallocationsdisablegateway) | bool | Disable the gateway in this location (true) or enable it (false). |
+| [`natGatewayState`](#parameter-apimdefinitionadditionallocationsnatgatewaystate) | string | NAT Gateway state for this location. Allowed values: Enabled or Disabled. |
+| [`publicIpAddressResourceId`](#parameter-apimdefinitionadditionallocationspublicipaddressresourceid) | string | Resource ID of an existing Public IP to associate with this location (if applicable). |
 
-### Parameter: `apimDefinition.additionalLocations.>Any_other_property<.capacity`
+### Parameter: `apimDefinition.additionalLocations.location`
 
-Capacity for the region.
-
-- Required: Yes
-- Type: int
-
-### Parameter: `apimDefinition.additionalLocations.>Any_other_property<.location`
-
-Location for the additional APIM instance.
+Azure region for this additional APIM location (e.g., westus2).
 
 - Required: Yes
 - Type: string
 
-### Parameter: `apimDefinition.additionalLocations.>Any_other_property<.gatewayDisabled`
+### Parameter: `apimDefinition.additionalLocations.availabilityZones`
 
-Disable gateway in this region.
+Availability zones to use in this region (e.g., [1,2]).
+
+- Required: No
+- Type: array
+
+### Parameter: `apimDefinition.additionalLocations.disableGateway`
+
+Disable the gateway in this location (true) or enable it (false).
 
 - Required: No
 - Type: bool
 
-### Parameter: `apimDefinition.additionalLocations.>Any_other_property<.publicIpAddressId`
+### Parameter: `apimDefinition.additionalLocations.natGatewayState`
 
-Public IP address resource ID to bind.
+NAT Gateway state for this location. Allowed values: Enabled or Disabled.
 
 - Required: No
 - Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Disabled'
+    'Enabled'
+  ]
+  ```
 
-### Parameter: `apimDefinition.additionalLocations.>Any_other_property<.virtualNetworkConfiguration`
+### Parameter: `apimDefinition.additionalLocations.publicIpAddressResourceId`
 
-VNet configuration for the region.
+Resource ID of an existing Public IP to associate with this location (if applicable).
 
 - Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`subnetId`](#parameter-apimdefinitionadditionallocations>any_other_property<virtualnetworkconfigurationsubnetid) | string | Subnet resource ID used by APIM in this region. |
-
-### Parameter: `apimDefinition.additionalLocations.>Any_other_property<.virtualNetworkConfiguration.subnetId`
-
-Subnet resource ID used by APIM in this region.
-
-- Required: Yes
 - Type: string
-
-### Parameter: `apimDefinition.additionalLocations.>Any_other_property<.zones`
-
-Availability zones for the region.
-
-- Required: No
-- Type: array
 
 ### Parameter: `apimDefinition.certificate`
 
@@ -1519,6 +1498,13 @@ Arbitrary key for each tag.
 - Required: Yes
 - Type: string
 
+### Parameter: `apimDefinition.zones`
+
+Availability zones to use (if any).
+
+- Required: No
+- Type: array
+
 ### Parameter: `appConfigurationDefinition`
 
 App Configuration store settings. Required if deployGenAiAppBackingServices is true, deployToggles.appConfig is true, and resourceIds.appConfigResourceId is empty.
@@ -1551,7 +1537,7 @@ App Configuration store settings. Required if deployGenAiAppBackingServices is t
 | [`localAuthEnabled`](#parameter-appconfigurationdefinitionlocalauthenabled) | bool | Enable local (access keys) authentication. |
 | [`name`](#parameter-appconfigurationdefinitionname) | string | App Configuration store name. |
 | [`purgeProtectionEnabled`](#parameter-appconfigurationdefinitionpurgeprotectionenabled) | bool | Enable purge protection. |
-| [`replicaLocations`](#parameter-appconfigurationdefinitionreplicalocations) | array | Geo-replica locations. Each entry creates a replica in that Azure region. |
+| [`replicaLocations`](#parameter-appconfigurationdefinitionreplicalocations) | array | Replicas. Ignored when SKU is free. |
 | [`roleAssignments`](#parameter-appconfigurationdefinitionroleassignments) | array | Role assignments to create on the store. |
 | [`sku`](#parameter-appconfigurationdefinitionsku) | string | SKU for App Configuration. |
 | [`softDeleteRetentionInDays`](#parameter-appconfigurationdefinitionsoftdeleteretentionindays) | int | Soft delete retention (days). |
@@ -1608,7 +1594,7 @@ Enable purge protection.
 
 ### Parameter: `appConfigurationDefinition.replicaLocations`
 
-Geo-replica locations. Each entry creates a replica in that Azure region.
+Replicas. Ignored when SKU is free.
 
 - Required: No
 - Type: array
@@ -1617,24 +1603,24 @@ Geo-replica locations. Each entry creates a replica in that Azure region.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`replicaLocation`](#parameter-appconfigurationdefinitionreplicalocationsreplicalocation) | string | Azure region for the replica (must differ from the primary location). |
+| [`replicaLocation`](#parameter-appconfigurationdefinitionreplicalocationsreplicalocation) | string | Azure region for this replica (e.g., westus2). |
 
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`name`](#parameter-appconfigurationdefinitionreplicalocationsname) | string | Replica resource name. If omitted, a deterministic name is generated. |
+| [`name`](#parameter-appconfigurationdefinitionreplicalocationsname) | string | Name for the replica resource. If omitted, a deterministic name is generated. |
 
 ### Parameter: `appConfigurationDefinition.replicaLocations.replicaLocation`
 
-Azure region for the replica (must differ from the primary location).
+Azure region for this replica (e.g., westus2).
 
 - Required: Yes
 - Type: string
 
 ### Parameter: `appConfigurationDefinition.replicaLocations.name`
 
-Replica resource name. If omitted, a deterministic name is generated.
+Name for the replica resource. If omitted, a deterministic name is generated.
 
 - Required: No
 - Type: string
@@ -1740,8 +1726,15 @@ Role assignment name.
 
 SKU for App Configuration.
 
-- Required: No
+- Required: Yes
 - Type: string
+- Allowed:
+  ```Bicep
+  [
+    'free'
+    'standard'
+  ]
+  ```
 
 ### Parameter: `appConfigurationDefinition.softDeleteRetentionInDays`
 
@@ -3442,7 +3435,7 @@ Arbitrary key for each tag.
 
 ### Parameter: `bastionKeyVaultDefinition`
 
-Jump (bastion) VM configuration (Windows). Required if deployToggles.jumpVm is true.
+Dedicated Key Vault used to store the Jump VM password for Bastion operators. Required if deployToggles.jumpVm is true.
 
 - Required: No
 - Type: object
@@ -5475,11 +5468,18 @@ Resource ID of the resource group that hosts existing Private DNS zones.
 
 ### Parameter: `publicIpAvailabilityZones`
 
-Availability zones to use for Public IPs (Application Gateway and Firewall). Specify only zones that exist in the selected region. Leave empty for regions that do not support availability zones. Required if Deploy App Gateway and Create App Gateway Public Frontend is true or Deploy Firewall is true
+Availability zones to use for Public IPs (Application Gateway and Firewall). Specify only zones that exist in the selected region. Leave empty for regions that do not support availability zones. Required if Deploy App Gateway and Create App Gateway Public Frontend is true or Deploy Firewall is true.
 
 - Required: No
 - Type: array
-- Default: `[]`
+- Default:
+  ```Bicep
+  [
+    1
+    2
+    3
+  ]
+  ```
 
 ### Parameter: `searchDefinition`
 
@@ -7842,7 +7842,7 @@ List of Container Apps to create.
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`appId`](#parameter-containerappslistappid) | string | Logical app identifier (used for Dapr and container name). |
-| [`external`](#parameter-containerappslistexternal) | bool | Whether to expose through the environment’s external ingress. |
+| [`external`](#parameter-containerappslistexternal) | bool | Whether to expose through the environment external ingress. |
 | [`maxReplicas`](#parameter-containerappslistmaxreplicas) | int | Maximum number of replicas. |
 | [`minReplicas`](#parameter-containerappslistminreplicas) | int | Minimum number of replicas. |
 | [`profileName`](#parameter-containerappslistprofilename) | string | Workload profile name to schedule to. |
@@ -7862,7 +7862,7 @@ Logical app identifier (used for Dapr and container name).
 
 ### Parameter: `containerAppsList.external`
 
-Whether to expose through the environment’s external ingress.
+Whether to expose through the environment external ingress.
 
 - Required: Yes
 - Type: bool

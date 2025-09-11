@@ -367,7 +367,7 @@ type containerAppDefinitionType = {
   minReplicas: int
   @description('Required. Maximum number of replicas.')
   maxReplicas: int
-  @description('Required. Whether to expose through the environment’s external ingress.')
+  @description('Required. Whether to expose through the environment external ingress.')
   external: bool
 }
 
@@ -627,6 +627,15 @@ type kSGroundingWithBingDefinitionType = {
 }
 
 @export()
+type appConfigurationReplicaLocationType = {
+  @description('Optional. Name for the replica resource. If omitted, a deterministic name is generated.')
+  name: string?
+
+  @description('Required. Azure region for this replica (e.g., westus2).')
+  replicaLocation: string
+}
+
+@export()
 @description('Configuration object for the Azure App Configuration store for the GenAI app.')
 type appConfigurationDefinitionType = {
   @description('Optional. Data plane proxy configuration (auth and Private Link delegation).')
@@ -647,7 +656,7 @@ type appConfigurationDefinitionType = {
   purgeProtectionEnabled: bool?
 
   @description('Optional. SKU for App Configuration.')
-  sku: string?
+  sku: 'standard' | 'free'
 
   @description('Optional. Soft delete retention (days).')
   softDeleteRetentionInDays: int?
@@ -658,13 +667,8 @@ type appConfigurationDefinitionType = {
     *: string
   }?
 
-  @description('Optional. Geo-replica locations. Each entry creates a replica in that Azure region.')
-  replicaLocations: {
-    @description('Optional. Replica resource name. If omitted, a deterministic name is generated.')
-    name: string?
-    @description('Required. Azure region for the replica (must differ from the primary location).')
-    replicaLocation: string
-  }[]?
+  @description('Optional. Replicas. Ignored when SKU is free.')
+  replicaLocations: appConfigurationReplicaLocationType[]?
 
   @description('Optional. Role assignments to create on the store.')
   roleAssignments: {
@@ -1574,6 +1578,25 @@ type appGatewayDefinitionType = {
 }
 
 @export()
+@description('Configuration for an additional APIM location (region, SKU/capacity, networking, and zones).')
+type apimAdditionalLocationType = {
+  @description('Required. Azure region for this additional APIM location (e.g., westus2).')
+  location: string
+
+  @description('Optional. Availability zones to use in this region (e.g., [1,2]).')
+  availabilityZones: int[]? // zones for this region (e.g., [1,2])
+
+  @description('Optional. Disable the gateway in this location (true) or enable it (false).')
+  disableGateway: bool?
+
+  @description('Optional. NAT Gateway state for this location. Allowed values: Enabled or Disabled.')
+  natGatewayState: 'Enabled' | 'Disabled'?
+
+  @description('Optional. Resource ID of an existing Public IP to associate with this location (if applicable).')
+  publicIpAddressResourceId: string?
+}
+
+@export()
 @description('Configuration object for the Azure API Management service to be deployed.')
 type apimDefinitionType = {
   @description('Optional. API Management service name.')
@@ -1592,26 +1615,7 @@ type apimDefinitionType = {
   notificationSenderEmail: string?
 
   @description('Optional. Additional regions for API Management.')
-  additionalLocations: {
-    @description('Required. Arbitrary key for each additional location entry.')
-    *: {
-      @description('Required. Location for the additional APIM instance.')
-      location: string
-      @description('Required. Capacity for the region.')
-      capacity: int
-      @description('Optional. Availability zones for the region.')
-      zones: int[]?
-      @description('Optional. Public IP address resource ID to bind.')
-      publicIpAddressId: string?
-      @description('Optional. Disable gateway in this region.')
-      gatewayDisabled: bool?
-      @description('Optional. VNet configuration for the region.')
-      virtualNetworkConfiguration: {
-        @description('Required. Subnet resource ID used by APIM in this region.')
-        subnetId: string
-      }?
-    }
-  }?
+  additionalLocations: apimAdditionalLocationType[]?
 
   @description('Optional. Certificates for API Management endpoints.')
   certificate: {
@@ -1802,6 +1806,9 @@ type apimDefinitionType = {
     @description('Required. Enable tenant access for the management plane.')
     enabled: bool
   }
+
+  @description('Optional. Availability zones to use (if any).')
+  zones: int[]?
 }
 
 @export()
