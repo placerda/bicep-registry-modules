@@ -983,11 +983,22 @@ var varAfModelDeployments = [
   for (md, idx) in varAfModelEntries: union(
     {
       name: empty(md.name) ? 'model-${idx}' : string(md.name)
-      model: { format: md.model.format, name: md.model.name, version: md.model.version }
-      sku: { capacity: int(md.scale.capacity), name: empty(md.scale.type) ? 'Standard' : string(md.scale.type) }
+      model: {
+        format: md.model.format
+        name: md.model.name
+        version: md.model.version
+      }
+      sku: {
+        capacity: int(md.scale.capacity)
+        name: empty(md.scale.type) ? 'Standard' : string(md.scale.type)
+      }
     },
-    empty(md.raiPolicyName!) ? {} : { raiPolicyName: md.raiPolicyName! },
-    empty(md.versionUpgradeOption!) ? {} : { versionUpgradeOption: md.versionUpgradeOption! }
+    (contains(md, 'raiPolicyName') && !empty(string(md.raiPolicyName)))
+      ? { raiPolicyName: string(md.raiPolicyName) }
+      : {},
+    (contains(md, 'versionUpgradeOption') && !empty(string(md.versionUpgradeOption)))
+      ? { versionUpgradeOption: string(md.versionUpgradeOption) }
+      : {}
   )
 ]
 
@@ -1111,11 +1122,7 @@ var varWafPolicyResourceId = varDeployWafPolicy ? wafPolicy!.outputs.resourceId 
 var varAgwPipName = '${varPip}${varAgw}${baseName}'
 
 // Firewall policy wiring and rules (optional)
-var varDeployAfwPolicy = varDeployFirewall && (length(firewallPolicyDefinition.networkRules!) > 0 || !empty(firewallPolicyDefinition.networkPolicyRuleCollectionGroupName!))
-var varRcgName = empty(firewallPolicyDefinition.networkPolicyRuleCollectionGroupName!)
-  ? 'networkRules'
-  : firewallPolicyDefinition.networkPolicyRuleCollectionGroupName!
-var varRcgPriority = firewallPolicyDefinition.networkPolicyRuleCollectionGroupPriority! ?? 100
+var varDeployAfwPolicy = varDeployFirewall && length(firewallPolicyDefinition.networkRules! ?? []) > 0
 var varNetworkRulesForModule = [
   for r in firewallPolicyDefinition.networkRules!: {
     name: r.name
@@ -2237,21 +2244,24 @@ module fwPolicy 'br/public:avm/res/network/firewall-policy:0.3.1' = if (varDeplo
     tags: tags
     enableTelemetry: enableTelemetry
 
-    // Single Rule Collection Group (configurable name/priority); "Allow" collection using provided networkRules
-    ruleCollectionGroups: [
-      {
-        name: varRcgName
-        priority: varRcgPriority
-        ruleCollections: [
+    ruleCollectionGroups: (length(varNetworkRulesForModule) > 0)
+      ? [
           {
-            name: 'defaultNetworkRules'
-            ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
-            action: { type: 'Allow' } // change to 'Deny' if you want
-            rules: varNetworkRulesForModule
+            name: empty(firewallPolicyDefinition.networkPolicyRuleCollectionGroupName!)
+              ? 'networkRules'
+              : firewallPolicyDefinition.networkPolicyRuleCollectionGroupName!
+            priority: firewallPolicyDefinition.networkPolicyRuleCollectionGroupPriority! ?? 100
+            ruleCollections: [
+              {
+                name: 'defaultNetworkRules'
+                ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+                action: { type: 'Allow' }
+                rules: varNetworkRulesForModule
+              }
+            ]
           }
         ]
-      }
-    ]
+      : []
   }
 }
 
