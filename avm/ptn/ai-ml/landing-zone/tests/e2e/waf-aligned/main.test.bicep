@@ -55,6 +55,14 @@ module testDeployment '../../../main.bicep' = [
           }
         ]
       }
+      publicIpAvailabilityZones: [1, 2, 3]
+      firewallDefinition: {
+        name: ''
+        sku: 'AZFW_VNet'
+        tier: 'Standard'
+        zones: [1, 2]
+        tags: {}
+      }
       jumpVmAdminPassword: '<StrongP@ssw0rd!>'
     }
   }

@@ -64,6 +64,9 @@ param flagPlatformLandingZone bool = false
 @description('Optional.  Deploy GenAI app services; defaults to true.')
 param deployGenAiAppBackingServices bool = true
 
+@description('Conditional. Availability zones to use for Public IPs (Application Gateway and Firewall). Specify only zones that exist in the selected region. Leave empty for regions that do not support availability zones. Required if Deploy App Gateway and Create App Gateway Public Frontend is true or Deploy Firewall is true')
+param publicIpAvailabilityZones int[] = []
+
 // 1.3 Reuse Existing Services (resource IDs to reuse, leave empty to create)
 @description('Optional.  Existing resource IDs to reuse; leave empty to create new resources.')
 param resourceIds types.resourceIdsType = {
@@ -201,6 +204,10 @@ param logAnalyticsDefinition types.logAnalyticsWorkspaceDefinitionType = {
   name: ''
   retention: 30
   sku: 'PerGB2018'
+  replication: {
+    enabled: true
+    location: 'westus2'
+  }
   tags: {}
 }
 
@@ -313,6 +320,9 @@ param appConfigurationDefinition types.appConfigurationDefinitionType = {
   softDeleteRetentionInDays: 7
   tags: {}
   roleAssignments: []
+  replicaLocations: [
+    { replicaLocation: 'westus2' }
+  ]
 }
 
 // 1.5.12 Private DNS
@@ -480,12 +490,12 @@ param apimDefinition types.apimDefinitionType = {
   hostnameConfiguration: { management: {}, portal: {}, developerPortal: {}, proxy: {}, scm: {} }
   minApiVersion: '2019-12-01'
   notificationSenderEmail: 'apimgmt-noreply@azure.com'
+  skuRoot: 'Premium' // zone-capable
+  skuCapacity: 2 // at least 2 scale units
   protocols: { enableHttp2: true }
   roleAssignments: []
   signIn: { enabled: true }
   signUp: { enabled: false, termsOfService: { consentRequired: false, enabled: false, text: '' } }
-  skuRoot: 'Developer'
-  skuCapacity: 1
   tags: {}
   tenantAccess: { enabled: true }
 }
@@ -496,7 +506,7 @@ param firewallDefinition types.firewallDefinitionType = {
   name: ''
   sku: 'AZFW_VNet'
   tier: 'Standard'
-  zones: []
+  zones: [1, 2]
   tags: {}
 }
 
@@ -1181,24 +1191,24 @@ var varBuildVmNormalized = union(
 )
 
 // Render cloud-init from template with placeholders
-var varT0raw = replace(loadTextContent('./common/build-cloudinit.yaml'), '\r\n', '\n')
-var varT0 = varT0raw
-var varT1 = replace(varT0, '{0}', string(varBuildVmNormalized.runner))
-var varT2 = replace(varT1, '{1}', string(varBuildVmNormalized.azdo.orgUrl))
-var varT3 = replace(varT2, '{2}', string(varBuildVmNormalized.azdo.pool))
-var varT4 = replace(varT3, '{3}', string(varBuildVmNormalized.azdo.agentName))
-var varT5 = replace(varT4, '{4}', string(varBuildVmNormalized.azdo.workFolder))
-var varT6 = replace(varT5, '{5}', string(varBuildVmNormalized.github.owner))
-var varT7 = replace(varT6, '{6}', string(varBuildVmNormalized.github.repo))
-var varT8 = replace(varT7, '{7}', string(varBuildVmNormalized.github.labels))
-var varT9 = replace(varT8, '{8}', string(varBuildVmNormalized.github.agentName))
-var varT10 = replace(varT9, '{9}', string(varBuildVmNormalized.github.workFolder))
-var varT11 = replace(varT10, '{10}', string(azdoPat))
-var varT12 = replace(varT11, '{11}', string(githubPat))
-var varT13 = replace(varT12, '{12}', string(varBuildVmNormalized.adminUsername))
-var varT14 = replace(varT13, '{13}', string(varBuildVmNormalized.sshPublicKey))
-var varT15 = replace(varT14, '{14}', string(baseName))
-var varBuildCloudInit = varT15
+var varBuildVMCloudInitRaw = replace(loadTextContent('./common/build-cloudinit.yaml'), '\r\n', '\n')
+var varBuildVMCloudInitT0 = varBuildVMCloudInitRaw
+var varBuildVMCloudInitT1 = replace(varBuildVMCloudInitT0, '{0}', string(varBuildVmNormalized.runner))
+var varBuildVMCloudInitT2 = replace(varBuildVMCloudInitT1, '{1}', string(varBuildVmNormalized.azdo.orgUrl))
+var varBuildVMCloudInitT3 = replace(varBuildVMCloudInitT2, '{2}', string(varBuildVmNormalized.azdo.pool))
+var varBuildVMCloudInitT4 = replace(varBuildVMCloudInitT3, '{3}', string(varBuildVmNormalized.azdo.agentName))
+var varBuildVMCloudInitT5 = replace(varBuildVMCloudInitT4, '{4}', string(varBuildVmNormalized.azdo.workFolder))
+var varBuildVMCloudInitT6 = replace(varBuildVMCloudInitT5, '{5}', string(varBuildVmNormalized.github.owner))
+var varBuildVMCloudInitT7 = replace(varBuildVMCloudInitT6, '{6}', string(varBuildVmNormalized.github.repo))
+var varBuildVMCloudInitT8 = replace(varBuildVMCloudInitT7, '{7}', string(varBuildVmNormalized.github.labels))
+var varBuildVMCloudInitT9 = replace(varBuildVMCloudInitT8, '{8}', string(varBuildVmNormalized.github.agentName))
+var varBuildVMCloudInitT10 = replace(varBuildVMCloudInitT9, '{9}', string(varBuildVmNormalized.github.workFolder))
+var varBuildVMCloudInitT11 = replace(varBuildVMCloudInitT10, '{10}', string(azdoPat))
+var varBuildVMCloudInitT12 = replace(varBuildVMCloudInitT11, '{11}', string(githubPat))
+var varBuildVMCloudInitT13 = replace(varBuildVMCloudInitT12, '{12}', string(varBuildVmNormalized.adminUsername))
+var varBuildVMCloudInitT14 = replace(varBuildVMCloudInitT13, '{13}', string(varBuildVmNormalized.sshPublicKey))
+var varBuildVMCloudInitT15 = replace(varBuildVMCloudInitT14, '{14}', string(baseName))
+var varBuildVMCloudInit = varBuildVMCloudInitT15
 
 // ── 2.14 Hub VNet (peer) parsing for reverse peering
 var varPeerVnetId = hubVnetPeeringDefinition.peerVnetResourceId
@@ -1793,6 +1803,7 @@ module logAnalytics 'br/public:avm/res/operational-insights/workspace:0.12.0' = 
     tags: union(tags, logAnalyticsDefinition.tags! ?? {})
     managedIdentities: { systemAssigned: true }
     enableTelemetry: enableTelemetry
+    replication: logAnalyticsDefinition.replication! ?? { enabled: true, location: 'westus2' }
   }
 }
 
@@ -2046,7 +2057,21 @@ module configurationStore 'br/public:avm/res/app-configuration/configuration-sto
   name: 'configurationStoreDeployment'
   params: {
     name: varAppConfigName
-    enablePurgeProtection: true
+    location: location
+    disableLocalAuth: !(appConfigurationDefinition.localAuthEnabled! ?? false)
+    enablePurgeProtection: appConfigurationDefinition.purgeProtectionEnabled! ?? true
+    softDeleteRetentionInDays: appConfigurationDefinition.softDeleteRetentionInDays! ?? 7
+    replicaLocations: [
+      for r in (toLower(appConfigurationDefinition.sku! ?? 'standard') == 'free'
+        ? []
+        : (appConfigurationDefinition.replicaLocations! ?? [])): {
+        name: empty(r.name!) ? 'rep-${replace(r.replicaLocation, ' ', '')}' : r.name!
+        replicaLocation: r.replicaLocation
+      }
+    ]
+
+    tags: union(tags, appConfigurationDefinition.tags! ?? {})
+    roleAssignments: appConfigurationDefinition.roleAssignments! ?? []
     enableTelemetry: enableTelemetry
   }
 }
@@ -2201,6 +2226,18 @@ module applicationGateway 'br/public:avm/res/network/application-gateway:0.7.1' 
       }
     ]
 
+    redirectConfigurations: [
+      {
+        name: 'httpsRedirect'
+        properties: {
+          redirectType: 'Permanent'
+          includePath: true
+          includeQueryString: true
+          targetUrl: 'https://example.com'
+        }
+      }
+    ]
+
     requestRoutingRules: [
       {
         name: 'defaultRule'
@@ -2208,12 +2245,12 @@ module applicationGateway 'br/public:avm/res/network/application-gateway:0.7.1' 
           ruleType: 'Basic'
           priority: 100
           httpListener: { id: '${agwId}/httpListeners/defaultListener' }
-          backendAddressPool: { id: '${agwId}/backendAddressPools/defaultPool' }
-          backendHttpSettings: { id: '${agwId}/backendHttpSettingsCollection/defaultSetting' }
+          redirectConfiguration: { id: '${agwId}/redirectConfigurations/httpsRedirect' }
         }
       }
     ]
   }
+
   dependsOn: [
     #disable-next-line BCP321
     (varDeployWafPolicy) ? wafPolicy : null
@@ -2231,6 +2268,7 @@ module appGatewayPip 'br/public:avm/res/network/public-ip-address:0.9.0' = if (v
     location: location
     skuName: 'Standard'
     publicIPAllocationMethod: 'Static'
+    availabilityZones: publicIpAvailabilityZones
     tags: tags
     enableTelemetry: enableTelemetry
   }
@@ -2272,6 +2310,7 @@ module firewallPip 'br/public:avm/res/network/public-ip-address:0.9.0' = if (var
     location: location
     skuName: 'Standard'
     publicIPAllocationMethod: 'Static'
+    availabilityZones: publicIpAvailabilityZones
     tags: tags
     enableTelemetry: enableTelemetry
   }
@@ -2512,7 +2551,7 @@ module buildVm 'br/public:avm/res/compute/virtual-machine:0.20.0' = if (varDeplo
       }
     ]
 
-    customData: base64(varBuildCloudInit)
+    customData: base64(varBuildVMCloudInit)
   }
   dependsOn: [
     #disable-next-line BCP321

@@ -170,8 +170,23 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
     }
     baseName: '<baseName>'
     deployGenAiAppBackingServices: false
+    firewallDefinition: {
+      name: ''
+      sku: 'AZFW_VNet'
+      tags: {}
+      tier: 'Standard'
+      zones: [
+        1
+        2
+      ]
+    }
     location: '<location>'
     networkIsolation: false
+    publicIpAvailabilityZones: [
+      1
+      2
+      3
+    ]
   }
 }
 ```
@@ -204,11 +219,30 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
     "deployGenAiAppBackingServices": {
       "value": false
     },
+    "firewallDefinition": {
+      "value": {
+        "name": "",
+        "sku": "AZFW_VNet",
+        "tags": {},
+        "tier": "Standard",
+        "zones": [
+          1,
+          2
+        ]
+      }
+    },
     "location": {
       "value": "<location>"
     },
     "networkIsolation": {
       "value": false
+    },
+    "publicIpAvailabilityZones": {
+      "value": [
+        1,
+        2,
+        3
+      ]
     }
   }
 }
@@ -234,8 +268,23 @@ param aiFoundryDefinition = {
 }
 param baseName = '<baseName>'
 param deployGenAiAppBackingServices = false
+param firewallDefinition = {
+  name: ''
+  sku: 'AZFW_VNet'
+  tags: {}
+  tier: 'Standard'
+  zones: [
+    1
+    2
+  ]
+}
 param location = '<location>'
 param networkIsolation = false
+param publicIpAvailabilityZones = [
+  1
+  2
+  3
+]
 ```
 
 </details>
@@ -287,8 +336,23 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
       storageAccountConfiguration: {}
     }
     baseName: '<baseName>'
+    firewallDefinition: {
+      name: ''
+      sku: 'AZFW_VNet'
+      tags: {}
+      tier: 'Standard'
+      zones: [
+        1
+        2
+      ]
+    }
     jumpVmAdminPassword: '<StrongP@ssw0rd!>'
     location: '<location>'
+    publicIpAvailabilityZones: [
+      1
+      2
+      3
+    ]
   }
 }
 ```
@@ -342,11 +406,30 @@ module landingZone 'br/public:avm/ptn/ai-ml/landing-zone:<version>' = {
     "baseName": {
       "value": "<baseName>"
     },
+    "firewallDefinition": {
+      "value": {
+        "name": "",
+        "sku": "AZFW_VNet",
+        "tags": {},
+        "tier": "Standard",
+        "zones": [
+          1,
+          2
+        ]
+      }
+    },
     "jumpVmAdminPassword": {
       "value": "<StrongP@ssw0rd!>"
     },
     "location": {
       "value": "<location>"
+    },
+    "publicIpAvailabilityZones": {
+      "value": [
+        1,
+        2,
+        3
+      ]
     }
   }
 }
@@ -395,8 +478,23 @@ param aiFoundryDefinition = {
   storageAccountConfiguration: {}
 }
 param baseName = '<baseName>'
+param firewallDefinition = {
+  name: ''
+  sku: 'AZFW_VNet'
+  tags: {}
+  tier: 'Standard'
+  zones: [
+    1
+    2
+  ]
+}
 param jumpVmAdminPassword = '<StrongP@ssw0rd!>'
 param location = '<location>'
+param publicIpAvailabilityZones = [
+  1
+  2
+  3
+]
 ```
 
 </details>
@@ -426,6 +524,7 @@ param location = '<location>'
 | [`logAnalyticsDefinition`](#parameter-loganalyticsdefinition) | object | Log Analytics Workspace configuration. Required if deployToggles.logAnalytics is true and resourceIds.logAnalyticsWorkspaceResourceId is empty. |
 | [`privateDnsZoneIds`](#parameter-privatednszoneids) | object | Existing Private DNS Zone resource IDs per service. Required if networkIsolation is true and you plan to reuse existing zones for any service. |
 | [`privateDnsZones`](#parameter-privatednszones) | object | Private DNS Zones and VNet links configuration. Required if networkIsolation is true, flagPlatformLandingZone is false, and you want this template to create zones for services not supplied in privateDnsZoneIds. |
+| [`publicIpAvailabilityZones`](#parameter-publicipavailabilityzones) | array | Availability zones to use for Public IPs (Application Gateway and Firewall). Specify only zones that exist in the selected region. Leave empty for regions that do not support availability zones. Required if Deploy App Gateway and Create App Gateway Public Frontend is true or Deploy Firewall is true |
 | [`searchDefinition`](#parameter-searchdefinition) | object | Azure AI Search configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.searchService is true, and resourceIds.searchServiceResourceId is empty. |
 | [`storageAccountDefinition`](#parameter-storageaccountdefinition) | object | Storage Account configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.storageAccount is true, and resourceIds.storageAccountResourceId is empty. |
 | [`vnetDefinition`](#parameter-vnetdefinition) | object | Virtual Network configuration. Required if deployToggles.virtualNetwork is true and resourceIds.virtualNetworkResourceId is empty. |
@@ -490,8 +589,8 @@ API Management configuration. Required if deployToggles.apiManagement is true an
           text: ''
         }
       }
-      skuCapacity: 1
-      skuRoot: 'Developer'
+      skuCapacity: 2
+      skuRoot: 'Premium'
       tags: {}
       tenantAccess: {
         enabled: true
@@ -1432,6 +1531,11 @@ App Configuration store settings. Required if deployGenAiAppBackingServices is t
       localAuthEnabled: false
       name: ''
       purgeProtectionEnabled: true
+      replicaLocations: [
+        {
+          replicaLocation: 'westus2'
+        }
+      ]
       roleAssignments: []
       sku: 'standard'
       softDeleteRetentionInDays: 7
@@ -1447,6 +1551,7 @@ App Configuration store settings. Required if deployGenAiAppBackingServices is t
 | [`localAuthEnabled`](#parameter-appconfigurationdefinitionlocalauthenabled) | bool | Enable local (access keys) authentication. |
 | [`name`](#parameter-appconfigurationdefinitionname) | string | App Configuration store name. |
 | [`purgeProtectionEnabled`](#parameter-appconfigurationdefinitionpurgeprotectionenabled) | bool | Enable purge protection. |
+| [`replicaLocations`](#parameter-appconfigurationdefinitionreplicalocations) | array | Geo-replica locations. Each entry creates a replica in that Azure region. |
 | [`roleAssignments`](#parameter-appconfigurationdefinitionroleassignments) | array | Role assignments to create on the store. |
 | [`sku`](#parameter-appconfigurationdefinitionsku) | string | SKU for App Configuration. |
 | [`softDeleteRetentionInDays`](#parameter-appconfigurationdefinitionsoftdeleteretentionindays) | int | Soft delete retention (days). |
@@ -1500,6 +1605,39 @@ Enable purge protection.
 
 - Required: No
 - Type: bool
+
+### Parameter: `appConfigurationDefinition.replicaLocations`
+
+Geo-replica locations. Each entry creates a replica in that Azure region.
+
+- Required: No
+- Type: array
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`replicaLocation`](#parameter-appconfigurationdefinitionreplicalocationsreplicalocation) | string | Azure region for the replica (must differ from the primary location). |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`name`](#parameter-appconfigurationdefinitionreplicalocationsname) | string | Replica resource name. If omitted, a deterministic name is generated. |
+
+### Parameter: `appConfigurationDefinition.replicaLocations.replicaLocation`
+
+Azure region for the replica (must differ from the primary location).
+
+- Required: Yes
+- Type: string
+
+### Parameter: `appConfigurationDefinition.replicaLocations.name`
+
+Replica resource name. If omitted, a deterministic name is generated.
+
+- Required: No
+- Type: string
 
 ### Parameter: `appConfigurationDefinition.roleAssignments`
 
@@ -4507,7 +4645,10 @@ Azure Firewall configuration. Required if deployToggles.firewall is true and res
       sku: 'AZFW_VNet'
       tags: {}
       tier: 'Standard'
-      zones: []
+      zones: [
+        1
+        2
+      ]
   }
   ```
 
@@ -5106,6 +5247,10 @@ Log Analytics Workspace configuration. Required if deployToggles.logAnalytics is
   ```Bicep
   {
       name: ''
+      replication: {
+        enabled: true
+        location: 'westus2'
+      }
       retention: 30
       sku: 'PerGB2018'
       tags: {}
@@ -5124,6 +5269,7 @@ Log Analytics Workspace configuration. Required if deployToggles.logAnalytics is
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`name`](#parameter-loganalyticsdefinitionname) | string | Workspace name. If empty, a deterministic name is used. |
+| [`replication`](#parameter-loganalyticsdefinitionreplication) | object | Replication settings for the workspace. |
 | [`tags`](#parameter-loganalyticsdefinitiontags) | object | Tags to apply to the workspace. |
 
 ### Parameter: `logAnalyticsDefinition.retention`
@@ -5156,6 +5302,39 @@ Workspace SKU.
 ### Parameter: `logAnalyticsDefinition.name`
 
 Workspace name. If empty, a deterministic name is used.
+
+- Required: No
+- Type: string
+
+### Parameter: `logAnalyticsDefinition.replication`
+
+Replication settings for the workspace.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`enabled`](#parameter-loganalyticsdefinitionreplicationenabled) | bool | Enable cross-region replication. |
+
+**Optional parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`location`](#parameter-loganalyticsdefinitionreplicationlocation) | string | Secondary region (paired). If omitted, use the platform default. |
+
+### Parameter: `logAnalyticsDefinition.replication.enabled`
+
+Enable cross-region replication.
+
+- Required: Yes
+- Type: bool
+
+### Parameter: `logAnalyticsDefinition.replication.location`
+
+Secondary region (paired). If omitted, use the platform default.
 
 - Required: No
 - Type: string
@@ -5293,6 +5472,14 @@ Resource ID of the resource group that hosts existing Private DNS zones.
 
 - Required: No
 - Type: string
+
+### Parameter: `publicIpAvailabilityZones`
+
+Availability zones to use for Public IPs (Application Gateway and Firewall). Specify only zones that exist in the selected region. Leave empty for regions that do not support availability zones. Required if Deploy App Gateway and Create App Gateway Public Frontend is true or Deploy Firewall is true
+
+- Required: No
+- Type: array
+- Default: `[]`
 
 ### Parameter: `searchDefinition`
 

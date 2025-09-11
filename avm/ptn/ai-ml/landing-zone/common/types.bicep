@@ -226,6 +226,15 @@ type logAnalyticsWorkspaceDefinitionType = {
   @description('Required. Workspace SKU.')
   sku: 'CapacityReservation' | 'Free' | 'LACluster' | 'PerGB2018' | 'PerNode' | 'Premium' | 'Standalone' | 'Standard'
 
+  @description('Optional. Replication settings for the workspace.')
+  replication: {
+    @description('Required. Enable cross-region replication.')
+    enabled: bool
+
+    @description('Optional. Secondary region (paired). If omitted, use the platform default.')
+    location: string?
+  }?
+
   @description('Optional. Tags to apply to the workspace.')
   tags: {
     @description('Required. Arbitrary key for each tag.')
@@ -648,6 +657,14 @@ type appConfigurationDefinitionType = {
     @description('Required. Arbitrary key for each tag.')
     *: string
   }?
+
+  @description('Optional. Geo-replica locations. Each entry creates a replica in that Azure region.')
+  replicaLocations: {
+    @description('Optional. Replica resource name. If omitted, a deterministic name is generated.')
+    name: string?
+    @description('Required. Azure region for the replica (must differ from the primary location).')
+    replicaLocation: string
+  }[]?
 
   @description('Optional. Role assignments to create on the store.')
   roleAssignments: {
