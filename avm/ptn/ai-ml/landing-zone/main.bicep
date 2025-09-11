@@ -254,8 +254,8 @@ param containerAppsList types.containerAppDefinitionType[] = [
     name: ''
     appId: 'hello-world'
     profileName: 'default'
-    minReplicas: 1
-    maxReplicas: 1
+    minReplicas: 2
+    maxReplicas: 2
     external: true
   }
 ]
@@ -310,7 +310,7 @@ param searchDefinition types.kSAISearchDefinitionType = {
   tags: {}
 }
 // helpers to keep the expression readable
-var varAppConfigSkuLower = toLower(appConfigurationDefinition.sku ?? 'standard')
+var varAppConfigSkuLower = toLower(appConfigurationDefinition.sku! ?? 'standard')
 var varAppConfigReplicaInput = (varAppConfigSkuLower == 'free')
   ? []
   : (appConfigurationDefinition.replicaLocations! ?? [])
@@ -489,7 +489,12 @@ param apimDefinition types.apimDefinitionType = {
   name: ''
   publisherEmail: 'admin@example.com'
   publisherName: 'Contoso'
-  additionalLocations: []
+  additionalLocations: [
+    {
+      location: 'westus2'
+      availabilityZones: [1, 2]
+    }
+  ]
   certificate: {}
   clientCertificateEnabled: false
   hostnameConfiguration: { management: {}, portal: {}, developerPortal: {}, proxy: {}, scm: {} }
@@ -2322,6 +2327,8 @@ module firewallPip 'br/public:avm/res/network/public-ip-address:0.9.0' = if (var
   }
 }
 
+var varZoneStrings = [for z in publicIpAvailabilityZones: string(z)]
+
 // 1) Azure Firewall without policy
 module azureFirewall_noPolicy 'br/public:avm/res/network/azure-firewall:0.8.0' = if (varDeployFirewall && !varDeployAfwPolicy) {
   name: 'azureFirewallDeployment'
@@ -2333,6 +2340,13 @@ module azureFirewall_noPolicy 'br/public:avm/res/network/azure-firewall:0.8.0' =
     availabilityZones: firewallDefinition.zones
     virtualNetworkResourceId: varVnetResourceId
     enableTelemetry: enableTelemetry
+    publicIPAddressObject: {
+      name: '${varAfw}${baseName}-pip'
+      publicIPAllocationMethod: 'Static'
+      skuName: 'Standard'
+      skuTier: 'Regional'
+      zones: varZoneStrings
+    }
   }
 }
 
@@ -2347,15 +2361,19 @@ module azureFirewall_withPolicy 'br/public:avm/res/network/azure-firewall:0.8.0'
     availabilityZones: firewallDefinition.zones
     virtualNetworkResourceId: varVnetResourceId
     enableTelemetry: enableTelemetry
+    publicIPAddressObject: {
+      name: '${varAfw}${baseName}-pip'
+      publicIPAllocationMethod: 'Static'
+      skuName: 'Standard'
+      skuTier: 'Regional'
+      zones: varZoneStrings
+    }
     firewallPolicyId: fwPolicy!.outputs.resourceId
   }
   dependsOn: [
     fwPolicy!
   ]
 }
-
-// Use caller-specified zones for PIPs as the APIM zone set, or fall back to [1,2]
-var varApimZones = length(publicIpAvailabilityZones) >= 2 ? publicIpAvailabilityZones : [1, 2]
 
 // Build additional APIM locations in the shape the AVM module/ARM expects
 var varApimAdditionalLocations = [
@@ -2380,6 +2398,11 @@ var varApimAdditionalLocations = [
   }
 ]
 
+// Use caller PIP zones as the APIM zone set, or fall back to [1, 2]
+var varApimZones = length(publicIpAvailabilityZones) >= 2 ? publicIpAvailabilityZones : [1, 2]
+
+var varApimZonesCapacityAligned = take(varApimZones, apimDefinition.skuCapacity)
+
 #disable-next-line BCP081
 module apim 'br/public:avm/res/api-management/service:0.11.0' = if (varDeployApim) {
   name: 'apimDeployment'
@@ -2401,7 +2424,7 @@ module apim 'br/public:avm/res/api-management/service:0.11.0' = if (varDeployApi
       : {}
 
     additionalLocations: varApimAdditionalLocations!
-    availabilityZones: varApimZones
+    availabilityZones: varApimZonesCapacityAligned
 
     enableTelemetry: enableTelemetry
     // Optional:

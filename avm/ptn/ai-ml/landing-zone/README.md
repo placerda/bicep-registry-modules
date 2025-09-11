@@ -559,7 +559,15 @@ API Management configuration. Required if deployToggles.apiManagement is true an
 - Default:
   ```Bicep
   {
-      additionalLocations: []
+      additionalLocations: [
+        {
+          availabilityZones: [
+            1
+            2
+          ]
+          location: 'westus2'
+        }
+      ]
       certificate: {}
       clientCertificateEnabled: false
       hostnameConfiguration: {
@@ -1726,7 +1734,7 @@ Role assignment name.
 
 SKU for App Configuration.
 
-- Required: Yes
+- Required: No
 - Type: string
 - Allowed:
   ```Bicep
@@ -7829,8 +7837,8 @@ List of Container Apps to create.
     {
       appId: 'hello-world'
       external: true
-      maxReplicas: 1
-      minReplicas: 1
+      maxReplicas: 2
+      minReplicas: 2
       name: ''
       profileName: 'default'
     }

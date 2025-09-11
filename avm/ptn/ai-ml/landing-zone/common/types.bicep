@@ -656,7 +656,7 @@ type appConfigurationDefinitionType = {
   purgeProtectionEnabled: bool?
 
   @description('Optional. SKU for App Configuration.')
-  sku: 'standard' | 'free'
+  sku: 'standard' | 'free'?
 
   @description('Optional. Soft delete retention (days).')
   softDeleteRetentionInDays: int?
