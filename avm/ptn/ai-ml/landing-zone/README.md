@@ -564,28 +564,42 @@ API Management configuration. Required if deployToggles.apiManagement is true an
           availabilityZones: [
             1
             2
+            3
           ]
           location: 'westus2'
+          sku: {
+            capacity: 2
+            name: 'Premium'
+          }
         }
       ]
-      certificate: {}
       clientCertificateEnabled: false
-      hostnameConfiguration: {
-        developerPortal: {}
-        management: {}
-        portal: {}
-        proxy: {}
-        scm: {}
-      }
+      hostnameConfigurations: [
+        {
+          defaultSslBinding: true
+          hostName: 'api.contoso.com'
+          keyVaultId: '/subscriptions/xxxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/kv/secrets/apim-proxy-cert'
+          type: 'Proxy'
+        }
+        {
+          hostName: 'dev.contoso.com'
+          keyVaultId: '/subscriptions/xxxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/kv/secrets/apim-devportal-cert'
+          type: 'DeveloperPortal'
+        }
+        {
+          hostName: 'mgmt.contoso.com'
+          keyVaultId: '/subscriptions/xxxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/kv/secrets/apim-mgmt-cert'
+          type: 'Management'
+        }
+      ]
       minApiVersion: '2022-08-01'
-      name: ''
+      name: 'apim-xyz'
       notificationSenderEmail: 'apimgmt-noreply@azure.com'
       protocols: {
         enableHttp2: true
       }
       publisherEmail: 'admin@example.com'
       publisherName: 'Contoso'
-      roleAssignments: []
       signIn: {
         enabled: true
       }
@@ -615,33 +629,33 @@ API Management configuration. Required if deployToggles.apiManagement is true an
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`clientCertificateEnabled`](#parameter-apimdefinitionclientcertificateenabled) | bool | Enable client certificate authentication for gateway. |
+| [`clientCertificateEnabled`](#parameter-apimdefinitionclientcertificateenabled) | bool | Enables client certificate authentication on the gateway. |
 | [`publisherEmail`](#parameter-apimdefinitionpublisheremail) | string | Publisher email address. |
 | [`publisherName`](#parameter-apimdefinitionpublishername) | string | Publisher display name. |
 | [`signIn`](#parameter-apimdefinitionsignin) | object | Sign-in configuration for the developer portal. |
 | [`signUp`](#parameter-apimdefinitionsignup) | object | Sign-up configuration for the developer portal. |
-| [`skuCapacity`](#parameter-apimdefinitionskucapacity) | int | Capacity for the chosen SKU. |
+| [`skuCapacity`](#parameter-apimdefinitionskucapacity) | int | Capacity (scale units) for the chosen SKU. |
 | [`tenantAccess`](#parameter-apimdefinitiontenantaccess) | object | Tenant access configuration for the management plane. |
 
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`additionalLocations`](#parameter-apimdefinitionadditionallocations) | array | Additional regions for API Management. |
-| [`certificate`](#parameter-apimdefinitioncertificate) | object | Certificates for API Management endpoints. |
-| [`hostnameConfiguration`](#parameter-apimdefinitionhostnameconfiguration) | object | Hostname configuration for all endpoints. |
-| [`minApiVersion`](#parameter-apimdefinitionminapiversion) | string | Minimum ARM API version to use for APIM operations. |
+| [`additionalLocations`](#parameter-apimdefinitionadditionallocations) | array | Additional regions for the API Management service. |
+| [`certificate`](#parameter-apimdefinitioncertificate) | object | Certificates map that can be used by other flows (not directly by hostnameConfigurations). |
+| [`hostnameConfigurations`](#parameter-apimdefinitionhostnameconfigurations) | array | Hostname configuration array in AVM-friendly format. |
+| [`minApiVersion`](#parameter-apimdefinitionminapiversion) | string | Minimum ARM API version to use for APIM control-plane operations. |
 | [`name`](#parameter-apimdefinitionname) | string | API Management service name. |
 | [`notificationSenderEmail`](#parameter-apimdefinitionnotificationsenderemail) | string | Sender email address used by APIM system notifications. |
-| [`protocols`](#parameter-apimdefinitionprotocols) | object | Protocol options. |
+| [`protocols`](#parameter-apimdefinitionprotocols) | object | Protocol options for the gateway. |
 | [`roleAssignments`](#parameter-apimdefinitionroleassignments) | array | Role assignments to create on the API Management service. |
 | [`skuRoot`](#parameter-apimdefinitionskuroot) | string | SKU for API Management (Developer/Basic/Standard/Premium/Consumption/V2 variants). |
 | [`tags`](#parameter-apimdefinitiontags) | object | Tags to apply to the API Management service. |
-| [`zones`](#parameter-apimdefinitionzones) | array | Availability zones to use (if any). |
+| [`zones`](#parameter-apimdefinitionzones) | array | Availability Zones for the primary region (use at least two where supported). |
 
 ### Parameter: `apimDefinition.clientCertificateEnabled`
 
-Enable client certificate authentication for gateway.
+Enables client certificate authentication on the gateway.
 
 - Required: Yes
 - Type: bool
@@ -671,11 +685,11 @@ Sign-in configuration for the developer portal.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`enabled`](#parameter-apimdefinitionsigninenabled) | bool | Enable sign-in on developer portal. |
+| [`enabled`](#parameter-apimdefinitionsigninenabled) | bool | Enables sign-in on the developer portal. |
 
 ### Parameter: `apimDefinition.signIn.enabled`
 
-Enable sign-in on developer portal.
+Enables sign-in on the developer portal.
 
 - Required: Yes
 - Type: bool
@@ -691,12 +705,12 @@ Sign-up configuration for the developer portal.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`enabled`](#parameter-apimdefinitionsignupenabled) | bool | Enable sign-up on developer portal. |
+| [`enabled`](#parameter-apimdefinitionsignupenabled) | bool | Enables sign-up on the developer portal. |
 | [`termsOfService`](#parameter-apimdefinitionsignuptermsofservice) | object | Terms of Service configuration for sign-up. |
 
 ### Parameter: `apimDefinition.signUp.enabled`
 
-Enable sign-up on developer portal.
+Enables sign-up on the developer portal.
 
 - Required: Yes
 - Type: bool
@@ -712,34 +726,34 @@ Terms of Service configuration for sign-up.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`consentRequired`](#parameter-apimdefinitionsignuptermsofserviceconsentrequired) | bool | User must consent to ToS. |
-| [`enabled`](#parameter-apimdefinitionsignuptermsofserviceenabled) | bool | Terms of Service enabled. |
-| [`text`](#parameter-apimdefinitionsignuptermsofservicetext) | string | Text shown for Terms of Service. |
+| [`consentRequired`](#parameter-apimdefinitionsignuptermsofserviceconsentrequired) | bool | Indicates whether user consent to ToS is required. |
+| [`enabled`](#parameter-apimdefinitionsignuptermsofserviceenabled) | bool | Indicates whether Terms of Service are enabled. |
+| [`text`](#parameter-apimdefinitionsignuptermsofservicetext) | string | Text for the Terms of Service displayed to users. |
 
 ### Parameter: `apimDefinition.signUp.termsOfService.consentRequired`
 
-User must consent to ToS.
+Indicates whether user consent to ToS is required.
 
 - Required: Yes
 - Type: bool
 
 ### Parameter: `apimDefinition.signUp.termsOfService.enabled`
 
-Terms of Service enabled.
+Indicates whether Terms of Service are enabled.
 
 - Required: Yes
 - Type: bool
 
 ### Parameter: `apimDefinition.signUp.termsOfService.text`
 
-Text shown for Terms of Service.
+Text for the Terms of Service displayed to users.
 
 - Required: Yes
 - Type: string
 
 ### Parameter: `apimDefinition.skuCapacity`
 
-Capacity for the chosen SKU.
+Capacity (scale units) for the chosen SKU.
 
 - Required: Yes
 - Type: int
@@ -755,18 +769,18 @@ Tenant access configuration for the management plane.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`enabled`](#parameter-apimdefinitiontenantaccessenabled) | bool | Enable tenant access for the management plane. |
+| [`enabled`](#parameter-apimdefinitiontenantaccessenabled) | bool | Enables tenant access for the management plane. |
 
 ### Parameter: `apimDefinition.tenantAccess.enabled`
 
-Enable tenant access for the management plane.
+Enables tenant access for the management plane.
 
 - Required: Yes
 - Type: bool
 
 ### Parameter: `apimDefinition.additionalLocations`
 
-Additional regions for API Management.
+Additional regions for the API Management service.
 
 - Required: No
 - Type: array
@@ -775,41 +789,84 @@ Additional regions for API Management.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`location`](#parameter-apimdefinitionadditionallocationslocation) | string | Azure region for this additional APIM location (e.g., westus2). |
+| [`location`](#parameter-apimdefinitionadditionallocationslocation) | string | Azure region name for this additional location (e.g., westus2). |
+| [`sku`](#parameter-apimdefinitionadditionallocationssku) | object | SKU settings for this additional location. |
 
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`availabilityZones`](#parameter-apimdefinitionadditionallocationsavailabilityzones) | array | Availability zones to use in this region (e.g., [1,2]). |
-| [`disableGateway`](#parameter-apimdefinitionadditionallocationsdisablegateway) | bool | Disable the gateway in this location (true) or enable it (false). |
-| [`natGatewayState`](#parameter-apimdefinitionadditionallocationsnatgatewaystate) | string | NAT Gateway state for this location. Allowed values: Enabled or Disabled. |
-| [`publicIpAddressResourceId`](#parameter-apimdefinitionadditionallocationspublicipaddressresourceid) | string | Resource ID of an existing Public IP to associate with this location (if applicable). |
+| [`availabilityZones`](#parameter-apimdefinitionadditionallocationsavailabilityzones) | array | Availability Zones to use in this location (use at least two where supported). |
+| [`disableGateway`](#parameter-apimdefinitionadditionallocationsdisablegateway) | bool | Disables the gateway in this additional location. |
+| [`natGatewayState`](#parameter-apimdefinitionadditionallocationsnatgatewaystate) | string | Enables or disables NAT Gateway for this location. |
+| [`publicIpAddressResourceId`](#parameter-apimdefinitionadditionallocationspublicipaddressresourceid) | string | Resource ID of a Standard Public IP to associate (where supported). |
+| [`virtualNetworkConfiguration`](#parameter-apimdefinitionadditionallocationsvirtualnetworkconfiguration) | object | Virtual network configuration for this location. |
 
 ### Parameter: `apimDefinition.additionalLocations.location`
 
-Azure region for this additional APIM location (e.g., westus2).
+Azure region name for this additional location (e.g., westus2).
 
 - Required: Yes
 - Type: string
 
+### Parameter: `apimDefinition.additionalLocations.sku`
+
+SKU settings for this additional location.
+
+- Required: Yes
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`capacity`](#parameter-apimdefinitionadditionallocationsskucapacity) | int | Capacity (scale units) for this location. |
+| [`name`](#parameter-apimdefinitionadditionallocationsskuname) | string | Name of the SKU for this location. |
+
+### Parameter: `apimDefinition.additionalLocations.sku.capacity`
+
+Capacity (scale units) for this location.
+
+- Required: Yes
+- Type: int
+
+### Parameter: `apimDefinition.additionalLocations.sku.name`
+
+Name of the SKU for this location.
+
+- Required: Yes
+- Type: string
+- Allowed:
+  ```Bicep
+  [
+    'Basic'
+    'BasicV2'
+    'Consumption'
+    'Developer'
+    'Isolated'
+    'Premium'
+    'Standard'
+    'StandardV2'
+  ]
+  ```
+
 ### Parameter: `apimDefinition.additionalLocations.availabilityZones`
 
-Availability zones to use in this region (e.g., [1,2]).
+Availability Zones to use in this location (use at least two where supported).
 
 - Required: No
 - Type: array
 
 ### Parameter: `apimDefinition.additionalLocations.disableGateway`
 
-Disable the gateway in this location (true) or enable it (false).
+Disables the gateway in this additional location.
 
 - Required: No
 - Type: bool
 
 ### Parameter: `apimDefinition.additionalLocations.natGatewayState`
 
-NAT Gateway state for this location. Allowed values: Enabled or Disabled.
+Enables or disables NAT Gateway for this location.
 
 - Required: No
 - Type: string
@@ -823,14 +880,34 @@ NAT Gateway state for this location. Allowed values: Enabled or Disabled.
 
 ### Parameter: `apimDefinition.additionalLocations.publicIpAddressResourceId`
 
-Resource ID of an existing Public IP to associate with this location (if applicable).
+Resource ID of a Standard Public IP to associate (where supported).
 
 - Required: No
 - Type: string
 
+### Parameter: `apimDefinition.additionalLocations.virtualNetworkConfiguration`
+
+Virtual network configuration for this location.
+
+- Required: No
+- Type: object
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`subnetResourceId`](#parameter-apimdefinitionadditionallocationsvirtualnetworkconfigurationsubnetresourceid) | string | Subnet resource ID for the APIM deployment in this location. |
+
+### Parameter: `apimDefinition.additionalLocations.virtualNetworkConfiguration.subnetResourceId`
+
+Subnet resource ID for the APIM deployment in this location.
+
+- Required: Yes
+- Type: string
+
 ### Parameter: `apimDefinition.certificate`
 
-Certificates for API Management endpoints.
+Certificates map that can be used by other flows (not directly by hostnameConfigurations).
 
 - Required: No
 - Type: object
@@ -853,13 +930,13 @@ Arbitrary key for each certificate entry.
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
 | [`encodedCertificate`](#parameter-apimdefinitioncertificate>any_other_property<encodedcertificate) | string | Base64-encoded PFX certificate. |
-| [`storeName`](#parameter-apimdefinitioncertificate>any_other_property<storename) | string | Store name to import to (e.g., CertificateAuthority). |
+| [`storeName`](#parameter-apimdefinitioncertificate>any_other_property<storename) | string | Certificate store name (e.g., CertificateAuthority). |
 
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`certificatePassword`](#parameter-apimdefinitioncertificate>any_other_property<certificatepassword) | string | Certificate password. |
+| [`certificatePassword`](#parameter-apimdefinitioncertificate>any_other_property<certificatepassword) | string | Password for the encoded certificate, if required. |
 
 ### Parameter: `apimDefinition.certificate.>Any_other_property<.encodedCertificate`
 
@@ -870,468 +947,112 @@ Base64-encoded PFX certificate.
 
 ### Parameter: `apimDefinition.certificate.>Any_other_property<.storeName`
 
-Store name to import to (e.g., CertificateAuthority).
+Certificate store name (e.g., CertificateAuthority).
 
 - Required: Yes
 - Type: string
 
 ### Parameter: `apimDefinition.certificate.>Any_other_property<.certificatePassword`
 
-Certificate password.
+Password for the encoded certificate, if required.
 
 - Required: No
 - Type: string
 
-### Parameter: `apimDefinition.hostnameConfiguration`
+### Parameter: `apimDefinition.hostnameConfigurations`
 
-Hostname configuration for all endpoints.
+Hostname configuration array in AVM-friendly format.
 
 - Required: No
-- Type: object
+- Type: array
+
+**Required parameters**
+
+| Parameter | Type | Description |
+| :-- | :-- | :-- |
+| [`hostName`](#parameter-apimdefinitionhostnameconfigurationshostname) | string | DNS host name to bind to this endpoint. |
+| [`type`](#parameter-apimdefinitionhostnameconfigurationstype) | string | Endpoint type for this binding. |
 
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`developerPortal`](#parameter-apimdefinitionhostnameconfigurationdeveloperportal) | object | Hostname configuration map for the Legacy Developer Portal (deprecated in some SKUs). |
-| [`management`](#parameter-apimdefinitionhostnameconfigurationmanagement) | object | Hostname configuration map for the Management endpoint. |
-| [`portal`](#parameter-apimdefinitionhostnameconfigurationportal) | object | Hostname configuration map for the Developer Portal. |
-| [`proxy`](#parameter-apimdefinitionhostnameconfigurationproxy) | object | Hostname configuration map for the Gateway/Proxy endpoint. |
-| [`scm`](#parameter-apimdefinitionhostnameconfigurationscm) | object | Hostname configuration map for the SCM endpoint. |
+| [`certificatePassword`](#parameter-apimdefinitionhostnameconfigurationscertificatepassword) | string | Password for the provided encoded certificate, if required. |
+| [`defaultSslBinding`](#parameter-apimdefinitionhostnameconfigurationsdefaultsslbinding) | bool | Marks this binding as the default SSL binding for the endpoint type. |
+| [`encodedCertificate`](#parameter-apimdefinitionhostnameconfigurationsencodedcertificate) | string | Base64-encoded PFX certificate to use when not referencing Key Vault. |
+| [`identityClientId`](#parameter-apimdefinitionhostnameconfigurationsidentityclientid) | string | Client ID of the managed identity used to access Key Vault for this binding. |
+| [`keyVaultId`](#parameter-apimdefinitionhostnameconfigurationskeyvaultid) | string | Key Vault secret ID containing the TLS certificate to use for this hostname. |
+| [`negotiateClientCertificate`](#parameter-apimdefinitionhostnameconfigurationsnegotiateclientcertificate) | bool | Require/negotiates a client certificate during TLS handshake. |
 
-### Parameter: `apimDefinition.hostnameConfiguration.developerPortal`
+### Parameter: `apimDefinition.hostnameConfigurations.hostName`
 
-Hostname configuration map for the Legacy Developer Portal (deprecated in some SKUs).
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`>Any_other_property<`](#parameter-apimdefinitionhostnameconfigurationdeveloperportal>any_other_property<) | object | Arbitrary key for each hostname binding. |
-
-### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<`
-
-Arbitrary key for each hostname binding.
-
-- Required: Yes
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`hostName`](#parameter-apimdefinitionhostnameconfigurationdeveloperportal>any_other_property<hostname) | string | Host name to bind. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`certificate`](#parameter-apimdefinitionhostnameconfigurationdeveloperportal>any_other_property<certificate) | string | Inline certificate as base64. |
-| [`certificatePassword`](#parameter-apimdefinitionhostnameconfigurationdeveloperportal>any_other_property<certificatepassword) | string | Password for the inline certificate (if provided). |
-| [`defaultSslBinding`](#parameter-apimdefinitionhostnameconfigurationdeveloperportal>any_other_property<defaultsslbinding) | bool | Set this binding as default for the endpoint. |
-| [`keyVaultId`](#parameter-apimdefinitionhostnameconfigurationdeveloperportal>any_other_property<keyvaultid) | string | Key Vault secret ID for the certificate. |
-| [`negotiateClientCertificate`](#parameter-apimdefinitionhostnameconfigurationdeveloperportal>any_other_property<negotiateclientcertificate) | bool | Negotiate client certificate on TLS. |
-| [`sslKeyvaultIdentityClientId`](#parameter-apimdefinitionhostnameconfigurationdeveloperportal>any_other_property<sslkeyvaultidentityclientid) | string | Client ID of the Key Vault identity used for SSL. |
-
-### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<.hostName`
-
-Host name to bind.
+DNS host name to bind to this endpoint.
 
 - Required: Yes
 - Type: string
 
-### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<.certificate`
+### Parameter: `apimDefinition.hostnameConfigurations.type`
 
-Inline certificate as base64.
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<.certificatePassword`
-
-Password for the inline certificate (if provided).
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<.defaultSslBinding`
-
-Set this binding as default for the endpoint.
-
-- Required: No
-- Type: bool
-
-### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<.keyVaultId`
-
-Key Vault secret ID for the certificate.
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<.negotiateClientCertificate`
-
-Negotiate client certificate on TLS.
-
-- Required: No
-- Type: bool
-
-### Parameter: `apimDefinition.hostnameConfiguration.developerPortal.>Any_other_property<.sslKeyvaultIdentityClientId`
-
-Client ID of the Key Vault identity used for SSL.
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.management`
-
-Hostname configuration map for the Management endpoint.
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`>Any_other_property<`](#parameter-apimdefinitionhostnameconfigurationmanagement>any_other_property<) | object | Arbitrary key for each hostname binding. |
-
-### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<`
-
-Arbitrary key for each hostname binding.
-
-- Required: Yes
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`hostName`](#parameter-apimdefinitionhostnameconfigurationmanagement>any_other_property<hostname) | string | Host name to bind. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`certificate`](#parameter-apimdefinitionhostnameconfigurationmanagement>any_other_property<certificate) | string | Inline certificate as base64. |
-| [`certificatePassword`](#parameter-apimdefinitionhostnameconfigurationmanagement>any_other_property<certificatepassword) | string | Password for the inline certificate (if provided). |
-| [`defaultSslBinding`](#parameter-apimdefinitionhostnameconfigurationmanagement>any_other_property<defaultsslbinding) | bool | Set this binding as default for the endpoint. |
-| [`keyVaultId`](#parameter-apimdefinitionhostnameconfigurationmanagement>any_other_property<keyvaultid) | string | Key Vault secret ID for the certificate. |
-| [`negotiateClientCertificate`](#parameter-apimdefinitionhostnameconfigurationmanagement>any_other_property<negotiateclientcertificate) | bool | Negotiate client certificate on TLS. |
-| [`sslKeyvaultIdentityClientId`](#parameter-apimdefinitionhostnameconfigurationmanagement>any_other_property<sslkeyvaultidentityclientid) | string | Client ID of the Key Vault identity used for SSL. |
-
-### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<.hostName`
-
-Host name to bind.
+Endpoint type for this binding.
 
 - Required: Yes
 - Type: string
+- Allowed:
+  ```Bicep
+  [
+    'DeveloperPortal'
+    'Management'
+    'Portal'
+    'Proxy'
+    'Scm'
+  ]
+  ```
 
-### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<.certificate`
+### Parameter: `apimDefinition.hostnameConfigurations.certificatePassword`
 
-Inline certificate as base64.
+Password for the provided encoded certificate, if required.
 
 - Required: No
 - Type: string
 
-### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<.certificatePassword`
+### Parameter: `apimDefinition.hostnameConfigurations.defaultSslBinding`
 
-Password for the inline certificate (if provided).
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<.defaultSslBinding`
-
-Set this binding as default for the endpoint.
+Marks this binding as the default SSL binding for the endpoint type.
 
 - Required: No
 - Type: bool
 
-### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<.keyVaultId`
+### Parameter: `apimDefinition.hostnameConfigurations.encodedCertificate`
 
-Key Vault secret ID for the certificate.
+Base64-encoded PFX certificate to use when not referencing Key Vault.
 
 - Required: No
 - Type: string
 
-### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<.negotiateClientCertificate`
+### Parameter: `apimDefinition.hostnameConfigurations.identityClientId`
 
-Negotiate client certificate on TLS.
+Client ID of the managed identity used to access Key Vault for this binding.
+
+- Required: No
+- Type: string
+
+### Parameter: `apimDefinition.hostnameConfigurations.keyVaultId`
+
+Key Vault secret ID containing the TLS certificate to use for this hostname.
+
+- Required: No
+- Type: string
+
+### Parameter: `apimDefinition.hostnameConfigurations.negotiateClientCertificate`
+
+Require/negotiates a client certificate during TLS handshake.
 
 - Required: No
 - Type: bool
-
-### Parameter: `apimDefinition.hostnameConfiguration.management.>Any_other_property<.sslKeyvaultIdentityClientId`
-
-Client ID of the Key Vault identity used for SSL.
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.portal`
-
-Hostname configuration map for the Developer Portal.
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`>Any_other_property<`](#parameter-apimdefinitionhostnameconfigurationportal>any_other_property<) | object | Arbitrary key for each hostname binding. |
-
-### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<`
-
-Arbitrary key for each hostname binding.
-
-- Required: Yes
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`hostName`](#parameter-apimdefinitionhostnameconfigurationportal>any_other_property<hostname) | string | Host name to bind. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`certificate`](#parameter-apimdefinitionhostnameconfigurationportal>any_other_property<certificate) | string | Inline certificate as base64. |
-| [`certificatePassword`](#parameter-apimdefinitionhostnameconfigurationportal>any_other_property<certificatepassword) | string | Password for the inline certificate (if provided). |
-| [`defaultSslBinding`](#parameter-apimdefinitionhostnameconfigurationportal>any_other_property<defaultsslbinding) | bool | Set this binding as default for the endpoint. |
-| [`keyVaultId`](#parameter-apimdefinitionhostnameconfigurationportal>any_other_property<keyvaultid) | string | Key Vault secret ID for the certificate. |
-| [`negotiateClientCertificate`](#parameter-apimdefinitionhostnameconfigurationportal>any_other_property<negotiateclientcertificate) | bool | Negotiate client certificate on TLS. |
-| [`sslKeyvaultIdentityClientId`](#parameter-apimdefinitionhostnameconfigurationportal>any_other_property<sslkeyvaultidentityclientid) | string | Client ID of the Key Vault identity used for SSL. |
-
-### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<.hostName`
-
-Host name to bind.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<.certificate`
-
-Inline certificate as base64.
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<.certificatePassword`
-
-Password for the inline certificate (if provided).
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<.defaultSslBinding`
-
-Set this binding as default for the endpoint.
-
-- Required: No
-- Type: bool
-
-### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<.keyVaultId`
-
-Key Vault secret ID for the certificate.
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<.negotiateClientCertificate`
-
-Negotiate client certificate on TLS.
-
-- Required: No
-- Type: bool
-
-### Parameter: `apimDefinition.hostnameConfiguration.portal.>Any_other_property<.sslKeyvaultIdentityClientId`
-
-Client ID of the Key Vault identity used for SSL.
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.proxy`
-
-Hostname configuration map for the Gateway/Proxy endpoint.
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`>Any_other_property<`](#parameter-apimdefinitionhostnameconfigurationproxy>any_other_property<) | object | Arbitrary key for each hostname binding. |
-
-### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<`
-
-Arbitrary key for each hostname binding.
-
-- Required: Yes
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`hostName`](#parameter-apimdefinitionhostnameconfigurationproxy>any_other_property<hostname) | string | Host name to bind. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`certificate`](#parameter-apimdefinitionhostnameconfigurationproxy>any_other_property<certificate) | string | Inline certificate as base64. |
-| [`certificatePassword`](#parameter-apimdefinitionhostnameconfigurationproxy>any_other_property<certificatepassword) | string | Password for the inline certificate (if provided). |
-| [`defaultSslBinding`](#parameter-apimdefinitionhostnameconfigurationproxy>any_other_property<defaultsslbinding) | bool | Set this binding as default for the endpoint. |
-| [`keyVaultId`](#parameter-apimdefinitionhostnameconfigurationproxy>any_other_property<keyvaultid) | string | Key Vault secret ID for the certificate. |
-| [`negotiateClientCertificate`](#parameter-apimdefinitionhostnameconfigurationproxy>any_other_property<negotiateclientcertificate) | bool | Negotiate client certificate on TLS. |
-| [`sslKeyvaultIdentityClientId`](#parameter-apimdefinitionhostnameconfigurationproxy>any_other_property<sslkeyvaultidentityclientid) | string | Client ID of the Key Vault identity used for SSL. |
-
-### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<.hostName`
-
-Host name to bind.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<.certificate`
-
-Inline certificate as base64.
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<.certificatePassword`
-
-Password for the inline certificate (if provided).
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<.defaultSslBinding`
-
-Set this binding as default for the endpoint.
-
-- Required: No
-- Type: bool
-
-### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<.keyVaultId`
-
-Key Vault secret ID for the certificate.
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<.negotiateClientCertificate`
-
-Negotiate client certificate on TLS.
-
-- Required: No
-- Type: bool
-
-### Parameter: `apimDefinition.hostnameConfiguration.proxy.>Any_other_property<.sslKeyvaultIdentityClientId`
-
-Client ID of the Key Vault identity used for SSL.
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.scm`
-
-Hostname configuration map for the SCM endpoint.
-
-- Required: No
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`>Any_other_property<`](#parameter-apimdefinitionhostnameconfigurationscm>any_other_property<) | object | Arbitrary key for each hostname binding. |
-
-### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<`
-
-Arbitrary key for each hostname binding.
-
-- Required: Yes
-- Type: object
-
-**Required parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`hostName`](#parameter-apimdefinitionhostnameconfigurationscm>any_other_property<hostname) | string | Host name to bind. |
-
-**Optional parameters**
-
-| Parameter | Type | Description |
-| :-- | :-- | :-- |
-| [`certificate`](#parameter-apimdefinitionhostnameconfigurationscm>any_other_property<certificate) | string | Inline certificate as base64. |
-| [`certificatePassword`](#parameter-apimdefinitionhostnameconfigurationscm>any_other_property<certificatepassword) | string | Password for the inline certificate (if provided). |
-| [`defaultSslBinding`](#parameter-apimdefinitionhostnameconfigurationscm>any_other_property<defaultsslbinding) | bool | Set this binding as default for the endpoint. |
-| [`keyVaultId`](#parameter-apimdefinitionhostnameconfigurationscm>any_other_property<keyvaultid) | string | Key Vault secret ID for the certificate. |
-| [`negotiateClientCertificate`](#parameter-apimdefinitionhostnameconfigurationscm>any_other_property<negotiateclientcertificate) | bool | Negotiate client certificate on TLS. |
-| [`sslKeyvaultIdentityClientId`](#parameter-apimdefinitionhostnameconfigurationscm>any_other_property<sslkeyvaultidentityclientid) | string | Client ID of the Key Vault identity used for SSL. |
-
-### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<.hostName`
-
-Host name to bind.
-
-- Required: Yes
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<.certificate`
-
-Inline certificate as base64.
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<.certificatePassword`
-
-Password for the inline certificate (if provided).
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<.defaultSslBinding`
-
-Set this binding as default for the endpoint.
-
-- Required: No
-- Type: bool
-
-### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<.keyVaultId`
-
-Key Vault secret ID for the certificate.
-
-- Required: No
-- Type: string
-
-### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<.negotiateClientCertificate`
-
-Negotiate client certificate on TLS.
-
-- Required: No
-- Type: bool
-
-### Parameter: `apimDefinition.hostnameConfiguration.scm.>Any_other_property<.sslKeyvaultIdentityClientId`
-
-Client ID of the Key Vault identity used for SSL.
-
-- Required: No
-- Type: string
 
 ### Parameter: `apimDefinition.minApiVersion`
 
-Minimum ARM API version to use for APIM operations.
+Minimum ARM API version to use for APIM control-plane operations.
 
 - Required: No
 - Type: string
@@ -1352,7 +1073,7 @@ Sender email address used by APIM system notifications.
 
 ### Parameter: `apimDefinition.protocols`
 
-Protocol options.
+Protocol options for the gateway.
 
 - Required: No
 - Type: object
@@ -1361,11 +1082,11 @@ Protocol options.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`enableHttp2`](#parameter-apimdefinitionprotocolsenablehttp2) | bool | Enable HTTP/2 for API traffic. |
+| [`enableHttp2`](#parameter-apimdefinitionprotocolsenablehttp2) | bool | Enables HTTP/2 for API traffic. |
 
 ### Parameter: `apimDefinition.protocols.enableHttp2`
 
-Enable HTTP/2 for API traffic.
+Enables HTTP/2 for API traffic.
 
 - Required: Yes
 - Type: bool
@@ -1381,23 +1102,23 @@ Role assignments to create on the API Management service.
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`principalId`](#parameter-apimdefinitionroleassignmentsprincipalid) | string | Principal ID to assign. |
+| [`principalId`](#parameter-apimdefinitionroleassignmentsprincipalid) | string | Principal ID to assign (objectId of user, group, or service principal). |
 | [`principalType`](#parameter-apimdefinitionroleassignmentsprincipaltype) | string | Principal type of the assignment. |
-| [`roleDefinitionIdOrName`](#parameter-apimdefinitionroleassignmentsroledefinitionidorname) | string | Role definition ID or name. |
+| [`roleDefinitionIdOrName`](#parameter-apimdefinitionroleassignmentsroledefinitionidorname) | string | Role definition ID or role name to assign. |
 
 **Optional parameters**
 
 | Parameter | Type | Description |
 | :-- | :-- | :-- |
-| [`condition`](#parameter-apimdefinitionroleassignmentscondition) | string | Condition for the assignment. |
-| [`conditionVersion`](#parameter-apimdefinitionroleassignmentsconditionversion) | string | Condition version (2.0). |
-| [`delegatedManagedIdentityResourceId`](#parameter-apimdefinitionroleassignmentsdelegatedmanagedidentityresourceid) | string | Delegated managed identity resource ID. |
-| [`description`](#parameter-apimdefinitionroleassignmentsdescription) | string | Description of the assignment. |
-| [`name`](#parameter-apimdefinitionroleassignmentsname) | string | Name of the role assignment. |
+| [`condition`](#parameter-apimdefinitionroleassignmentscondition) | string | Condition for the role assignment (for conditional access). |
+| [`conditionVersion`](#parameter-apimdefinitionroleassignmentsconditionversion) | string | Condition version (only 2.0 supported). |
+| [`delegatedManagedIdentityResourceId`](#parameter-apimdefinitionroleassignmentsdelegatedmanagedidentityresourceid) | string | Delegated managed identity resource ID (when applicable). |
+| [`description`](#parameter-apimdefinitionroleassignmentsdescription) | string | Description for the role assignment. |
+| [`name`](#parameter-apimdefinitionroleassignmentsname) | string | Name of the role assignment (GUID or custom). |
 
 ### Parameter: `apimDefinition.roleAssignments.principalId`
 
-Principal ID to assign.
+Principal ID to assign (objectId of user, group, or service principal).
 
 - Required: Yes
 - Type: string
@@ -1421,21 +1142,21 @@ Principal type of the assignment.
 
 ### Parameter: `apimDefinition.roleAssignments.roleDefinitionIdOrName`
 
-Role definition ID or name.
+Role definition ID or role name to assign.
 
 - Required: Yes
 - Type: string
 
 ### Parameter: `apimDefinition.roleAssignments.condition`
 
-Condition for the assignment.
+Condition for the role assignment (for conditional access).
 
 - Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.roleAssignments.conditionVersion`
 
-Condition version (2.0).
+Condition version (only 2.0 supported).
 
 - Required: No
 - Type: string
@@ -1448,21 +1169,21 @@ Condition version (2.0).
 
 ### Parameter: `apimDefinition.roleAssignments.delegatedManagedIdentityResourceId`
 
-Delegated managed identity resource ID.
+Delegated managed identity resource ID (when applicable).
 
 - Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.roleAssignments.description`
 
-Description of the assignment.
+Description for the role assignment.
 
 - Required: No
 - Type: string
 
 ### Parameter: `apimDefinition.roleAssignments.name`
 
-Name of the role assignment.
+Name of the role assignment (GUID or custom).
 
 - Required: No
 - Type: string
@@ -1508,7 +1229,7 @@ Arbitrary key for each tag.
 
 ### Parameter: `apimDefinition.zones`
 
-Availability zones to use (if any).
+Availability Zones for the primary region (use at least two where supported).
 
 - Required: No
 - Type: array
@@ -8322,7 +8043,14 @@ Enable network isolation posture (Private Endpoints + Private DNS).
 
 - Required: No
 - Type: array
-- Default: `[]`
+- Default:
+  ```Bicep
+  [
+    1
+    2
+    3
+  ]
+  ```
 
 ### Parameter: `resourceIds`
 

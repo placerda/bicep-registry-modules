@@ -65,7 +65,7 @@ param flagPlatformLandingZone bool = false
 param deployGenAiAppBackingServices bool = true
 
 @description('Optional.  Availability zones for any public IPs created by this deployment (e.g. Application Gateway). Must be 2 or more zones.')
-param publicIpAvailabilityZones int[] = []
+param publicIpAvailabilityZones int[] = [1, 2, 3]
 
 // 1.3 Reuse Existing Services (resource IDs to reuse, leave empty to create)
 @description('Optional.  Existing resource IDs to reuse; leave empty to create new resources.')
@@ -486,29 +486,65 @@ param appGatewayDefinition types.appGatewayDefinitionType = {
 // 1.5.17 API Management
 @description('Conditional. API Management configuration. Required if deployToggles.apiManagement is true and resourceIds.apimServiceResourceId is empty.')
 param apimDefinition types.apimDefinitionType = {
-  name: ''
+  // Basic metadata
+  name: 'apim-xyz'
   publisherEmail: 'admin@example.com'
   publisherName: 'Contoso'
+  minApiVersion: '2022-08-01'
+  notificationSenderEmail: 'apimgmt-noreply@azure.com'
+
+  // Primary region zones (intra-region HA)
+  zones: [1, 2, 3]
+
+  // Optional multi-region (each location declares its own zones)
   additionalLocations: [
     {
       location: 'westus2'
-      availabilityZones: [1, 2]
+      sku: {
+        name: 'Premium'
+        capacity: 2
+      }
+      availabilityZones: [1, 2, 3] // West US 2 supports 3 AZs
     }
   ]
-  certificate: {}
+
+  // Feature toggles
   clientCertificateEnabled: false
-  hostnameConfiguration: { management: {}, portal: {}, developerPortal: {}, proxy: {}, scm: {} }
-  minApiVersion: '2022-08-01'
-  notificationSenderEmail: 'apimgmt-noreply@azure.com'
-  skuRoot: 'Premium' // zone-capable
-  skuCapacity: 2 // at least 2 scale units
   protocols: { enableHttp2: true }
-  roleAssignments: []
   signIn: { enabled: true }
   signUp: { enabled: false, termsOfService: { consentRequired: false, enabled: false, text: '' } }
-  tags: {}
   tenantAccess: { enabled: true }
-  zones: [1, 2, 3]
+
+  // SKU sized for PSRule (>=2 scale units + zones for Premium)
+  skuRoot: 'Premium'
+  skuCapacity: 2
+
+  // Optional tags
+  tags: {}
+
+  // Hostnames passed directly in AVM shape (array)
+  hostnameConfigurations: [
+    {
+      // Public gateway (Proxy)
+      type: 'Proxy'
+      hostName: 'api.contoso.com'
+      keyVaultId: '/subscriptions/xxxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/kv/secrets/apim-proxy-cert'
+      defaultSslBinding: true
+    }
+    {
+      // New developer portal
+      type: 'DeveloperPortal'
+      hostName: 'dev.contoso.com'
+      keyVaultId: '/subscriptions/xxxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/kv/secrets/apim-devportal-cert'
+    }
+    {
+      // Management plane custom domain (optional)
+      type: 'Management'
+      hostName: 'mgmt.contoso.com'
+      keyVaultId: '/subscriptions/xxxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/kv/secrets/apim-mgmt-cert'
+    }
+    // Add 'Portal' (legacy) or 'Scm' only if you use them
+  ]
 }
 
 // 1.5.18 Azure Firewall
@@ -2324,7 +2360,7 @@ module afwPip 'br/public:avm/res/network/public-ip-address:0.9.0' = {
     location: location
     skuName: 'Standard'
     publicIPAllocationMethod: 'Static'
-    availabilityZones: []
+    availabilityZones: publicIpAvailabilityZones
     tags: tags
     enableTelemetry: enableTelemetry
   }
@@ -2374,62 +2410,84 @@ module azureFirewall_withPolicy 'br/public:avm/res/network/azure-firewall:0.8.0'
   ]
 }
 
-var varApimZoneCandidates = (length(apimDefinition.zones! ?? []) >= 2) ? apimDefinition.zones! : [1, 2]
+// var varApimZoneCandidates = (length(apimDefinition.zones! ?? []) >= 2) ? apimDefinition.zones! : [1, 2]
 
-var varApimZonesCapacityAligned = take(varApimZoneCandidates!, max(2, apimDefinition.skuCapacity))
+// var varApimZonesCapacityAligned = take(varApimZoneCandidates!, max(2, apimDefinition.skuCapacity))
 
-// Build additional APIM locations in the shape the AVM module/ARM expects
-var varApimAdditionalLocations = [
-  for l in (apimDefinition.additionalLocations! ?? []): {
-    location: l.location
-    // SKU must be embedded here (don’t put skuCapacity at this level)
-    sku: {
-      name: apimDefinition.skuRoot!
-      capacity: apimDefinition.skuCapacity
-    }
-    // property name is zones in ARM; AVM normalizes it
-    zones: (contains(l, 'availabilityZones') && length(l.availabilityZones! ?? []) > 0)
-      ? l.availabilityZones!
-      : varApimZoneCandidates!
+// // Build additional APIM locations in the shape the AVM module/ARM expects
+// var varApimAdditionalLocations = [
+//   for l in (apimDefinition.additionalLocations! ?? []): {
+//     location: l.location
+//     // SKU must be embedded here (don’t put skuCapacity at this level)
+//     sku: {
+//       name: apimDefinition.skuRoot!
+//       capacity: apimDefinition.skuCapacity
+//     }
+//     // property name is zones in ARM; AVM normalizes it
+//     zones: (contains(l, 'availabilityZones') && length(l.availabilityZones! ?? []) > 0)
+//       ? l.availabilityZones!
+//       : varApimZoneCandidates!
 
-    // optional pass-throughs
-    ...(contains(l, 'disableGateway') && l.disableGateway! != null ? { disableGateway: l.disableGateway! } : {})
-    ...(contains(l, 'natGatewayState') && l.natGatewayState! != null ? { natGatewayState: l.natGatewayState! } : {})
-    ...(contains(l, 'publicIpAddressResourceId') && !empty(string(l.publicIpAddressResourceId!))
-      ? { publicIpAddressResourceId: l.publicIpAddressResourceId! }
-      : {})
-  }
-]
+//     // optional pass-throughs
+//     ...(contains(l, 'disableGateway') && l.disableGateway! != null ? { disableGateway: l.disableGateway! } : {})
+//     ...(contains(l, 'natGatewayState') && l.natGatewayState! != null ? { natGatewayState: l.natGatewayState! } : {})
+//     ...(contains(l, 'publicIpAddressResourceId') && !empty(string(l.publicIpAddressResourceId!))
+//       ? { publicIpAddressResourceId: l.publicIpAddressResourceId! }
+//       : {})
+//   }
+// ]
 
 #disable-next-line BCP081
 module apim 'br/public:avm/res/api-management/service:0.11.0' = if (varDeployApim) {
   name: 'apimDeployment'
   params: {
+    // Core identity & placement
     name: varApimName
     location: location
     tags: union(tags, apimDefinition.tags! ?? {})
 
-    // AVM expects these:
-    sku: apimDefinition.skuRoot! // Developer | Basic | Standard | Premium | Consumption
+    // AVM-required SKU fields
+    sku: apimDefinition.skuRoot! // Developer | Basic | Standard | Premium | Consumption | V2 variants
     skuCapacity: apimDefinition.skuCapacity
 
+    // Publisher info
     publisherEmail: apimDefinition.publisherEmail
     publisherName: apimDefinition.publisherName
 
-    // Enable HTTP/2 via customProperties (string "true"/"false")
+    // Enable HTTP/2 as string flags (what the module expects)
     customProperties: apimDefinition.protocols! != null && apimDefinition!.protocols!.enableHttp2
       ? { 'Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2': 'true' }
       : {}
 
-    additionalLocations: varApimAdditionalLocations!
-    availabilityZones: varApimZonesCapacityAligned
+    // Primary region availability zones (use null if not provided)
+    availabilityZones: (length(apimDefinition.zones! ?? []) > 0) ? apimDefinition.zones! : null
 
+    // Multi-region locations (each with its own zones)
+    additionalLocations: [
+      for l in (apimDefinition.additionalLocations! ?? []): {
+        location: l.location
+        sku: {
+          name: apimDefinition.skuRoot!
+          capacity: apimDefinition.skuCapacity
+        }
+        availabilityZones: (length(l.availabilityZones! ?? []) > 0) ? l.availabilityZones! : null
+
+        // Optional pass-throughs
+        ...(contains(l, 'disableGateway') && l.disableGateway! != null ? { disableGateway: l.disableGateway! } : {})
+        ...(contains(l, 'natGatewayState') && l.natGatewayState! != null ? { natGatewayState: l.natGatewayState! } : {})
+        ...(contains(l, 'publicIpAddressResourceId') && !empty(string(l.publicIpAddressResourceId!))
+          ? { publicIpAddressResourceId: l.publicIpAddressResourceId! }
+          : {})
+      }
+    ]
+
+    // Hostnames in AVM shape (array) or null if not provided
+    hostnameConfigurations: apimDefinition.hostnameConfigurations! ?? null
+
+    // Misc
     enableTelemetry: enableTelemetry
     minApiVersion: apimDefinition.minApiVersion!
-
-    // Optional:
-    // notificationSenderEmail: apimDefinition.notificationSenderEmail
-    // hostnameConfigurations: apimDefinition.hostnameConfiguration
+    notificationSenderEmail: apimDefinition.notificationSenderEmail!
   }
 }
 

@@ -1578,26 +1578,68 @@ type appGatewayDefinitionType = {
 }
 
 @export()
-@description('Configuration for an additional APIM location (region, SKU/capacity, networking, and zones).')
-type apimAdditionalLocationType = {
-  @description('Required. Azure region for this additional APIM location (e.g., westus2).')
-  location: string
+@description('Required. Hostname binding entry in the AVM-friendly array format.')
+type apimHostnameConfigurationItem = {
+  @description('Required. Endpoint type for this binding.')
+  type: 'Proxy' | 'Portal' | 'Management' | 'DeveloperPortal' | 'Scm'
 
-  @description('Optional. Availability zones to use in this region (e.g., [1,2]).')
-  availabilityZones: int[]? // zones for this region (e.g., [1,2])
+  @description('Required. DNS host name to bind to this endpoint.')
+  hostName: string
 
-  @description('Optional. Disable the gateway in this location (true) or enable it (false).')
-  disableGateway: bool?
+  @description('Optional. Key Vault secret ID containing the TLS certificate to use for this hostname.')
+  keyVaultId: string?
 
-  @description('Optional. NAT Gateway state for this location. Allowed values: Enabled or Disabled.')
-  natGatewayState: 'Enabled' | 'Disabled'?
+  @description('Optional. Base64-encoded PFX certificate to use when not referencing Key Vault.')
+  encodedCertificate: string?
 
-  @description('Optional. Resource ID of an existing Public IP to associate with this location (if applicable).')
-  publicIpAddressResourceId: string?
+  @description('Optional. Password for the provided encoded certificate, if required.')
+  certificatePassword: string?
+
+  @description('Optional. Require/negotiates a client certificate during TLS handshake.')
+  negotiateClientCertificate: bool?
+
+  @description('Optional. Marks this binding as the default SSL binding for the endpoint type.')
+  defaultSslBinding: bool?
+
+  @description('Optional. Client ID of the managed identity used to access Key Vault for this binding.')
+  identityClientId: string?
 }
 
 @export()
-@description('Configuration object for the Azure API Management service to be deployed.')
+@description('Required. Additional region entry for the API Management service.')
+type apimAdditionalLocationType = {
+  @description('Required. Azure region name for this additional location (e.g., westus2).')
+  location: string
+
+  @description('Required. SKU settings for this additional location.')
+  sku: {
+    @description('Required. Name of the SKU for this location.')
+    name: 'Basic' | 'BasicV2' | 'Consumption' | 'Developer' | 'Isolated' | 'Premium' | 'Standard' | 'StandardV2'
+    @description('Required. Capacity (scale units) for this location.')
+    capacity: int
+  }
+
+  @description('Optional. Availability Zones to use in this location (use at least two where supported).')
+  availabilityZones: int[]?
+
+  @description('Optional. Disables the gateway in this additional location.')
+  disableGateway: bool?
+
+  @description('Optional. Enables or disables NAT Gateway for this location.')
+  natGatewayState: 'Disabled' | 'Enabled'?
+
+  @description('Optional. Resource ID of a Standard Public IP to associate (where supported).')
+  publicIpAddressResourceId: string?
+
+  @description('Optional. Virtual network configuration for this location.')
+  virtualNetworkConfiguration: {
+    @description('Required. Subnet resource ID for the APIM deployment in this location.')
+    subnetResourceId: string
+  }?
+}
+
+@export()
+@description('Required. Configuration object for the Azure API Management service to be deployed.')
 type apimDefinitionType = {
   @description('Optional. API Management service name.')
   name: string?
@@ -1608,191 +1650,85 @@ type apimDefinitionType = {
   @description('Required. Publisher display name.')
   publisherName: string
 
-  @description('Optional. Minimum ARM API version to use for APIM operations.')
+  @description('Optional. Minimum ARM API version to use for APIM control-plane operations.')
   minApiVersion: string?
 
   @description('Optional. Sender email address used by APIM system notifications.')
   notificationSenderEmail: string?
 
-  @description('Optional. Additional regions for API Management.')
+  @description('Optional. Additional regions for the API Management service.')
   additionalLocations: apimAdditionalLocationType[]?
 
-  @description('Optional. Certificates for API Management endpoints.')
+  @description('Optional. Certificates map that can be used by other flows (not directly by hostnameConfigurations).')
   certificate: {
     @description('Required. Arbitrary key for each certificate entry.')
     *: {
       @description('Required. Base64-encoded PFX certificate.')
       encodedCertificate: string
-      @description('Required. Store name to import to (e.g., CertificateAuthority).')
+      @description('Required. Certificate store name (e.g., CertificateAuthority).')
       storeName: string
-      @description('Optional. Certificate password.')
+      @description('Optional. Password for the encoded certificate, if required.')
       certificatePassword: string?
     }
   }?
 
-  @description('Required. Enable client certificate authentication for gateway.')
+  @description('Required. Enables client certificate authentication on the gateway.')
   clientCertificateEnabled: bool
 
-  @description('Optional. Hostname configuration for all endpoints.')
-  hostnameConfiguration: {
-    @description('Optional. Hostname configuration map for the Management endpoint.')
-    management: {
-      @description('Required. Arbitrary key for each hostname binding.')
-      *: {
-        @description('Required. Host name to bind.')
-        hostName: string
-        @description('Optional. Key Vault secret ID for the certificate.')
-        keyVaultId: string?
-        @description('Optional. Inline certificate as base64.')
-        certificate: string?
-        @description('Optional. Password for the inline certificate (if provided).')
-        certificatePassword: string?
-        @description('Optional. Negotiate client certificate on TLS.')
-        negotiateClientCertificate: bool?
-        @description('Optional. Client ID of the Key Vault identity used for SSL.')
-        sslKeyvaultIdentityClientId: string?
-        @description('Optional. Set this binding as default for the endpoint.')
-        defaultSslBinding: bool?
-      }
-    }?
+  @description('Optional. Hostname configuration array in AVM-friendly format.')
+  hostnameConfigurations: apimHostnameConfigurationItem[]?
 
-    @description('Optional. Hostname configuration map for the Developer Portal.')
-    portal: {
-      @description('Required. Arbitrary key for each hostname binding.')
-      *: {
-        @description('Required. Host name to bind.')
-        hostName: string
-        @description('Optional. Key Vault secret ID for the certificate.')
-        keyVaultId: string?
-        @description('Optional. Inline certificate as base64.')
-        certificate: string?
-        @description('Optional. Password for the inline certificate (if provided).')
-        certificatePassword: string?
-        @description('Optional. Negotiate client certificate on TLS.')
-        negotiateClientCertificate: bool?
-        @description('Optional. Client ID of the Key Vault identity used for SSL.')
-        sslKeyvaultIdentityClientId: string?
-        @description('Optional. Set this binding as default for the endpoint.')
-        defaultSslBinding: bool?
-      }
-    }?
-
-    @description('Optional. Hostname configuration map for the Legacy Developer Portal (deprecated in some SKUs).')
-    developerPortal: {
-      @description('Required. Arbitrary key for each hostname binding.')
-      *: {
-        @description('Required. Host name to bind.')
-        hostName: string
-        @description('Optional. Key Vault secret ID for the certificate.')
-        keyVaultId: string?
-        @description('Optional. Inline certificate as base64.')
-        certificate: string?
-        @description('Optional. Password for the inline certificate (if provided).')
-        certificatePassword: string?
-        @description('Optional. Negotiate client certificate on TLS.')
-        negotiateClientCertificate: bool?
-        @description('Optional. Client ID of the Key Vault identity used for SSL.')
-        sslKeyvaultIdentityClientId: string?
-        @description('Optional. Set this binding as default for the endpoint.')
-        defaultSslBinding: bool?
-      }
-    }?
-
-    @description('Optional. Hostname configuration map for the Gateway/Proxy endpoint.')
-    proxy: {
-      @description('Required. Arbitrary key for each hostname binding.')
-      *: {
-        @description('Required. Host name to bind.')
-        hostName: string
-        @description('Optional. Key Vault secret ID for the certificate.')
-        keyVaultId: string?
-        @description('Optional. Inline certificate as base64.')
-        certificate: string?
-        @description('Optional. Password for the inline certificate (if provided).')
-        certificatePassword: string?
-        @description('Optional. Negotiate client certificate on TLS.')
-        negotiateClientCertificate: bool?
-        @description('Optional. Client ID of the Key Vault identity used for SSL.')
-        sslKeyvaultIdentityClientId: string?
-        @description('Optional. Set this binding as default for the endpoint.')
-        defaultSslBinding: bool?
-      }
-    }?
-
-    @description('Optional. Hostname configuration map for the SCM endpoint.')
-    scm: {
-      @description('Required. Arbitrary key for each hostname binding.')
-      *: {
-        @description('Required. Host name to bind.')
-        hostName: string
-        @description('Optional. Key Vault secret ID for the certificate.')
-        keyVaultId: string?
-        @description('Optional. Inline certificate as base64.')
-        certificate: string?
-        @description('Optional. Password for the inline certificate (if provided).')
-        certificatePassword: string?
-        @description('Optional. Negotiate client certificate on TLS.')
-        negotiateClientCertificate: bool?
-        @description('Optional. Client ID of the Key Vault identity used for SSL.')
-        sslKeyvaultIdentityClientId: string?
-        @description('Optional. Set this binding as default for the endpoint.')
-        defaultSslBinding: bool?
-      }
-    }?
-  }?
-
-  @description('Optional. Protocol options.')
+  @description('Optional. Protocol options for the gateway.')
   protocols: {
-    @description('Required. Enable HTTP/2 for API traffic.')
+    @description('Required. Enables HTTP/2 for API traffic.')
     enableHttp2: bool
   }?
 
   @description('Required. Sign-in configuration for the developer portal.')
   signIn: {
-    @description('Required. Enable sign-in on developer portal.')
+    @description('Required. Enables sign-in on the developer portal.')
     enabled: bool
   }
 
   @description('Required. Sign-up configuration for the developer portal.')
   signUp: {
-    @description('Required. Enable sign-up on developer portal.')
+    @description('Required. Enables sign-up on the developer portal.')
     enabled: bool
-
     @description('Required. Terms of Service configuration for sign-up.')
     termsOfService: {
-      @description('Required. User must consent to ToS.')
+      @description('Required. Indicates whether user consent to ToS is required.')
       consentRequired: bool
-      @description('Required. Terms of Service enabled.')
+      @description('Required. Indicates whether Terms of Service are enabled.')
       enabled: bool
-      @description('Required. Text shown for Terms of Service.')
+      @description('Required. Text for the Terms of Service displayed to users.')
       text: string
     }
   }
 
   @description('Optional. Role assignments to create on the API Management service.')
   roleAssignments: {
-    @description('Optional. Name of the role assignment.')
+    @description('Optional. Name of the role assignment (GUID or custom).')
     name: string?
-    @description('Required. Principal ID to assign.')
+    @description('Required. Principal ID to assign (objectId of user, group, or service principal).')
     principalId: string
-    @description('Required. Role definition ID or name.')
+    @description('Required. Role definition ID or role name to assign.')
     roleDefinitionIdOrName: string
     @description('Required. Principal type of the assignment.')
     principalType: 'Device' | 'ForeignGroup' | 'Group' | 'ServicePrincipal' | 'User'
-    @description('Optional. Description of the assignment.')
+    @description('Optional. Description for the role assignment.')
     description: string?
-    @description('Optional. Condition for the assignment.')
+    @description('Optional. Condition for the role assignment (for conditional access).')
     condition: string?
-    @description('Optional. Condition version (2.0).')
+    @description('Optional. Condition version (only 2.0 supported).')
     conditionVersion: '2.0'?
-    @description('Optional. Delegated managed identity resource ID.')
+    @description('Optional. Delegated managed identity resource ID (when applicable).')
     delegatedManagedIdentityResourceId: string?
   }[]?
 
   @description('Optional. SKU for API Management (Developer/Basic/Standard/Premium/Consumption/V2 variants).')
   skuRoot: 'Basic' | 'BasicV2' | 'Consumption' | 'Developer' | 'Premium' | 'Standard' | 'StandardV2'?
 
-  @description('Required. Capacity for the chosen SKU.')
+  @description('Required. Capacity (scale units) for the chosen SKU.')
   skuCapacity: int
 
   @description('Optional. Tags to apply to the API Management service.')
@@ -1803,11 +1739,11 @@ type apimDefinitionType = {
 
   @description('Required. Tenant access configuration for the management plane.')
   tenantAccess: {
-    @description('Required. Enable tenant access for the management plane.')
+    @description('Required. Enables tenant access for the management plane.')
     enabled: bool
   }
 
-  @description('Optional. Availability zones to use (if any).')
+  @description('Optional. Availability Zones for the primary region (use at least two where supported).')
   zones: int[]?
 }
 
