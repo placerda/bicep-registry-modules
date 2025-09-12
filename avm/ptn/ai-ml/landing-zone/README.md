@@ -577,7 +577,7 @@ API Management configuration. Required if deployToggles.apiManagement is true an
         proxy: {}
         scm: {}
       }
-      minApiVersion: '2019-12-01'
+      minApiVersion: '2022-08-01'
       name: ''
       notificationSenderEmail: 'apimgmt-noreply@azure.com'
       protocols: {

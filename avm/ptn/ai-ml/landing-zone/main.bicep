@@ -498,7 +498,7 @@ param apimDefinition types.apimDefinitionType = {
   certificate: {}
   clientCertificateEnabled: false
   hostnameConfiguration: { management: {}, portal: {}, developerPortal: {}, proxy: {}, scm: {} }
-  minApiVersion: '2019-12-01'
+  minApiVersion: '2022-08-01'
   notificationSenderEmail: 'apimgmt-noreply@azure.com'
   skuRoot: 'Premium' // zone-capable
   skuCapacity: 2 // at least 2 scale units
@@ -2314,6 +2314,22 @@ module fwPolicy 'br/public:avm/res/network/firewall-policy:0.3.1' = if (varDeplo
   }
 }
 
+// name matches what your module currently uses
+var varAfwPipName = '${varAfw}${baseName}-pip'
+
+module afwPip 'br/public:avm/res/network/public-ip-address:0.9.0' = {
+  name: 'afwPipDeployment'
+  params: {
+    name: varAfwPipName
+    location: location
+    skuName: 'Standard'
+    publicIPAllocationMethod: 'Static'
+    availabilityZones: []
+    tags: tags
+    enableTelemetry: enableTelemetry
+  }
+}
+
 // 1) Azure Firewall without policy
 module azureFirewall_noPolicy 'br/public:avm/res/network/azure-firewall:0.8.0' = if (varDeployFirewall && !varDeployAfwPolicy) {
   name: 'azureFirewallDeployment'
@@ -2409,8 +2425,9 @@ module apim 'br/public:avm/res/api-management/service:0.11.0' = if (varDeployApi
     availabilityZones: varApimZonesCapacityAligned
 
     enableTelemetry: enableTelemetry
+    minApiVersion: apimDefinition.minApiVersion!
+
     // Optional:
-    // minApiVersion: apimDefinition.minApiVersion
     // notificationSenderEmail: apimDefinition.notificationSenderEmail
     // hostnameConfigurations: apimDefinition.hostnameConfiguration
   }
