@@ -524,7 +524,6 @@ param publicIpAvailabilityZones = [
 | [`logAnalyticsDefinition`](#parameter-loganalyticsdefinition) | object | Log Analytics Workspace configuration. Required if deployToggles.logAnalytics is true and resourceIds.logAnalyticsWorkspaceResourceId is empty. |
 | [`privateDnsZoneIds`](#parameter-privatednszoneids) | object | Existing Private DNS Zone resource IDs per service. Required if networkIsolation is true and you plan to reuse existing zones for any service. |
 | [`privateDnsZones`](#parameter-privatednszones) | object | Private DNS Zones and VNet links configuration. Required if networkIsolation is true, flagPlatformLandingZone is false, and you want this template to create zones for services not supplied in privateDnsZoneIds. |
-| [`publicIpAvailabilityZones`](#parameter-publicipavailabilityzones) | array | Availability zones to use for Public IPs (Application Gateway and Firewall). Specify only zones that exist in the selected region. Leave empty for regions that do not support availability zones. Required if Deploy App Gateway and Create App Gateway Public Frontend is true or Deploy Firewall is true. |
 | [`searchDefinition`](#parameter-searchdefinition) | object | Azure AI Search configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.searchService is true, and resourceIds.searchServiceResourceId is empty. |
 | [`storageAccountDefinition`](#parameter-storageaccountdefinition) | object | Storage Account configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.storageAccount is true, and resourceIds.storageAccountResourceId is empty. |
 | [`vnetDefinition`](#parameter-vnetdefinition) | object | Virtual Network configuration. Required if deployToggles.virtualNetwork is true and resourceIds.virtualNetworkResourceId is empty. |
@@ -546,6 +545,7 @@ param publicIpAvailabilityZones = [
 | [`githubPat`](#parameter-githubpat) | securestring | PAT used to request a GitHub runner registration token (when runner = github). |
 | [`location`](#parameter-location) | string | Azure region for AI LZ resources. Defaults to the resource group location. |
 | [`networkIsolation`](#parameter-networkisolation) | bool | Enable network isolation posture (Private Endpoints + Private DNS). |
+| [`publicIpAvailabilityZones`](#parameter-publicipavailabilityzones) | array |  Availability zones for any public IPs created by this deployment (e.g. Application Gateway). Must be 2 or more zones. |
 | [`resourceIds`](#parameter-resourceids) | object |  Existing resource IDs to reuse; leave empty to create new resources. |
 | [`resourceToken`](#parameter-resourcetoken) | string |  Deterministic token for resource names; auto-generated if not provided. |
 | [`tags`](#parameter-tags) | object |  Tags applied to all deployed resources. |
@@ -5474,21 +5474,6 @@ Resource ID of the resource group that hosts existing Private DNS zones.
 - Required: No
 - Type: string
 
-### Parameter: `publicIpAvailabilityZones`
-
-Availability zones to use for Public IPs (Application Gateway and Firewall). Specify only zones that exist in the selected region. Leave empty for regions that do not support availability zones. Required if Deploy App Gateway and Create App Gateway Public Frontend is true or Deploy Firewall is true.
-
-- Required: No
-- Type: array
-- Default:
-  ```Bicep
-  [
-    1
-    2
-    3
-  ]
-  ```
-
 ### Parameter: `searchDefinition`
 
 Azure AI Search configuration for the GenAI app. Required if deployGenAiAppBackingServices is true, deployToggles.searchService is true, and resourceIds.searchServiceResourceId is empty.
@@ -8330,6 +8315,14 @@ Enable network isolation posture (Private Endpoints + Private DNS).
 - Required: No
 - Type: bool
 - Default: `True`
+
+### Parameter: `publicIpAvailabilityZones`
+
+ Availability zones for any public IPs created by this deployment (e.g. Application Gateway). Must be 2 or more zones.
+
+- Required: No
+- Type: array
+- Default: `[]`
 
 ### Parameter: `resourceIds`
 

@@ -7,7 +7,8 @@ metadata description = 'Deploys the landing zone with defaults.'
 @maxLength(90)
 param resourceGroupName string = 'dep-${namePrefix}-bicep-${serviceShort}-rg'
 
-import { enforcedLocation } from '../../shared/constants.bicep'
+#disable-next-line no-hardcoded-location
+import { enforcedLocation, tags } from '../../shared/constants.bicep'
 
 @description('Optional. Short identifier for the test kind. Keep short to avoid name-length issues.')
 param serviceShort string = 'lzmin'
@@ -23,6 +24,7 @@ var workloadName = take(replace(replace(replace(replace(_seed, ' ', ''), '-', ''
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2025-04-01' = {
   name: resourceGroupName
   location: enforcedLocation
+  tags: tags
 }
 
 // Deploys the AI/ML landing zone with default settings and no model deployments, validating basic provisioning and idempotency.

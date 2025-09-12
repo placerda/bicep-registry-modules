@@ -64,8 +64,8 @@ param flagPlatformLandingZone bool = false
 @description('Optional.  Deploy GenAI app services; defaults to true.')
 param deployGenAiAppBackingServices bool = true
 
-@description('Conditional. Availability zones to use for Public IPs (Application Gateway and Firewall). Specify only zones that exist in the selected region. Leave empty for regions that do not support availability zones. Required if Deploy App Gateway and Create App Gateway Public Frontend is true or Deploy Firewall is true.')
-param publicIpAvailabilityZones int[] = [1, 2, 3]
+@description('Optional.  Availability zones for any public IPs created by this deployment (e.g. Application Gateway). Must be 2 or more zones.')
+param publicIpAvailabilityZones int[] = []
 
 // 1.3 Reuse Existing Services (resource IDs to reuse, leave empty to create)
 @description('Optional.  Existing resource IDs to reuse; leave empty to create new resources.')
@@ -2314,21 +2314,6 @@ module fwPolicy 'br/public:avm/res/network/firewall-policy:0.3.1' = if (varDeplo
   }
 }
 
-module firewallPip 'br/public:avm/res/network/public-ip-address:0.9.0' = if (varDeployFirewall) {
-  name: 'firewallPipDeployment'
-  params: {
-    name: '${varPip}${varAfw}${baseName}'
-    location: location
-    skuName: 'Standard'
-    publicIPAllocationMethod: 'Static'
-    availabilityZones: publicIpAvailabilityZones
-    tags: tags
-    enableTelemetry: enableTelemetry
-  }
-}
-
-var varZoneStrings = [for z in publicIpAvailabilityZones: string(z)]
-
 // 1) Azure Firewall without policy
 module azureFirewall_noPolicy 'br/public:avm/res/network/azure-firewall:0.8.0' = if (varDeployFirewall && !varDeployAfwPolicy) {
   name: 'azureFirewallDeployment'
@@ -2345,7 +2330,6 @@ module azureFirewall_noPolicy 'br/public:avm/res/network/azure-firewall:0.8.0' =
       publicIPAllocationMethod: 'Static'
       skuName: 'Standard'
       skuTier: 'Regional'
-      zones: varZoneStrings
     }
   }
 }
@@ -2366,7 +2350,6 @@ module azureFirewall_withPolicy 'br/public:avm/res/network/azure-firewall:0.8.0'
       publicIPAllocationMethod: 'Static'
       skuName: 'Standard'
       skuTier: 'Regional'
-      zones: varZoneStrings
     }
     firewallPolicyId: fwPolicy!.outputs.resourceId
   }
@@ -2374,6 +2357,10 @@ module azureFirewall_withPolicy 'br/public:avm/res/network/azure-firewall:0.8.0'
     fwPolicy!
   ]
 }
+
+var varApimZoneCandidates = (length(apimDefinition.zones! ?? []) >= 2) ? apimDefinition.zones! : [1, 2]
+
+var varApimZonesCapacityAligned = take(varApimZoneCandidates!, max(2, apimDefinition.skuCapacity))
 
 // Build additional APIM locations in the shape the AVM module/ARM expects
 var varApimAdditionalLocations = [
@@ -2387,7 +2374,7 @@ var varApimAdditionalLocations = [
     // property name is zones in ARM; AVM normalizes it
     zones: (contains(l, 'availabilityZones') && length(l.availabilityZones! ?? []) > 0)
       ? l.availabilityZones!
-      : varApimZones
+      : varApimZoneCandidates!
 
     // optional pass-throughs
     ...(contains(l, 'disableGateway') && l.disableGateway! != null ? { disableGateway: l.disableGateway! } : {})
@@ -2397,11 +2384,6 @@ var varApimAdditionalLocations = [
       : {})
   }
 ]
-
-// Use caller PIP zones as the APIM zone set, or fall back to [1, 2]
-var varApimZones = length(publicIpAvailabilityZones) >= 2 ? publicIpAvailabilityZones : [1, 2]
-
-var varApimZonesCapacityAligned = take(varApimZones, apimDefinition.skuCapacity)
 
 #disable-next-line BCP081
 module apim 'br/public:avm/res/api-management/service:0.11.0' = if (varDeployApim) {
