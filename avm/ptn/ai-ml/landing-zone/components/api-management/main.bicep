@@ -24,26 +24,30 @@ param apimDefinition types.apimDefinitionType
 // Helpers
 // -------------------------------
 
+// Note: Avoid converting availabilityZones -> zones here to prevent parser complexity.
+// If needed, this conversion can be reintroduced using a different approach.
+
 var primaryZones = length(apimDefinition.zones!) > 0 ? apimDefinition.zones! : null
 
 // Cache the source list
 var _additionalLocations = apimDefinition.additionalLocations! ?? []
 
-// Build zones (string[]) for each location in a separate var
-// Removed nested for-expression to avoid parser limitations
+// Note: Avoid converting availabilityZones -> zones here to prevent parser complexity.
+// If needed, this conversion can be reintroduced using a different approach.
 
-// Normalize additional locations (no nested 'for' inside object)
 var additionalLocationsNormalized = [
   for (l, i) in _additionalLocations: {
     location: l.location
-    sku: {
-      name: l.sku.name
-      capacity: l.sku.capacity
-    }
-
-    // Emit availability/zones as provided by the source type (avoid nested for)
-    zones: length(l.availabilityZones! ?? []) > 0 ? l.availabilityZones! : null
-
+    sku: contains(l, 'sku')
+      ? {
+          name: l.sku.name
+          capacity: l.sku.capacity
+        }
+      : {
+          name: apimDefinition.skuRoot!
+          capacity: apimDefinition.skuCapacity
+        }
+    zones: null
     disableGateway: l.disableGateway!
     natGatewayState: l.natGatewayState!
     publicIpAddressId: l.publicIpAddressResourceId!
@@ -122,7 +126,6 @@ resource apim 'Microsoft.ApiManagement/service@2024-05-01' = {
     enableClientCertificate: apimDefinition.skuRoot! == 'Consumption' ? apimDefinition.clientCertificateEnabled : null
   }
 }
-
 // Handy outputs
 output resourceId string = apim.id
 output nameOut string = apim.name

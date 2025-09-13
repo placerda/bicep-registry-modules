@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "2778157238257598254"
+      "templateHash": "17627272646022293086"
     }
   },
   "definitions": {
@@ -5540,11 +5540,8 @@
         "count": "[length(variables('_additionalLocations'))]",
         "input": {
           "location": "[variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].location]",
-          "sku": {
-            "name": "[variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].sku.name]",
-            "capacity": "[variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].sku.capacity]"
-          },
-          "zones": "[if(greater(length(coalesce(variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].availabilityZones, createArray())), 0), variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].availabilityZones, null())]",
+          "sku": "[if(contains(variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')], 'sku'), createObject('name', variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].sku.name, 'capacity', variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].sku.capacity), createObject('name', parameters('apimDefinition').skuRoot, 'capacity', parameters('apimDefinition').skuCapacity))]",
+          "zones": null,
           "disableGateway": "[variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].disableGateway]",
           "natGatewayState": "[variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].natGatewayState]",
           "publicIpAddressId": "[variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].publicIpAddressResourceId]",
