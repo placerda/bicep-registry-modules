@@ -1579,7 +1579,7 @@ type appGatewayDefinitionType = {
 
 @export()
 @description('Required. Hostname binding entry in the AVM-friendly array format.')
-type apimHostnameConfigurationItem = {
+type apimHostnameConfigurationItemType = {
   @description('Required. Endpoint type for this binding.')
   type: 'Proxy' | 'Portal' | 'Management' | 'DeveloperPortal' | 'Scm'
 
@@ -1620,7 +1620,7 @@ type apimAdditionalLocationType = {
   }
 
   @description('Optional. Availability Zones to use in this location (use at least two where supported).')
-  availabilityZones: int[]?
+  availabilityZones: string[]?
 
   @description('Optional. Disables the gateway in this additional location.')
   disableGateway: bool?
@@ -1676,7 +1676,7 @@ type apimDefinitionType = {
   clientCertificateEnabled: bool
 
   @description('Optional. Hostname configuration array in AVM-friendly format.')
-  hostnameConfigurations: apimHostnameConfigurationItem[]?
+  hostnameConfigurations: apimHostnameConfigurationItemType[]?
 
   @description('Optional. Protocol options for the gateway.')
   protocols: {
@@ -1744,7 +1744,7 @@ type apimDefinitionType = {
   }
 
   @description('Optional. Availability Zones for the primary region (use at least two where supported).')
-  zones: int[]?
+  zones: string[]?
 }
 
 @export()

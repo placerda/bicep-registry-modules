@@ -1,0 +1,5612 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "languageVersion": "2.0",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.37.4.10188",
+      "templateHash": "2778157238257598254"
+    }
+  },
+  "definitions": {
+    "_1.aiFoundryConfigurationType": {
+      "type": "object",
+      "properties": {
+        "accountName": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Account name for AI Foundry."
+          }
+        },
+        "location": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Location for the account (defaults to RG location if omitted)."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "allowedValues": [
+            "F0",
+            "S0"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Account SKU."
+          }
+        },
+        "createCapabilityHosts": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Create capability hosts (data plane services)."
+          }
+        },
+        "allowProjectManagement": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Allow project management operations."
+          }
+        },
+        "networking": {
+          "type": "object",
+          "properties": {
+            "agentServiceSubnetResourceId": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Subnet Resource ID for the Agent Service."
+              }
+            },
+            "cognitiveServicesPrivateDnsZoneResourceId": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Private DNS zone Resource ID for AI Services."
+              }
+            },
+            "openAiPrivateDnsZoneResourceId": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Private DNS zone Resource ID for OpenAI."
+              }
+            },
+            "aiServicesPrivateDnsZoneResourceId": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Private DNS zone Resource ID for AI Services."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Networking configuration (subnet & private DNS zones)."
+          }
+        },
+        "project": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Default project name."
+              }
+            },
+            "displayName": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Default project display name."
+              }
+            },
+            "desc": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Default project description."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Default project properties."
+          }
+        },
+        "roleAssignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Role assignment name."
+                }
+              },
+              "principalId": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Principal (objectId) to assign."
+                }
+              },
+              "roleDefinitionIdOrName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Role definition ID or built-in role name."
+                }
+              },
+              "principalType": {
+                "type": "string",
+                "allowedValues": [
+                  "Device",
+                  "ForeignGroup",
+                  "Group",
+                  "ServicePrincipal",
+                  "User"
+                ],
+                "metadata": {
+                  "description": "Required. Principal type."
+                }
+              },
+              "description": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Description for the assignment."
+                }
+              },
+              "condition": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition expression for the assignment."
+                }
+              },
+              "conditionVersion": {
+                "type": "string",
+                "allowedValues": [
+                  "2.0"
+                ],
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition version (e.g., 2.0)."
+                }
+              },
+              "delegatedManagedIdentityResourceId": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Delegated managed identity resource ID."
+                }
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Role assignments to create on the account."
+          }
+        },
+        "privateDnsZoneResourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Consolidated list of Private DNS Zone resource IDs."
+          }
+        }
+      },
+      "metadata": {
+        "description": "AI Foundry account configuration.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.aiFoundryDefinitionType": {
+      "type": "object",
+      "properties": {
+        "baseUniqueName": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Base unique name used for related resources."
+          }
+        },
+        "location": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Location/region for the AI Foundry resources."
+          }
+        },
+        "createByor": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Create BYOR (bring-your-own resource) links where applicable."
+          }
+        },
+        "lock": {
+          "$ref": "#/definitions/_2.lockType",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Optional lock configuration for created resources."
+          }
+        },
+        "aiProjects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.aiFoundryProjectType"
+          },
+          "nullable": true,
+          "minLength": 0,
+          "metadata": {
+            "description": "Optional. Array of AI Projects to create (can be empty)."
+          }
+        },
+        "aiFoundryConfiguration": {
+          "$ref": "#/definitions/_1.aiFoundryConfigurationType",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. AI Foundry account/project level configuration."
+          }
+        },
+        "aiModelDeployments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.aiModelDeploymentType"
+          },
+          "nullable": true,
+          "minLength": 0,
+          "metadata": {
+            "description": "Optional. Model deployments to provision (can be empty)."
+          }
+        },
+        "includeAssociatedResources": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Include associated resources (Search/Cosmos/Storage/KV) in the deployment."
+          }
+        },
+        "privateEndpointSubnetResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Subnet resource ID where Private Endpoints should be created."
+          }
+        },
+        "keyVaultConfiguration": {
+          "type": "object",
+          "properties": {
+            "existingResourceId": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Existing Key Vault resource ID to reuse."
+              }
+            },
+            "name": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Name for a new Key Vault (if creating)."
+              }
+            },
+            "privateDnsZoneResourceId": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Private DNS Zone resource ID for Vault."
+              }
+            },
+            "roleAssignments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Role assignment name."
+                    }
+                  },
+                  "principalId": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Principal (objectId) to assign."
+                    }
+                  },
+                  "roleDefinitionIdOrName": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Role definition ID or built-in role name."
+                    }
+                  },
+                  "principalType": {
+                    "type": "string",
+                    "allowedValues": [
+                      "Device",
+                      "ForeignGroup",
+                      "Group",
+                      "ServicePrincipal",
+                      "User"
+                    ],
+                    "metadata": {
+                      "description": "Required. Principal type."
+                    }
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Description for the assignment."
+                    }
+                  },
+                  "condition": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Condition expression for the assignment."
+                    }
+                  },
+                  "conditionVersion": {
+                    "type": "string",
+                    "allowedValues": [
+                      "2.0"
+                    ],
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Condition version (e.g., 2.0)."
+                    }
+                  },
+                  "delegatedManagedIdentityResourceId": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Delegated managed identity resource ID."
+                    }
+                  }
+                }
+              },
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Role assignments to create on the vault."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Key Vault configuration (reuse or create) for AI Foundry associated resources."
+          }
+        },
+        "aiSearchConfiguration": {
+          "type": "object",
+          "properties": {
+            "existingResourceId": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Existing Search resource ID to reuse."
+              }
+            },
+            "name": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Name for a new Search service (if creating)."
+              }
+            },
+            "privateDnsZoneResourceId": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Private DNS Zone resource ID for Search."
+              }
+            },
+            "roleAssignments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Role assignment name."
+                    }
+                  },
+                  "principalId": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Principal (objectId) to assign."
+                    }
+                  },
+                  "roleDefinitionIdOrName": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Role definition ID or built-in role name."
+                    }
+                  },
+                  "principalType": {
+                    "type": "string",
+                    "allowedValues": [
+                      "Device",
+                      "ForeignGroup",
+                      "Group",
+                      "ServicePrincipal",
+                      "User"
+                    ],
+                    "metadata": {
+                      "description": "Required. Principal type for the assignment."
+                    }
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Description for the assignment."
+                    }
+                  },
+                  "condition": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Condition expression for the assignment."
+                    }
+                  },
+                  "conditionVersion": {
+                    "type": "string",
+                    "allowedValues": [
+                      "2.0"
+                    ],
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Condition version (e.g., 2.0)."
+                    }
+                  },
+                  "delegatedManagedIdentityResourceId": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Delegated managed identity resource ID."
+                    }
+                  }
+                }
+              },
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Role assignments to create on the Search service."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Azure AI Search configuration (reuse or create) for AI Foundry associated resources."
+          }
+        },
+        "storageAccountConfiguration": {
+          "type": "object",
+          "properties": {
+            "existingResourceId": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Existing Storage Account resource ID to reuse."
+              }
+            },
+            "name": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Name for a new Storage Account (if creating)."
+              }
+            },
+            "blobPrivateDnsZoneResourceId": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Private DNS Zone resource ID for Blob (if using Private Endpoints)."
+              }
+            },
+            "roleAssignments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Role assignment name."
+                    }
+                  },
+                  "principalId": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Principal (objectId) to assign."
+                    }
+                  },
+                  "roleDefinitionIdOrName": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Role definition ID or built-in role name."
+                    }
+                  },
+                  "principalType": {
+                    "type": "string",
+                    "allowedValues": [
+                      "Device",
+                      "ForeignGroup",
+                      "Group",
+                      "ServicePrincipal",
+                      "User"
+                    ],
+                    "metadata": {
+                      "description": "Required. Principal type for the assignment."
+                    }
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Description for the assignment."
+                    }
+                  },
+                  "condition": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Condition expression for the assignment."
+                    }
+                  },
+                  "conditionVersion": {
+                    "type": "string",
+                    "allowedValues": [
+                      "2.0"
+                    ],
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Condition version (e.g., 2.0)."
+                    }
+                  },
+                  "delegatedManagedIdentityResourceId": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Delegated managed identity resource ID."
+                    }
+                  }
+                }
+              },
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Role assignments to create on the Storage Account."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Storage Account configuration (reuse or create) for AI Foundry associated resources."
+          }
+        },
+        "cosmosDbConfiguration": {
+          "type": "object",
+          "properties": {
+            "existingResourceId": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Existing Cosmos DB account resource ID to reuse."
+              }
+            },
+            "name": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Name for a new Cosmos DB account (if creating)."
+              }
+            },
+            "privateDnsZoneResourceId": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Private DNS Zone resource ID for Cosmos."
+              }
+            },
+            "roleAssignments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Role assignment name."
+                    }
+                  },
+                  "principalId": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Principal (objectId) to assign."
+                    }
+                  },
+                  "roleDefinitionIdOrName": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Role definition ID or built-in role name."
+                    }
+                  },
+                  "principalType": {
+                    "type": "string",
+                    "allowedValues": [
+                      "Device",
+                      "ForeignGroup",
+                      "Group",
+                      "ServicePrincipal",
+                      "User"
+                    ],
+                    "metadata": {
+                      "description": "Required. Principal type for the assignment."
+                    }
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Description for the assignment."
+                    }
+                  },
+                  "condition": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Condition expression for the assignment."
+                    }
+                  },
+                  "conditionVersion": {
+                    "type": "string",
+                    "allowedValues": [
+                      "2.0"
+                    ],
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Condition version (e.g., 2.0)."
+                    }
+                  },
+                  "delegatedManagedIdentityResourceId": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Delegated managed identity resource ID."
+                    }
+                  }
+                }
+              },
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Role assignments to create on the Cosmos DB account."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Cosmos DB configuration (reuse or create) for AI Foundry associated resources."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Azure AI Foundry Account and Project and related resources.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.aiFoundryProjectConnectionRefType": {
+      "type": "object",
+      "properties": {
+        "existingResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Resource ID of an existing resource to connect to."
+          }
+        },
+        "newResourceMapKey": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Key referencing a newly created resource within the deployment map."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Connection reference for BYOR resources inside AI Projects.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.aiFoundryProjectType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Project resource name."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Project SKU."
+          }
+        },
+        "displayName": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Display name for the project."
+          }
+        },
+        "desc": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Description for the project."
+          }
+        },
+        "createProjectConnections": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Whether to auto-create project connections (BYOR)."
+          }
+        },
+        "cosmosDbConnection": {
+          "$ref": "#/definitions/_1.aiFoundryProjectConnectionRefType",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Cosmos DB connection reference."
+          }
+        },
+        "aiSearchConnection": {
+          "$ref": "#/definitions/_1.aiFoundryProjectConnectionRefType",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. AI Search connection reference."
+          }
+        },
+        "keyVaultConnection": {
+          "$ref": "#/definitions/_1.aiFoundryProjectConnectionRefType",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Key Vault connection reference."
+          }
+        },
+        "storageAccountConnection": {
+          "$ref": "#/definitions/_1.aiFoundryProjectConnectionRefType",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Storage Account connection reference."
+          }
+        }
+      },
+      "metadata": {
+        "description": "AI Project definition.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.aiModelDeploymentType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Deployment name."
+          }
+        },
+        "raiPolicyName": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Name of the associated RAI policy to apply."
+          }
+        },
+        "versionUpgradeOption": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Version upgrade option for this deployment."
+          }
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "format": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Model format (e.g., OpenAI, HF, ONNX)."
+              }
+            },
+            "name": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Model name."
+              }
+            },
+            "version": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Model version."
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. Model identification (format/name/version)."
+          }
+        },
+        "scale": {
+          "type": "object",
+          "properties": {
+            "capacity": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Target capacity (number of instances)."
+              }
+            },
+            "family": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. VM family or accelerator family."
+              }
+            },
+            "size": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. VM size or SKU size."
+              }
+            },
+            "tier": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Billing tier."
+              }
+            },
+            "type": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Resource type (dedicated/consumption/etc.)."
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. Capacity configuration (family/size/tier/type/capacity)."
+          }
+        }
+      },
+      "metadata": {
+        "description": "AI model deployment definition.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.apimAdditionalLocationType": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Azure region name for this additional location (e.g., westus2)."
+          }
+        },
+        "sku": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "allowedValues": [
+                "Basic",
+                "BasicV2",
+                "Consumption",
+                "Developer",
+                "Isolated",
+                "Premium",
+                "Standard",
+                "StandardV2"
+              ],
+              "metadata": {
+                "description": "Required. Name of the SKU for this location."
+              }
+            },
+            "capacity": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Capacity (scale units) for this location."
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. SKU settings for this additional location."
+          }
+        },
+        "availabilityZones": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Availability Zones to use in this location (use at least two where supported)."
+          }
+        },
+        "disableGateway": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Disables the gateway in this additional location."
+          }
+        },
+        "natGatewayState": {
+          "type": "string",
+          "allowedValues": [
+            "Disabled",
+            "Enabled"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enables or disables NAT Gateway for this location."
+          }
+        },
+        "publicIpAddressResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Resource ID of a Standard Public IP to associate (where supported)."
+          }
+        },
+        "virtualNetworkConfiguration": {
+          "type": "object",
+          "properties": {
+            "subnetResourceId": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Subnet resource ID for the APIM deployment in this location."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Virtual network configuration for this location."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Required. Additional region entry for the API Management service.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.apimDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. API Management service name."
+          }
+        },
+        "publisherEmail": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Publisher email address."
+          }
+        },
+        "publisherName": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Publisher display name."
+          }
+        },
+        "minApiVersion": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Minimum ARM API version to use for APIM control-plane operations."
+          }
+        },
+        "notificationSenderEmail": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Sender email address used by APIM system notifications."
+          }
+        },
+        "additionalLocations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.apimAdditionalLocationType"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Additional regions for the API Management service."
+          }
+        },
+        "certificate": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "encodedCertificate": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Base64-encoded PFX certificate."
+                }
+              },
+              "storeName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Certificate store name (e.g., CertificateAuthority)."
+                }
+              },
+              "certificatePassword": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Password for the encoded certificate, if required."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each certificate entry."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Certificates map that can be used by other flows (not directly by hostnameConfigurations)."
+          }
+        },
+        "clientCertificateEnabled": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Enables client certificate authentication on the gateway."
+          }
+        },
+        "hostnameConfigurations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.apimHostnameConfigurationItemType"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Hostname configuration array in AVM-friendly format."
+          }
+        },
+        "protocols": {
+          "type": "object",
+          "properties": {
+            "enableHttp2": {
+              "type": "bool",
+              "metadata": {
+                "description": "Required. Enables HTTP/2 for API traffic."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Protocol options for the gateway."
+          }
+        },
+        "signIn": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "bool",
+              "metadata": {
+                "description": "Required. Enables sign-in on the developer portal."
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. Sign-in configuration for the developer portal."
+          }
+        },
+        "signUp": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "bool",
+              "metadata": {
+                "description": "Required. Enables sign-up on the developer portal."
+              }
+            },
+            "termsOfService": {
+              "type": "object",
+              "properties": {
+                "consentRequired": {
+                  "type": "bool",
+                  "metadata": {
+                    "description": "Required. Indicates whether user consent to ToS is required."
+                  }
+                },
+                "enabled": {
+                  "type": "bool",
+                  "metadata": {
+                    "description": "Required. Indicates whether Terms of Service are enabled."
+                  }
+                },
+                "text": {
+                  "type": "string",
+                  "metadata": {
+                    "description": "Required. Text for the Terms of Service displayed to users."
+                  }
+                }
+              },
+              "metadata": {
+                "description": "Required. Terms of Service configuration for sign-up."
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. Sign-up configuration for the developer portal."
+          }
+        },
+        "roleAssignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Name of the role assignment (GUID or custom)."
+                }
+              },
+              "principalId": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Principal ID to assign (objectId of user, group, or service principal)."
+                }
+              },
+              "roleDefinitionIdOrName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Role definition ID or role name to assign."
+                }
+              },
+              "principalType": {
+                "type": "string",
+                "allowedValues": [
+                  "Device",
+                  "ForeignGroup",
+                  "Group",
+                  "ServicePrincipal",
+                  "User"
+                ],
+                "metadata": {
+                  "description": "Required. Principal type of the assignment."
+                }
+              },
+              "description": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Description for the role assignment."
+                }
+              },
+              "condition": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition for the role assignment (for conditional access)."
+                }
+              },
+              "conditionVersion": {
+                "type": "string",
+                "allowedValues": [
+                  "2.0"
+                ],
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition version (only 2.0 supported)."
+                }
+              },
+              "delegatedManagedIdentityResourceId": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Delegated managed identity resource ID (when applicable)."
+                }
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Role assignments to create on the API Management service."
+          }
+        },
+        "skuRoot": {
+          "type": "string",
+          "allowedValues": [
+            "Basic",
+            "BasicV2",
+            "Consumption",
+            "Developer",
+            "Premium",
+            "Standard",
+            "StandardV2"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. SKU for API Management (Developer/Basic/Standard/Premium/Consumption/V2 variants)."
+          }
+        },
+        "skuCapacity": {
+          "type": "int",
+          "metadata": {
+            "description": "Required. Capacity (scale units) for the chosen SKU."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the API Management service."
+          }
+        },
+        "tenantAccess": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "bool",
+              "metadata": {
+                "description": "Required. Enables tenant access for the management plane."
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. Tenant access configuration for the management plane."
+          }
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Availability Zones for the primary region (use at least two where supported)."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Required. Configuration object for the Azure API Management service to be deployed.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.apimHostnameConfigurationItemType": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "allowedValues": [
+            "DeveloperPortal",
+            "Management",
+            "Portal",
+            "Proxy",
+            "Scm"
+          ],
+          "metadata": {
+            "description": "Required. Endpoint type for this binding."
+          }
+        },
+        "hostName": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. DNS host name to bind to this endpoint."
+          }
+        },
+        "keyVaultId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Key Vault secret ID containing the TLS certificate to use for this hostname."
+          }
+        },
+        "encodedCertificate": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Base64-encoded PFX certificate to use when not referencing Key Vault."
+          }
+        },
+        "certificatePassword": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Password for the provided encoded certificate, if required."
+          }
+        },
+        "negotiateClientCertificate": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Require/negotiates a client certificate during TLS handshake."
+          }
+        },
+        "defaultSslBinding": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Marks this binding as the default SSL binding for the endpoint type."
+          }
+        },
+        "identityClientId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Client ID of the managed identity used to access Key Vault for this binding."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Required. Hostname binding entry in the AVM-friendly array format.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.appConfigurationDefinitionType": {
+      "type": "object",
+      "properties": {
+        "dataPlaneProxy": {
+          "type": "object",
+          "properties": {
+            "authenticationMode": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Authentication mode for data plane proxy."
+              }
+            },
+            "privateLinkDelegation": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Private Link delegation for data plane proxy."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Data plane proxy configuration (auth and Private Link delegation)."
+          }
+        },
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. App Configuration store name."
+          }
+        },
+        "localAuthEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable local (access keys) authentication."
+          }
+        },
+        "purgeProtectionEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable purge protection."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "allowedValues": [
+            "free",
+            "standard"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. SKU for App Configuration."
+          }
+        },
+        "softDeleteRetentionInDays": {
+          "type": "int",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Soft delete retention (days)."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the App Configuration store."
+          }
+        },
+        "replicaLocations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.appConfigurationReplicaLocationType"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Replicas. Ignored when SKU is free."
+          }
+        },
+        "roleAssignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Role assignment name."
+                }
+              },
+              "principalId": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Principal (objectId) to assign."
+                }
+              },
+              "roleDefinitionIdOrName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Role definition ID or built-in role name."
+                }
+              },
+              "principalType": {
+                "type": "string",
+                "allowedValues": [
+                  "Device",
+                  "ForeignGroup",
+                  "Group",
+                  "ServicePrincipal",
+                  "User"
+                ],
+                "metadata": {
+                  "description": "Required. Principal type for the assignment."
+                }
+              },
+              "description": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Description for the assignment."
+                }
+              },
+              "condition": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition expression for the assignment."
+                }
+              },
+              "conditionVersion": {
+                "type": "string",
+                "allowedValues": [
+                  "2.0"
+                ],
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition version (e.g., 2.0)."
+                }
+              },
+              "delegatedManagedIdentityResourceId": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Delegated managed identity resource ID."
+                }
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Role assignments to create on the store."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Azure App Configuration store for the GenAI app.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.appConfigurationReplicaLocationType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Name for the replica resource. If omitted, a deterministic name is generated."
+          }
+        },
+        "replicaLocation": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Azure region for this replica (e.g., westus2)."
+          }
+        }
+      },
+      "metadata": {
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.appGatewayDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Application Gateway name."
+          }
+        },
+        "http2Enable": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Enable HTTP/2 on the gateway."
+          }
+        },
+        "createPublicFrontend": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Create public frontend and public IP for the gateway."
+          }
+        },
+        "authenticationCertificate": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Certificate name."
+                }
+              },
+              "data": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Certificate data."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each authentication certificate."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Authentication certificates to attach to the gateway."
+          }
+        },
+        "sku": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. SKU name (e.g., WAF_v2)."
+              }
+            },
+            "tier": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. SKU tier (e.g., WAF_v2)."
+              }
+            },
+            "capacity": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Instance capacity when autoscale is disabled."
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. SKU definition (name/tier/capacity)."
+          }
+        },
+        "autoscaleConfiguration": {
+          "type": "object",
+          "properties": {
+            "maxCapacity": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Maximum autoscale capacity."
+              }
+            },
+            "minCapacity": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Minimum autoscale capacity."
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. Autoscale configuration (min/max capacity)."
+          }
+        },
+        "sslPolicy": {
+          "type": "object",
+          "properties": {
+            "cipherSuites": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "metadata": {
+                "description": "Required. Allowed cipher suites."
+              }
+            },
+            "disabledProtocols": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "metadata": {
+                "description": "Required. Disabled protocol versions."
+              }
+            },
+            "minProtocolVersion": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Minimum allowed TLS protocol version."
+              }
+            },
+            "policyName": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Policy name if using a predefined policy."
+              }
+            },
+            "policyType": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Policy type (Predefined/Custom)."
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. SSL policy (protocols/ciphers)."
+          }
+        },
+        "backendAddressPools": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Pool name."
+                }
+              },
+              "fqdns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Backend FQDNs."
+                }
+              },
+              "ipAddresses": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Backend IP addresses."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each backend pool."
+            }
+          },
+          "metadata": {
+            "description": "Required. Backend address pools (FQDNs/IPs)."
+          }
+        },
+        "backendHttpSettings": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "cookieBasedAffinity": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Cookie-based affinity mode."
+                }
+              },
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Setting name."
+                }
+              },
+              "port": {
+                "type": "int",
+                "metadata": {
+                  "description": "Required. Backend port for the setting."
+                }
+              },
+              "protocol": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Protocol (Http/Https)."
+                }
+              },
+              "affinityCookieName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Custom affinity cookie name."
+                }
+              },
+              "hostName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Host header to use when forwarding."
+                }
+              },
+              "path": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Path to append when forwarding."
+                }
+              },
+              "pickHostNameFromBackendAddress": {
+                "type": "bool",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Use backend address as host header (true/false)."
+                }
+              },
+              "probeName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Probe name to associate."
+                }
+              },
+              "requestTimeout": {
+                "type": "int",
+                "metadata": {
+                  "description": "Required. Request timeout in seconds."
+                }
+              },
+              "trustedRootCertificateNames": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Trusted root certificate names to use."
+                }
+              },
+              "authenticationCertificate": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Authentication certificate names to present to backend."
+                }
+              },
+              "connectionDraining": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "bool",
+                    "metadata": {
+                      "description": "Required. Enable connection draining for backend HTTP settings."
+                    }
+                  },
+                  "drainTimeoutSec": {
+                    "type": "int",
+                    "metadata": {
+                      "description": "Required. Drain timeout in seconds before terminating connections."
+                    }
+                  }
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Connection draining settings (enable and drain timeout in seconds)."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each backend HTTP setting."
+            }
+          },
+          "metadata": {
+            "description": "Required. Backend HTTP settings collection."
+          }
+        },
+        "frontendPorts": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Port name."
+                }
+              },
+              "port": {
+                "type": "int",
+                "metadata": {
+                  "description": "Required. Port number."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each frontend port."
+            }
+          },
+          "metadata": {
+            "description": "Required. Frontend ports to expose."
+          }
+        },
+        "httpListeners": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Listener name."
+                }
+              },
+              "frontendPortName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Name of the frontend port to use."
+                }
+              },
+              "frontendIpConfigurationName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Name of the frontend IP configuration to use."
+                }
+              },
+              "firewallPolicyId": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Resource ID of the associated WAF policy."
+                }
+              },
+              "requireSni": {
+                "type": "bool",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Require SNI for TLS."
+                }
+              },
+              "hostName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Host name for the listener."
+                }
+              },
+              "hostNames": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Multiple host names for the listener."
+                }
+              },
+              "sslCertificateName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. SSL certificate name to bind to the listener."
+                }
+              },
+              "sslProfileName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. SSL profile name to use."
+                }
+              },
+              "customErrorConfiguration": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Custom error configuration entries."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each HTTP listener."
+            }
+          },
+          "metadata": {
+            "description": "Required. HTTP listeners configuration."
+          }
+        },
+        "probeConfigurations": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Probe name."
+                }
+              },
+              "host": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Host header to send in probe requests."
+                }
+              },
+              "interval": {
+                "type": "int",
+                "metadata": {
+                  "description": "Required. Probe interval in seconds."
+                }
+              },
+              "timeout": {
+                "type": "int",
+                "metadata": {
+                  "description": "Required. Probe timeout in seconds."
+                }
+              },
+              "unhealthyThreshold": {
+                "type": "int",
+                "metadata": {
+                  "description": "Required. Consecutive failures before marking unhealthy."
+                }
+              },
+              "protocol": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Protocol for the probe (Http/Https/Tcp)."
+                }
+              },
+              "port": {
+                "type": "int",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Backend port to probe."
+                }
+              },
+              "path": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Path to probe (for HTTP/S)."
+                }
+              },
+              "pickHostNameFromBackendHttpSettings": {
+                "type": "bool",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Use host name from backend HTTP settings."
+                }
+              },
+              "minimumServers": {
+                "type": "int",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Minimum servers that must be healthy."
+                }
+              },
+              "match": {
+                "type": "object",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Match conditions for HTTP probe response."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each probe configuration."
+            }
+          },
+          "metadata": {
+            "description": "Required. Health probe configurations."
+          }
+        },
+        "redirectConfiguration": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "includePath": {
+                "type": "bool",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Include the path in the redirect."
+                }
+              },
+              "includeQueryString": {
+                "type": "bool",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Include the query string in the redirect."
+                }
+              },
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Redirect configuration name."
+                }
+              },
+              "redirectType": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Redirect type (Permanent, Found, Temporary, SeeOther)."
+                }
+              },
+              "targetListenerName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Target listener name for listener redirect."
+                }
+              },
+              "targetUrl": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Target URL for external redirect."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each redirect configuration."
+            }
+          },
+          "metadata": {
+            "description": "Required. Redirect configurations."
+          }
+        },
+        "requestRoutingRules": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Rule name."
+                }
+              },
+              "ruleType": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Rule type (Basic or PathBasedRouting)."
+                }
+              },
+              "httpListenerName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. HTTP listener name to attach to."
+                }
+              },
+              "backendAddressPoolName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Backend address pool name to route to."
+                }
+              },
+              "priority": {
+                "type": "int",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Rule priority (1-20000)."
+                }
+              },
+              "urlPathMapName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. URL path map name for path-based rules."
+                }
+              },
+              "backendHttpSettingsName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Backend HTTP settings name to use."
+                }
+              },
+              "redirectConfigurationName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Redirect configuration name to use."
+                }
+              },
+              "rewriteRuleSetName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Rewrite rule set name to apply."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each routing rule."
+            }
+          },
+          "metadata": {
+            "description": "Required. Request routing rules."
+          }
+        },
+        "rewriteRuleSet": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Rewrite rule set name."
+                }
+              },
+              "rewriteRules": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {
+                  "type": "object",
+                  "metadata": {
+                    "description": "Required. Arbitrary key for each rewrite rule entry."
+                  }
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Rewrite rules contained in this set."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each rewrite rule set."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Rewrite rule sets."
+          }
+        },
+        "sslCertificates": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Certificate name."
+                }
+              },
+              "data": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Base64-encoded PFX certificate data."
+                }
+              },
+              "password": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. PFX password (if data provided)."
+                }
+              },
+              "keyVaultSecretId": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Key Vault secret ID for the certificate."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each SSL certificate."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. SSL certificates."
+          }
+        },
+        "sslProfile": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. SSL profile name."
+                }
+              },
+              "trustedClientCertificateNames": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Trusted client certificate names to require."
+                }
+              },
+              "verifyClientCertIssuerDn": {
+                "type": "bool",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Verify client certificate issuer DN."
+                }
+              },
+              "verifyClientCertificateRevocation": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Client certificate revocation check setting."
+                }
+              },
+              "sslPolicy": {
+                "type": "object",
+                "properties": {
+                  "cipherSuites": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Allowed cipher suites."
+                    }
+                  },
+                  "disabledProtocols": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Disabled protocol versions."
+                    }
+                  },
+                  "minProtocolVersion": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Minimum TLS version."
+                    }
+                  },
+                  "policyName": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Predefined policy name."
+                    }
+                  },
+                  "policyType": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Policy type (Predefined/Custom)."
+                    }
+                  }
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. SSL policy for the profile."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each SSL profile."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. SSL profiles."
+          }
+        },
+        "trustedClientCertificate": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Base64-encoded certificate data."
+                }
+              },
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Certificate name."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each trusted client certificate."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Trusted client certificates."
+          }
+        },
+        "trustedRootCertificate": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Base64-encoded certificate data."
+                }
+              },
+              "keyVaultSecretId": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Key Vault secret ID for the certificate."
+                }
+              },
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Certificate name."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each trusted root certificate."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Trusted root certificates."
+          }
+        },
+        "urlPathMapConfigurations": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. URL path map name."
+                }
+              },
+              "defaultRedirectConfigurationName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Default redirect configuration name."
+                }
+              },
+              "defaultRewriteRuleSetName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Default rewrite rule set name."
+                }
+              },
+              "defaultBackendHttpSettingsName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Default backend HTTP settings name."
+                }
+              },
+              "defaultBackendAddressPoolName": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Default backend address pool name."
+                }
+              },
+              "pathRules": {
+                "type": "object",
+                "properties": {},
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "metadata": {
+                        "description": "Required. Path rule name."
+                      }
+                    },
+                    "paths": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "metadata": {
+                        "description": "Required. Paths to match (e.g., /images/*)."
+                      }
+                    },
+                    "backendAddressPoolName": {
+                      "type": "string",
+                      "nullable": true,
+                      "metadata": {
+                        "description": "Optional. Backend address pool name for the rule."
+                      }
+                    },
+                    "backendHttpSettingsName": {
+                      "type": "string",
+                      "nullable": true,
+                      "metadata": {
+                        "description": "Optional. Backend HTTP settings name for the rule."
+                      }
+                    },
+                    "redirectConfigurationName": {
+                      "type": "string",
+                      "nullable": true,
+                      "metadata": {
+                        "description": "Optional. Redirect configuration name for the rule."
+                      }
+                    },
+                    "rewriteRuleSetName": {
+                      "type": "string",
+                      "nullable": true,
+                      "metadata": {
+                        "description": "Optional. Rewrite rule set name for the rule."
+                      }
+                    }
+                  },
+                  "metadata": {
+                    "description": "Required. Arbitrary key for each path rule."
+                  }
+                },
+                "metadata": {
+                  "description": "Required. Path rules for this map."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each URL path map configuration."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. URL path map configurations."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the Application Gateway."
+          }
+        },
+        "roleAssignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Role assignment name."
+                }
+              },
+              "principalId": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Principal (objectId) to assign."
+                }
+              },
+              "roleDefinitionIdOrName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Role definition ID or built-in role name."
+                }
+              },
+              "principalType": {
+                "type": "string",
+                "allowedValues": [
+                  "Device",
+                  "ForeignGroup",
+                  "Group",
+                  "ServicePrincipal",
+                  "User"
+                ],
+                "metadata": {
+                  "description": "Required. Principal type for the assignment."
+                }
+              },
+              "description": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Description for the assignment."
+                }
+              },
+              "condition": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition expression for the assignment."
+                }
+              },
+              "conditionVersion": {
+                "type": "string",
+                "allowedValues": [
+                  "2.0"
+                ],
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition version (e.g., 2.0)."
+                }
+              },
+              "delegatedManagedIdentityResourceId": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Delegated managed identity resource ID."
+                }
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Role assignments to create on the gateway."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Azure Application Gateway to be deployed.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.appInsightsDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Application Insights resource name."
+          }
+        },
+        "applicationType": {
+          "type": "string",
+          "allowedValues": [
+            "other",
+            "web"
+          ],
+          "metadata": {
+            "description": "Required. Application type for Insights (e.g., web)."
+          }
+        },
+        "kind": {
+          "type": "string",
+          "allowedValues": [
+            "other",
+            "web"
+          ],
+          "metadata": {
+            "description": "Required. Resource kind."
+          }
+        },
+        "disableIpMasking": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Disable IP masking (true) or keep enabled (false)."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the component."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Application Insights component to be created or reused.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.bastionDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Bastion host name."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Azure Bastion SKU."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the Bastion resource."
+          }
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "metadata": {
+            "description": "Required. Availability zones to use for Bastion (if supported)."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Azure Bastion service to be deployed.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.buildVmDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. VM name."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. VM size SKU (e.g., Standard_B2s)."
+          }
+        },
+        "adminUsername": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Admin username to create (e.g., azureuser)."
+          }
+        },
+        "osType": {
+          "type": "string",
+          "allowedValues": [
+            "Linux",
+            "Windows"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. OS type for the VM."
+          }
+        },
+        "imageReference": {
+          "$ref": "#/definitions/_1.vmImageReferenceType",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Marketplace image reference for the VM."
+          }
+        },
+        "sshPublicKey": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. SSH public key for the admin user."
+          }
+        },
+        "runner": {
+          "type": "string",
+          "allowedValues": [
+            "azdo",
+            "github"
+          ],
+          "metadata": {
+            "description": "Required. Which agent to install."
+          }
+        },
+        "azdo": {
+          "type": "object",
+          "properties": {
+            "orgUrl": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Azure DevOps organization URL (e.g., https://dev.azure.com/contoso)."
+              }
+            },
+            "pool": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Agent pool name."
+              }
+            },
+            "agentName": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Agent name."
+              }
+            },
+            "workFolder": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Working folder."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Azure DevOps settings (required when runner = azdo)."
+          }
+        },
+        "github": {
+          "type": "object",
+          "properties": {
+            "owner": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. GitHub owner (org or user)."
+              }
+            },
+            "repo": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Repository name."
+              }
+            },
+            "labels": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Runner labels (comma-separated)."
+              }
+            },
+            "agentName": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Runner name."
+              }
+            },
+            "workFolder": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Working folder."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. GitHub settings (required when runner = github)."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the Build VM resource."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Linux Build VM configuration.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.containerAppDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Container App resource name."
+          }
+        },
+        "appId": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Logical app identifier (used for Dapr and container name)."
+          }
+        },
+        "profileName": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Workload profile name to schedule to."
+          }
+        },
+        "minReplicas": {
+          "type": "int",
+          "metadata": {
+            "description": "Required. Minimum number of replicas."
+          }
+        },
+        "maxReplicas": {
+          "type": "int",
+          "metadata": {
+            "description": "Required. Maximum number of replicas."
+          }
+        },
+        "external": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Whether to expose through the environment external ingress."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Definition of a single Container App to create.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.containerAppEnvDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Container Apps Environment name."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the environment."
+          }
+        },
+        "internalLoadBalancerEnabled": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Enable internal load balancer (true) to make the environment internal."
+          }
+        },
+        "subnetName": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Conditional. Subnet name where the environment is deployed when internal. Required if the environment is internal (internalLoadBalancerEnabled is true)."
+          }
+        },
+        "zoneRedundancyEnabled": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Enable zone redundancy for the environment."
+          }
+        },
+        "userAssignedManagedIdentityIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "metadata": {
+            "description": "Required. List of user-assigned managed identity resource IDs to attach (can be empty)."
+          }
+        },
+        "workloadProfiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Profile name."
+                }
+              },
+              "workloadProfileType": {
+                "type": "string",
+                "allowedValues": [
+                  "Consumption",
+                  "D16",
+                  "D4",
+                  "D8",
+                  "E16",
+                  "E32",
+                  "E4",
+                  "E8"
+                ],
+                "metadata": {
+                  "description": "Required. Workload profile type."
+                }
+              },
+              "minimumCount": {
+                "type": "int",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Minimum number of nodes for this profile."
+                }
+              },
+              "maximumCount": {
+                "type": "int",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Maximum number of nodes for this profile."
+                }
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. Workload profiles for the environment."
+          }
+        },
+        "enableDiagnosticSettings": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable diagnostic settings for the environment."
+          }
+        },
+        "logAnalyticsWorkspaceResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Conditional. Resource ID of a Log Analytics workspace for diagnostics. Required if enableDiagnosticSettings is true and a workspace is not inferred by the template."
+          }
+        },
+        "roleAssignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Role assignment name."
+                }
+              },
+              "principalId": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Principal (objectId) to assign."
+                }
+              },
+              "roleDefinitionIdOrName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Role definition ID or built-in role name."
+                }
+              },
+              "principalType": {
+                "type": "string",
+                "allowedValues": [
+                  "Device",
+                  "ForeignGroup",
+                  "Group",
+                  "ServicePrincipal",
+                  "User"
+                ],
+                "metadata": {
+                  "description": "Required. Principal type for the assignment."
+                }
+              },
+              "description": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Description for the assignment."
+                }
+              },
+              "condition": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition expression for the assignment."
+                }
+              },
+              "conditionVersion": {
+                "type": "string",
+                "allowedValues": [
+                  "2.0"
+                ],
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition version (e.g., 2.0)."
+                }
+              },
+              "delegatedManagedIdentityResourceId": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Delegated managed identity resource ID."
+                }
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Role assignments to create on the environment."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Container App Environment to be created for GenAI services.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.containerRegistryDefinitionType": {
+      "type": "object",
+      "properties": {
+        "dataPlaneProxy": {
+          "type": "object",
+          "properties": {
+            "authenticationMode": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Authentication mode for data plane proxy."
+              }
+            },
+            "privateLinkDelegation": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Private Link delegation setting for data plane proxy."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Data plane proxy configuration."
+          }
+        },
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Container Registry name."
+          }
+        },
+        "localAuthEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable local (admin) authentication."
+          }
+        },
+        "purgeProtectionEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable purge protection for deleted artifacts."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "allowedValues": [
+            "Basic",
+            "Premium",
+            "Standard"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Container Registry SKU."
+          }
+        },
+        "softDeleteRetentionInDays": {
+          "type": "int",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Soft delete retention period in days."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the Container Registry."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Azure Container Registry to be created for GenAI services.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.deployTogglesType": {
+      "type": "object",
+      "properties": {
+        "logAnalytics": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Log Analytics (true) or not (false)."
+          }
+        },
+        "appInsights": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Application Insights (true) or not (false)."
+          }
+        },
+        "containerEnv": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Container Apps Environment (true) or not (false)."
+          }
+        },
+        "containerRegistry": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Azure Container Registry (true) or not (false)."
+          }
+        },
+        "cosmosDb": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Cosmos DB (true) or not (false)."
+          }
+        },
+        "keyVault": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Key Vault (true) or not (false)."
+          }
+        },
+        "storageAccount": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Storage Account (true) or not (false)."
+          }
+        },
+        "searchService": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Azure AI Search (true) or not (false)."
+          }
+        },
+        "groundingWithBingSearch": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Bing Grounding with Search (true) or not (false)."
+          }
+        },
+        "appConfig": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy App Configuration (true) or not (false)."
+          }
+        },
+        "apiManagement": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy API Management (true) or not (false)."
+          }
+        },
+        "applicationGateway": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Application Gateway (true) or not (false)."
+          }
+        },
+        "firewall": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Azure Firewall (true) or not (false)."
+          }
+        },
+        "containerApps": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Container Apps (true) or not (false)."
+          }
+        },
+        "buildVm": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Build VM (true) or not (false)."
+          }
+        },
+        "jumpVm": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy Jump VM (true) or not (false)."
+          }
+        },
+        "virtualNetwork": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy a new Virtual Network (true) or not (false)."
+          }
+        },
+        "wafPolicy": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Toggle to deploy an Application Gateway WAF policy (true) or not (false)."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Per-service deployment toggles; set false to skip creating that service (reusing via resourceIds still works).",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.firewallDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Azure Firewall name."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Azure Firewall SKU (e.g., AZFW_VNet)."
+          }
+        },
+        "tier": {
+          "type": "string",
+          "allowedValues": [
+            "Basic",
+            "Premium",
+            "Standard"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Azure Firewall tier. Allowed values: Basic, Standard or Premium."
+          }
+        },
+        "zones": {
+          "type": "array",
+          "items": {
+            "type": "int"
+          },
+          "metadata": {
+            "description": "Required. Availability zones to use (if any)."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the firewall."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Azure Firewall to be deployed.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.firewallPolicyDefinitionType": {
+      "type": "object",
+      "properties": {
+        "networkPolicyRuleCollectionGroupName": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Name of the Network Rule Collection Group."
+          }
+        },
+        "networkPolicyRuleCollectionGroupPriority": {
+          "type": "int",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Priority for the Network Rule Collection Group."
+          }
+        },
+        "networkRules": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.firewallPolicyRuleType"
+          },
+          "nullable": true,
+          "minLength": 0,
+          "metadata": {
+            "description": "Optional. Network rules to include in the policy (can be empty)."
+          }
+        },
+        "ruleCollectionGroups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.firewallPolicyRcgInputType"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. List of custom Rule Collection Groups with collections and rules."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Azure Firewall Policy (rule collection groups).",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.firewallPolicyRcgInputType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Name of the Rule Collection Group."
+          }
+        },
+        "priority": {
+          "type": "int",
+          "metadata": {
+            "description": "Required. Priority of the Rule Collection Group (lower value = higher priority)."
+          }
+        },
+        "collections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.firewallPolicyRuleCollectionInputType"
+          },
+          "metadata": {
+            "description": "Required. Rule collections that belong to this group."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Definition of a Firewall Policy Rule Collection Group Input.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.firewallPolicyRuleCollectionInputType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Name of the rule collection."
+          }
+        },
+        "action": {
+          "type": "string",
+          "allowedValues": [
+            "Allow",
+            "Deny"
+          ],
+          "metadata": {
+            "description": "Required. Action to apply on the rule collection (Allow or Deny)."
+          }
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Rule name."
+                }
+              },
+              "description": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Rule description."
+                }
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. List of rules contained in this rule collection."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Definition of a Firewall Policy Rule Collection Input.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.firewallPolicyRuleType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Rule name."
+          }
+        },
+        "description": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Rule description."
+          }
+        },
+        "destinationAddresses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "metadata": {
+            "description": "Required. Destination IP addresses."
+          }
+        },
+        "destinationPorts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "metadata": {
+            "description": "Required. Destination ports."
+          }
+        },
+        "sourceAddresses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "metadata": {
+            "description": "Required. Source IP addresses."
+          }
+        },
+        "protocols": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "metadata": {
+            "description": "Required. Allowed protocols (e.g., TCP, UDP, ICMP, Any)."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Represents a single firewall policy rule defining its name, addresses, ports and allowed protocols.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.genAIAppCosmosDbDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Cosmos DB account name."
+          }
+        },
+        "secondaryRegions": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Secondary region location name."
+                }
+              },
+              "zoneRedundant": {
+                "type": "bool",
+                "metadata": {
+                  "description": "Required. Whether zone redundancy is enabled in the region."
+                }
+              },
+              "failoverPriority": {
+                "type": "int",
+                "metadata": {
+                  "description": "Required. Failover priority for the region (0 is primary)."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each secondary region entry."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Conditional. Map of secondary regions and failover properties. Required if multipleWriteLocationsEnabled is true or you need regional failover."
+          }
+        },
+        "publicNetworkAccessEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable public network access to the account."
+          }
+        },
+        "analyticalStorageEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable analytical storage."
+          }
+        },
+        "automaticFailoverEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable automatic failover."
+          }
+        },
+        "localAuthenticationDisabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Disable local authentication (keys)."
+          }
+        },
+        "partitionMergeEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable partition merge."
+          }
+        },
+        "multipleWriteLocationsEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable multiple write locations."
+          }
+        },
+        "analyticalStorageConfig": {
+          "type": "object",
+          "properties": {
+            "schemaType": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Schema type for analytical storage."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Conditional. Analytical storage configuration. Required if analyticalStorageEnabled is true."
+          }
+        },
+        "consistencyPolicy": {
+          "type": "object",
+          "properties": {
+            "maxIntervalInSeconds": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Maximum interval in seconds for Bounded Staleness."
+              }
+            },
+            "maxStalenessPrefix": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Maximum staleness prefix for Bounded Staleness."
+              }
+            },
+            "consistencyLevel": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Consistency level (e.g., Strong, Session)."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Conditional. Consistency policy configuration. Required if you choose a non-default consistency level or use Bounded Staleness."
+          }
+        },
+        "backup": {
+          "type": "object",
+          "properties": {
+            "retentionInHours": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Retention period in hours."
+              }
+            },
+            "intervalInMinutes": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Backup interval in minutes."
+              }
+            },
+            "storageRedundancy": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Storage redundancy for backups."
+              }
+            },
+            "type": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. Backup type (e.g., Periodic/Continuous)."
+              }
+            },
+            "tier": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Backup tier (if applicable)."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Conditional. Backup policy configuration. Required if you require a non-default backup policy (e.g., Continuous or custom periodic settings)."
+          }
+        },
+        "capabilities": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Capability name."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each capability entry."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Capabilities to enable on the Cosmos DB account."
+          }
+        },
+        "capacity": {
+          "type": "object",
+          "properties": {
+            "totalThroughputLimit": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Total throughput limit (RU/s) for the account."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Capacity limits for the account."
+          }
+        },
+        "corsRule": {
+          "type": "object",
+          "properties": {
+            "allowedHeaders": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "metadata": {
+                "description": "Required. Allowed headers for CORS."
+              }
+            },
+            "allowedMethods": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "metadata": {
+                "description": "Required. Allowed HTTP methods for CORS."
+              }
+            },
+            "allowedOrigins": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "metadata": {
+                "description": "Required. Allowed origins for CORS."
+              }
+            },
+            "exposedHeaders": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "metadata": {
+                "description": "Required. Exposed headers for CORS."
+              }
+            },
+            "maxAgeInSeconds": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Max age for preflight cache (seconds)."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. CORS rules to allow on the account."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Azure Cosmos DB account to be created for GenAI services.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.huVnetPeeringDefinitionType": {
+      "type": "object",
+      "properties": {
+        "peerVnetResourceId": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Resource ID of the hub (peer) VNet."
+          }
+        },
+        "firewallIpAddress": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Hub firewall private IP address for routing (if applicable)."
+          }
+        },
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Name of the peering from spoke to hub."
+          }
+        },
+        "allowForwardedTraffic": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Allow forwarded traffic across the peering."
+          }
+        },
+        "allowGatewayTransit": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Allow gateway transit across the peering."
+          }
+        },
+        "allowVirtualNetworkAccess": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Allow virtual network access across the peering."
+          }
+        },
+        "createReversePeering": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Create reverse peering from hub back to this VNet."
+          }
+        },
+        "reverseAllowForwardedTraffic": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Reverse peering: allow forwarded traffic."
+          }
+        },
+        "reverseAllowGatewayTransit": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Reverse peering: allow gateway transit."
+          }
+        },
+        "reverseAllowVirtualNetworkAccess": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Reverse peering: allow VNet access."
+          }
+        },
+        "reverseName": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Name of the reverse peering (hub->spoke)."
+          }
+        },
+        "reverseUseRemoteGateways": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Reverse peering: use remote gateways."
+          }
+        },
+        "useRemoteGateways": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Use remote gateways on the spoke peering."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for VNet peering with a hub network.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.jumpVmDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. VM resource name."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. VM size SKU (e.g., Standard_D2s_v5)."
+          }
+        },
+        "adminUsername": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Admin username."
+          }
+        },
+        "osType": {
+          "type": "string",
+          "allowedValues": [
+            "Linux",
+            "Windows"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. OS type for the VM."
+          }
+        },
+        "imageReference": {
+          "$ref": "#/definitions/_1.vmImageReferenceType",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Marketplace image reference for the VM."
+          }
+        },
+        "vmKeyVaultSecName": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Name of the admin password secret in the Bastion Key Vault."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "metadata": {
+            "description": "Required. Tags to apply to the Jump VM."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Jump VM to be created for managing the implementation services.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.keyVaultDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Key Vault name."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Key Vault SKU (e.g., standard, premium)."
+          }
+        },
+        "tenantId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. AAD tenant ID for the vault."
+          }
+        },
+        "roleAssignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Role assignment name."
+                }
+              },
+              "principalId": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Principal (objectId) to assign."
+                }
+              },
+              "roleDefinitionIdOrName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Role definition ID or built-in role name."
+                }
+              },
+              "principalType": {
+                "type": "string",
+                "allowedValues": [
+                  "Device",
+                  "ForeignGroup",
+                  "Group",
+                  "ServicePrincipal",
+                  "User"
+                ],
+                "metadata": {
+                  "description": "Required. Principal type for the assignment."
+                }
+              },
+              "description": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Description for the assignment."
+                }
+              },
+              "condition": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition expression for the assignment."
+                }
+              },
+              "conditionVersion": {
+                "type": "string",
+                "allowedValues": [
+                  "2.0"
+                ],
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition version (e.g., 2.0)."
+                }
+              },
+              "delegatedManagedIdentityResourceId": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Delegated managed identity resource ID."
+                }
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Role assignments to create on the vault."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the Key Vault."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Azure Key Vault to be created.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.kSAISearchDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Search service name."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Search SKU (e.g., basic/standard)."
+          }
+        },
+        "localAuthenticationEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable local (admin keys) authentication."
+          }
+        },
+        "partitionCount": {
+          "type": "int",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Number of partitions."
+          }
+        },
+        "publicNetworkAccessEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable public network access."
+          }
+        },
+        "replicaCount": {
+          "type": "int",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Number of replicas."
+          }
+        },
+        "semanticSearchSku": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Semantic search SKU (e.g., standard)."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the search service."
+          }
+        },
+        "roleAssignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Role assignment name."
+                }
+              },
+              "principalId": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Principal (objectId) to assign."
+                }
+              },
+              "roleDefinitionIdOrName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Role definition ID or built-in role name."
+                }
+              },
+              "principalType": {
+                "type": "string",
+                "allowedValues": [
+                  "Device",
+                  "ForeignGroup",
+                  "Group",
+                  "ServicePrincipal",
+                  "User"
+                ],
+                "metadata": {
+                  "description": "Required. Principal type for the assignment."
+                }
+              },
+              "description": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Description for the assignment."
+                }
+              },
+              "condition": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition expression for the assignment."
+                }
+              },
+              "conditionVersion": {
+                "type": "string",
+                "allowedValues": [
+                  "2.0"
+                ],
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition version (e.g., 2.0)."
+                }
+              },
+              "delegatedManagedIdentityResourceId": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Delegated managed identity resource ID."
+                }
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Role assignments to create on the search service."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Azure AI Search service to be deployed.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.kSGroundingWithBingDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Bing Grounding resource name."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Bing Grounding resource SKU."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "metadata": {
+            "description": "Required. Tags to apply to the Bing Grounding resource."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Bing Grounding service to be deployed.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.logAnalyticsWorkspaceDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Workspace name. If empty, a deterministic name is used."
+          }
+        },
+        "retention": {
+          "type": "int",
+          "metadata": {
+            "description": "Required. Data retention in days."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "allowedValues": [
+            "CapacityReservation",
+            "Free",
+            "LACluster",
+            "PerGB2018",
+            "PerNode",
+            "Premium",
+            "Standalone",
+            "Standard"
+          ],
+          "metadata": {
+            "description": "Required. Workspace SKU."
+          }
+        },
+        "replication": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "bool",
+              "metadata": {
+                "description": "Required. Enable cross-region replication."
+              }
+            },
+            "location": {
+              "type": "string",
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Secondary region (paired). If omitted, use the platform default."
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Replication settings for the workspace."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the workspace."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Log Analytics Workspace to be created for monitoring and logging.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.nSGDefinitionsType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. NSG resource name."
+          }
+        },
+        "securityRules": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Rule name."
+                }
+              },
+              "priority": {
+                "type": "int",
+                "metadata": {
+                  "description": "Required. Priority of the rule (100–4096)."
+                }
+              },
+              "access": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Access type (Allow or Deny)."
+                }
+              },
+              "direction": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Direction of traffic (Inbound or Outbound)."
+                }
+              },
+              "protocol": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Protocol (Tcp, Udp, or *)."
+                }
+              },
+              "sourceAddressPrefix": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Source address prefix."
+                }
+              },
+              "sourceAddressPrefixes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Source address prefixes."
+                }
+              },
+              "sourceApplicationSecurityGroupIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Source application security group IDs."
+                }
+              },
+              "sourcePortRange": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Source port range."
+                }
+              },
+              "sourcePortRanges": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Source port ranges."
+                }
+              },
+              "destinationAddressPrefix": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Destination address prefix."
+                }
+              },
+              "destinationAddressPrefixes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Destination address prefixes."
+                }
+              },
+              "destinationApplicationSecurityGroupIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Destination application security group IDs."
+                }
+              },
+              "destinationPortRange": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Destination port range."
+                }
+              },
+              "destinationPortRanges": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Destination port ranges."
+                }
+              },
+              "description": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Rule description."
+                }
+              },
+              "timeouts": {
+                "type": "object",
+                "properties": {
+                  "create": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Create operation timeout (e.g., PT30M)."
+                    }
+                  },
+                  "read": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Read operation timeout (e.g., PT5M)."
+                    }
+                  },
+                  "update": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Update operation timeout (e.g., PT30M)."
+                    }
+                  },
+                  "delete": {
+                    "type": "string",
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Delete operation timeout (e.g., PT30M)."
+                    }
+                  }
+                },
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Operation timeouts."
+                }
+              }
+            },
+            "metadata": {
+              "description": "Required. Arbitrary key for each NSG rule."
+            }
+          },
+          "metadata": {
+            "description": "Required. Security rules to configure in the NSG."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for Network Security Groups (NSGs) to be deployed.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.privateDnsZoneDefinitionsType": {
+      "type": "object",
+      "properties": {
+        "existingZonesResourceGroupResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Resource ID of the resource group that hosts existing Private DNS zones."
+          }
+        },
+        "allowInternetResolutionFallback": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Allow fallback to internet DNS resolution when Private DNS is unavailable."
+          }
+        },
+        "networkLinks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.privateDnsZoneNetworkLinkType"
+          },
+          "minLength": 0,
+          "metadata": {
+            "description": "Required. VNet link definitions to associate with the zones (can be empty)."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration for Private DNS Zones and VNet links.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.privateDnsZoneNetworkLinkType": {
+      "type": "object",
+      "properties": {
+        "vnetLinkName": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Name of the VNet link resource to create."
+          }
+        },
+        "vnetId": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Resource ID of the VNet to link."
+          }
+        },
+        "resolutionPolicy": {
+          "type": "string",
+          "allowedValues": [
+            "Classic",
+            "Default",
+            "SecureOnly"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. DNS resolution policy for the link."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Single Private DNS Zone VNet link definition.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.resourceIdsType": {
+      "type": "object",
+      "properties": {
+        "virtualNetworkResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing VNet resource ID to reuse; leave empty to create a new VNet."
+          }
+        },
+        "bastionHostResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing Azure Bastion resource ID to reuse; leave empty to skip."
+          }
+        },
+        "appInsightsResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing Application Insights resource ID to reuse."
+          }
+        },
+        "logAnalyticsWorkspaceResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing Log Analytics Workspace resource ID to reuse."
+          }
+        },
+        "appConfigResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing App Configuration store resource ID to reuse."
+          }
+        },
+        "keyVaultResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing Key Vault resource ID to reuse."
+          }
+        },
+        "storageAccountResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing Storage Account resource ID to reuse."
+          }
+        },
+        "dbAccountResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing Cosmos DB account resource ID to reuse."
+          }
+        },
+        "searchServiceResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing Azure AI Search service resource ID to reuse."
+          }
+        },
+        "groundingServiceResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing Grounding service resource ID to reuse."
+          }
+        },
+        "containerEnvResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing Container Apps Environment resource ID to reuse."
+          }
+        },
+        "containerRegistryResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing Azure Container Registry resource ID to reuse."
+          }
+        },
+        "apimServiceResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing API Management service resource ID to reuse."
+          }
+        },
+        "applicationGatewayResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing Application Gateway resource ID to reuse."
+          }
+        },
+        "firewallResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Existing Azure Firewall resource ID to reuse."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Existing resource IDs to reuse; leave empty to create new resources.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.storageAccountDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Storage account name."
+          }
+        },
+        "accountKind": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Storage account kind (e.g., StorageV2)."
+          }
+        },
+        "accountTier": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Storage account tier (Standard/Premium)."
+          }
+        },
+        "accountReplicationType": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Replication type (e.g., LRS/ZRS/GRS)."
+          }
+        },
+        "endpointTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Endpoint types to enable (e.g., blob, dfs)."
+          }
+        },
+        "accessTier": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Access tier (Hot/Cool)."
+          }
+        },
+        "publicNetworkAccessEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable public network access."
+          }
+        },
+        "sharedAccessKeyEnabled": {
+          "type": "bool",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Enable shared access keys (account keys)."
+          }
+        },
+        "roleAssignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Role assignment name."
+                }
+              },
+              "principalId": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Principal (objectId) to assign."
+                }
+              },
+              "roleDefinitionIdOrName": {
+                "type": "string",
+                "metadata": {
+                  "description": "Required. Role definition ID or built-in role name."
+                }
+              },
+              "principalType": {
+                "type": "string",
+                "allowedValues": [
+                  "Device",
+                  "ForeignGroup",
+                  "Group",
+                  "ServicePrincipal",
+                  "User"
+                ],
+                "metadata": {
+                  "description": "Required. Principal type for the assignment."
+                }
+              },
+              "description": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Description for the assignment."
+                }
+              },
+              "condition": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition expression for the assignment."
+                }
+              },
+              "conditionVersion": {
+                "type": "string",
+                "allowedValues": [
+                  "2.0"
+                ],
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Condition version (e.g., 2.0)."
+                }
+              },
+              "delegatedManagedIdentityResourceId": {
+                "type": "string",
+                "nullable": true,
+                "metadata": {
+                  "description": "Optional. Delegated managed identity resource ID."
+                }
+              }
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Role assignments to create on the account."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the storage account."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Azure Storage Account to be created for GenAI services.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.vmImageReferenceType": {
+      "type": "object",
+      "properties": {
+        "publisher": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Publisher name."
+          }
+        },
+        "offer": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Offer name."
+          }
+        },
+        "sku": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. SKU name."
+          }
+        },
+        "version": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Image version (e.g., latest)."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Marketplace image reference.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.vNetDefinitionType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. VNet name. If empty, a deterministic name is generated."
+          }
+        },
+        "addressSpace": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. VNet CIDR address space (e.g., 192.168.0.0/16)."
+          }
+        },
+        "ddosProtectionPlanResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Resource ID of an existing DDoS Protection Plan to associate."
+          }
+        },
+        "dnsServers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Custom DNS server IP addresses for the VNet."
+          }
+        },
+        "subnets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_1.vNetSubnetType"
+          },
+          "metadata": {
+            "description": "Required. Subnet definitions for the VNet."
+          }
+        },
+        "vnetPeeringConfiguration": {
+          "$ref": "#/definitions/_1.vNetPeeringConfigurationType",
+          "nullable": true,
+          "metadata": {
+            "description": "Conditional. Peering configuration to another VNet (hub/spoke). Required if the template establishes hub–spoke peering for this VNet."
+          }
+        },
+        "vwanHubPeeringConfiguration": {
+          "$ref": "#/definitions/_1.vWanHubPeeringConfigurationType",
+          "nullable": true,
+          "metadata": {
+            "description": "Conditional. Peering configuration to a Virtual WAN hub. Required if the template establishes a Virtual WAN hub peering."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the VNet."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Virtual Network to be deployed.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.vNetPeeringConfigurationType": {
+      "type": "object",
+      "properties": {
+        "peerVnetResourceId": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Resource ID of the peer virtual network."
+          }
+        },
+        "firewallIpAddress": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Conditional. Hub firewall private IP address used for routing (if applicable). Required if the peering must route via a hub firewall."
+          }
+        },
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Name of the spoke-to-hub peering."
+          }
+        },
+        "allowForwardedTraffic": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Allow forwarded traffic across the peering."
+          }
+        },
+        "allowGatewayTransit": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Allow gateway transit across the peering."
+          }
+        },
+        "allowVirtualNetworkAccess": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Allow virtual network access across the peering."
+          }
+        },
+        "createReversePeering": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Create the reverse peering from hub back to this VNet."
+          }
+        },
+        "reverseAllowForwardedTraffic": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Reverse peering: allow forwarded traffic."
+          }
+        },
+        "reverseAllowGatewayTransit": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Reverse peering: allow gateway transit."
+          }
+        },
+        "reverseAllowVirtualNetworkAccess": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Reverse peering: allow virtual network access."
+          }
+        },
+        "reverseName": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Name of the reverse peering (hub->spoke)."
+          }
+        },
+        "reverseUseRemoteGateways": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Reverse peering: use remote gateways."
+          }
+        },
+        "useRemoteGateways": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Use remote gateways on the spoke peering."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Peering with another VNet (hub/spoke).",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.vNetSubnetType": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "bool",
+          "metadata": {
+            "description": "Required. Enables (true) or disables (false) creation/use of this subnet."
+          }
+        },
+        "name": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Subnet name."
+          }
+        },
+        "addressPrefix": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Subnet address prefix in CIDR notation (e.g., 10.0.1.0/24)."
+          }
+        },
+        "delegation": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Service delegation for the subnet (resource provider/type)."
+          }
+        },
+        "serviceEndpoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Service endpoints to enable for this subnet."
+          }
+        },
+        "natGatewayResourceId": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Resource ID of an associated NAT Gateway."
+          }
+        },
+        "privateEndpointNetworkPolicies": {
+          "type": "string",
+          "allowedValues": [
+            "Disabled",
+            "Enabled"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Conditional. Whether private endpoint network policies are Enabled or Disabled. Required if the subnet will host Private Endpoints and you need policies Disabled."
+          }
+        },
+        "privateLinkServiceNetworkPolicies": {
+          "type": "string",
+          "allowedValues": [
+            "Disabled",
+            "Enabled"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Conditional. Whether private link service network policies are Enabled or Disabled. Required if the subnet will host a Private Link Service and you need policies Disabled."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for one subnet.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.vWanHubPeeringConfigurationType": {
+      "type": "object",
+      "properties": {
+        "peerVwanHubResourceId": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. Resource ID of the target Virtual WAN hub."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Peering with a Virtual WAN hub.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_1.wafPolicyDefinitionsType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "metadata": {
+            "description": "Required. WAF policy resource name."
+          }
+        },
+        "policySettings": {
+          "type": "object",
+          "properties": {
+            "enabledState": {
+              "type": "string",
+              "allowedValues": [
+                "Disabled",
+                "Enabled"
+              ],
+              "metadata": {
+                "description": "Required. WAF policy enabled state."
+              }
+            },
+            "mode": {
+              "type": "string",
+              "allowedValues": [
+                "Detection",
+                "Prevention"
+              ],
+              "metadata": {
+                "description": "Required. WAF mode (Prevention or Detection)."
+              }
+            },
+            "requestBodyCheck": {
+              "type": "bool",
+              "metadata": {
+                "description": "Required. Enable request body inspection."
+              }
+            },
+            "maxRequestBodySizeInKb": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. Maximum request body size (KB)."
+              }
+            },
+            "fileUploadLimitInMb": {
+              "type": "int",
+              "metadata": {
+                "description": "Required. File upload size limit (MB)."
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. WAF policy settings (state, mode, size limits)."
+          }
+        },
+        "managedRules": {
+          "type": "object",
+          "properties": {
+            "exclusions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "matchVariable": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Match variable to exclude (e.g., RequestHeaderNames)."
+                    }
+                  },
+                  "selector": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Selector value for the match variable."
+                    }
+                  },
+                  "selectorMatchOperator": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Selector match operator (e.g., Equals, Contains)."
+                    }
+                  },
+                  "excludedRuleSet": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "metadata": {
+                          "description": "Required. Rule set type (e.g., OWASP)."
+                        }
+                      },
+                      "version": {
+                        "type": "string",
+                        "metadata": {
+                          "description": "Required. Rule set version (e.g., 3.2)."
+                        }
+                      },
+                      "ruleGroup": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "nullable": true,
+                        "metadata": {
+                          "description": "Optional. Rule groups to exclude."
+                        }
+                      }
+                    },
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Specific managed rule set exclusion details."
+                    }
+                  }
+                }
+              },
+              "nullable": true,
+              "metadata": {
+                "description": "Optional. Exclusions for specific rules or variables."
+              }
+            },
+            "managedRuleSets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Rule set type (e.g., OWASP)."
+                    }
+                  },
+                  "version": {
+                    "type": "string",
+                    "metadata": {
+                      "description": "Required. Rule set version."
+                    }
+                  },
+                  "ruleGroupOverride": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ruleGroupName": {
+                          "type": "string",
+                          "metadata": {
+                            "description": "Required. Name of the rule group."
+                          }
+                        },
+                        "rule": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "metadata": {
+                                  "description": "Required. Rule ID."
+                                }
+                              },
+                              "action": {
+                                "type": "string",
+                                "metadata": {
+                                  "description": "Required. Action to take (e.g., Allow, Block, Log)."
+                                }
+                              },
+                              "enabled": {
+                                "type": "bool",
+                                "metadata": {
+                                  "description": "Required. Whether the rule is enabled."
+                                }
+                              }
+                            }
+                          },
+                          "metadata": {
+                            "description": "Required. Rule overrides within the group."
+                          }
+                        }
+                      }
+                    },
+                    "nullable": true,
+                    "metadata": {
+                      "description": "Optional. Overrides for specific rule groups."
+                    }
+                  }
+                }
+              },
+              "metadata": {
+                "description": "Required. Managed rule sets to apply."
+              }
+            }
+          },
+          "metadata": {
+            "description": "Required. Managed rule sets and exclusions for the WAF policy."
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Arbitrary key for each tag."
+            }
+          },
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Tags to apply to the WAF Policy."
+          }
+        }
+      },
+      "metadata": {
+        "description": "Configuration object for the Web Application Firewall (WAF) Policy to be deployed.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "../../common/types.bicep"
+        }
+      }
+    },
+    "_2.lockType": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Specify the name of lock."
+          }
+        },
+        "kind": {
+          "type": "string",
+          "allowedValues": [
+            "CanNotDelete",
+            "None",
+            "ReadOnly"
+          ],
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Specify the type of lock."
+          }
+        },
+        "notes": {
+          "type": "string",
+          "nullable": true,
+          "metadata": {
+            "description": "Optional. Specify the notes of the lock."
+          }
+        }
+      },
+      "metadata": {
+        "description": "An AVM-aligned type for a lock.",
+        "__bicep_imported_from!": {
+          "sourceTemplate": "br:mcr.microsoft.com/bicep/avm/utl/types/avm-common-types:0.6.0"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "name": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. APIM resource name (usually your varApimName)."
+      }
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Azure region for the primary location."
+      }
+    },
+    "apimDefinition": {
+      "$ref": "#/definitions/_1.apimDefinitionType",
+      "metadata": {
+        "description": "Required. Full APIM definition object, using your exported type."
+      }
+    }
+  },
+  "variables": {
+    "copy": [
+      {
+        "name": "additionalLocationsNormalized",
+        "count": "[length(variables('_additionalLocations'))]",
+        "input": {
+          "location": "[variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].location]",
+          "sku": {
+            "name": "[variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].sku.name]",
+            "capacity": "[variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].sku.capacity]"
+          },
+          "zones": "[if(greater(length(coalesce(variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].availabilityZones, createArray())), 0), variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].availabilityZones, null())]",
+          "disableGateway": "[variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].disableGateway]",
+          "natGatewayState": "[variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].natGatewayState]",
+          "publicIpAddressId": "[variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].publicIpAddressResourceId]",
+          "virtualNetworkConfiguration": "[if(not(equals(variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].virtualNetworkConfiguration, null())), createObject('subnetResourceId', variables('_additionalLocations')[copyIndex('additionalLocationsNormalized')].virtualNetworkConfiguration.subnetResourceId), null())]"
+        }
+      },
+      {
+        "name": "hostnameConfigurationsNormalized",
+        "count": "[length(coalesce(parameters('apimDefinition').hostnameConfigurations, createArray()))]",
+        "input": {
+          "type": "[coalesce(parameters('apimDefinition').hostnameConfigurations, createArray())[copyIndex('hostnameConfigurationsNormalized')].type]",
+          "hostName": "[coalesce(parameters('apimDefinition').hostnameConfigurations, createArray())[copyIndex('hostnameConfigurationsNormalized')].hostName]",
+          "keyVaultId": "[coalesce(parameters('apimDefinition').hostnameConfigurations, createArray())[copyIndex('hostnameConfigurationsNormalized')].keyVaultId]",
+          "encodedCertificate": "[coalesce(parameters('apimDefinition').hostnameConfigurations, createArray())[copyIndex('hostnameConfigurationsNormalized')].encodedCertificate]",
+          "certificatePassword": "[coalesce(parameters('apimDefinition').hostnameConfigurations, createArray())[copyIndex('hostnameConfigurationsNormalized')].certificatePassword]",
+          "negotiateClientCertificate": "[coalesce(parameters('apimDefinition').hostnameConfigurations, createArray())[copyIndex('hostnameConfigurationsNormalized')].negotiateClientCertificate]",
+          "defaultSslBinding": "[coalesce(parameters('apimDefinition').hostnameConfigurations, createArray())[copyIndex('hostnameConfigurationsNormalized')].defaultSslBinding]",
+          "identityClientId": "[coalesce(parameters('apimDefinition').hostnameConfigurations, createArray())[copyIndex('hostnameConfigurationsNormalized')].identityClientId]"
+        }
+      }
+    ],
+    "primaryZones": "[if(greater(length(parameters('apimDefinition').zones), 0), parameters('apimDefinition').zones, null())]",
+    "_additionalLocations": "[coalesce(parameters('apimDefinition').additionalLocations, createArray())]",
+    "_apiVersionConstraint": "[if(not(equals(parameters('apimDefinition').minApiVersion, null())), createObject('minApiVersion', parameters('apimDefinition').minApiVersion), null())]",
+    "_customProperties": "[if(equals(parameters('apimDefinition').protocols.enableHttp2, true()), createObject('Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2', 'true'), null())]"
+  },
+  "resources": {
+    "apim": {
+      "type": "Microsoft.ApiManagement/service",
+      "apiVersion": "2024-05-01",
+      "name": "[parameters('name')]",
+      "location": "[parameters('location')]",
+      "tags": "[coalesce(parameters('apimDefinition').tags, createObject())]",
+      "sku": {
+        "name": "[parameters('apimDefinition').skuRoot]",
+        "capacity": "[parameters('apimDefinition').skuCapacity]"
+      },
+      "zones": "[variables('primaryZones')]",
+      "properties": {
+        "publisherEmail": "[parameters('apimDefinition').publisherEmail]",
+        "publisherName": "[parameters('apimDefinition').publisherName]",
+        "apiVersionConstraint": "[variables('_apiVersionConstraint')]",
+        "notificationSenderEmail": "[parameters('apimDefinition').notificationSenderEmail]",
+        "customProperties": "[variables('_customProperties')]",
+        "additionalLocations": "[if(greater(length(variables('additionalLocationsNormalized')), 0), variables('additionalLocationsNormalized'), null())]",
+        "hostnameConfigurations": "[if(greater(length(variables('hostnameConfigurationsNormalized')), 0), variables('hostnameConfigurationsNormalized'), null())]",
+        "enableClientCertificate": "[if(equals(parameters('apimDefinition').skuRoot, 'Consumption'), parameters('apimDefinition').clientCertificateEnabled, null())]"
+      }
+    }
+  },
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.ApiManagement/service', parameters('name'))]"
+    },
+    "nameOut": {
+      "type": "string",
+      "value": "[parameters('name')]"
+    },
+    "locationOut": {
+      "type": "string",
+      "value": "[reference('apim', '2024-05-01', 'full').location]"
+    }
+  }
+}

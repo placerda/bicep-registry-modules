@@ -487,14 +487,14 @@ param appGatewayDefinition types.appGatewayDefinitionType = {
 @description('Conditional. API Management configuration. Required if deployToggles.apiManagement is true and resourceIds.apimServiceResourceId is empty.')
 param apimDefinition types.apimDefinitionType = {
   // Basic metadata
-  name: 'apim-xyz'
+  name: ''
   publisherEmail: 'admin@example.com'
   publisherName: 'Contoso'
   minApiVersion: '2022-08-01'
   notificationSenderEmail: 'apimgmt-noreply@azure.com'
 
   // Primary region zones (intra-region HA)
-  zones: [1, 2, 3]
+  zones: ['1', '2', '3']
 
   // Optional multi-region (each location declares its own zones)
   additionalLocations: [
@@ -504,7 +504,7 @@ param apimDefinition types.apimDefinitionType = {
         name: 'Premium'
         capacity: 2
       }
-      availabilityZones: [1, 2, 3] // West US 2 supports 3 AZs
+      availabilityZones: ['1', '2', '3'] // West US 2 supports 3 AZs
     }
   ]
 
@@ -2350,22 +2350,6 @@ module fwPolicy 'br/public:avm/res/network/firewall-policy:0.3.1' = if (varDeplo
   }
 }
 
-// name matches what your module currently uses
-var varAfwPipName = '${varAfw}${baseName}-pip'
-
-module afwPip 'br/public:avm/res/network/public-ip-address:0.9.0' = {
-  name: 'afwPipDeployment'
-  params: {
-    name: varAfwPipName
-    location: location
-    skuName: 'Standard'
-    publicIPAllocationMethod: 'Static'
-    availabilityZones: publicIpAvailabilityZones
-    tags: tags
-    enableTelemetry: enableTelemetry
-  }
-}
-
 // 1) Azure Firewall without policy
 module azureFirewall_noPolicy 'br/public:avm/res/network/azure-firewall:0.8.0' = if (varDeployFirewall && !varDeployAfwPolicy) {
   name: 'azureFirewallDeployment'
@@ -2380,6 +2364,7 @@ module azureFirewall_noPolicy 'br/public:avm/res/network/azure-firewall:0.8.0' =
     publicIPAddressObject: {
       name: '${varAfw}${baseName}-pip'
       publicIPAllocationMethod: 'Static'
+      availabilityZones: publicIpAvailabilityZones
       skuName: 'Standard'
       skuTier: 'Regional'
     }
@@ -2400,6 +2385,7 @@ module azureFirewall_withPolicy 'br/public:avm/res/network/azure-firewall:0.8.0'
     publicIPAddressObject: {
       name: '${varAfw}${baseName}-pip'
       publicIPAllocationMethod: 'Static'
+      availabilityZones: publicIpAvailabilityZones
       skuName: 'Standard'
       skuTier: 'Regional'
     }
@@ -2410,84 +2396,12 @@ module azureFirewall_withPolicy 'br/public:avm/res/network/azure-firewall:0.8.0'
   ]
 }
 
-// var varApimZoneCandidates = (length(apimDefinition.zones! ?? []) >= 2) ? apimDefinition.zones! : [1, 2]
-
-// var varApimZonesCapacityAligned = take(varApimZoneCandidates!, max(2, apimDefinition.skuCapacity))
-
-// // Build additional APIM locations in the shape the AVM module/ARM expects
-// var varApimAdditionalLocations = [
-//   for l in (apimDefinition.additionalLocations! ?? []): {
-//     location: l.location
-//     // SKU must be embedded here (don’t put skuCapacity at this level)
-//     sku: {
-//       name: apimDefinition.skuRoot!
-//       capacity: apimDefinition.skuCapacity
-//     }
-//     // property name is zones in ARM; AVM normalizes it
-//     zones: (contains(l, 'availabilityZones') && length(l.availabilityZones! ?? []) > 0)
-//       ? l.availabilityZones!
-//       : varApimZoneCandidates!
-
-//     // optional pass-throughs
-//     ...(contains(l, 'disableGateway') && l.disableGateway! != null ? { disableGateway: l.disableGateway! } : {})
-//     ...(contains(l, 'natGatewayState') && l.natGatewayState! != null ? { natGatewayState: l.natGatewayState! } : {})
-//     ...(contains(l, 'publicIpAddressResourceId') && !empty(string(l.publicIpAddressResourceId!))
-//       ? { publicIpAddressResourceId: l.publicIpAddressResourceId! }
-//       : {})
-//   }
-// ]
-
-#disable-next-line BCP081
-module apim 'br/public:avm/res/api-management/service:0.11.0' = if (varDeployApim) {
+module apim './components/api-management/main.bicep' = if (varDeployApim) {
   name: 'apimDeployment'
   params: {
-    // Core identity & placement
     name: varApimName
     location: location
-    tags: union(tags, apimDefinition.tags! ?? {})
-
-    // AVM-required SKU fields
-    sku: apimDefinition.skuRoot! // Developer | Basic | Standard | Premium | Consumption | V2 variants
-    skuCapacity: apimDefinition.skuCapacity
-
-    // Publisher info
-    publisherEmail: apimDefinition.publisherEmail
-    publisherName: apimDefinition.publisherName
-
-    // Enable HTTP/2 as string flags (what the module expects)
-    customProperties: apimDefinition.protocols! != null && apimDefinition!.protocols!.enableHttp2
-      ? { 'Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2': 'true' }
-      : {}
-
-    // Primary region availability zones (use null if not provided)
-    availabilityZones: (length(apimDefinition.zones! ?? []) > 0) ? apimDefinition.zones! : null
-
-    // Multi-region locations (each with its own zones)
-    additionalLocations: [
-      for l in (apimDefinition.additionalLocations! ?? []): {
-        location: l.location
-        sku: {
-          name: apimDefinition.skuRoot!
-          capacity: apimDefinition.skuCapacity
-        }
-        availabilityZones: (length(l.availabilityZones! ?? []) > 0) ? l.availabilityZones! : null
-
-        // Optional pass-throughs
-        ...(contains(l, 'disableGateway') && l.disableGateway! != null ? { disableGateway: l.disableGateway! } : {})
-        ...(contains(l, 'natGatewayState') && l.natGatewayState! != null ? { natGatewayState: l.natGatewayState! } : {})
-        ...(contains(l, 'publicIpAddressResourceId') && !empty(string(l.publicIpAddressResourceId!))
-          ? { publicIpAddressResourceId: l.publicIpAddressResourceId! }
-          : {})
-      }
-    ]
-
-    // Hostnames in AVM shape (array) or null if not provided
-    hostnameConfigurations: apimDefinition.hostnameConfigurations! ?? null
-
-    // Misc
-    enableTelemetry: enableTelemetry
-    minApiVersion: apimDefinition.minApiVersion!
-    notificationSenderEmail: apimDefinition.notificationSenderEmail!
+    apimDefinition: apimDefinition
   }
 }
 
