@@ -1770,12 +1770,12 @@ module wafPolicy 'br/public:avm/res/network/application-gateway-web-application-
     name: empty(wafPolicyDefinition.name!) ? 'afwp-${baseName}' : wafPolicyDefinition.name!
     managedRules: wafPolicyDefinition.managedRules
 
-    // Optionals (guarded)
-    policySettings: !empty(wafPolicyDefinition.?policySettings) ? wafPolicyDefinition.policySettings! : null
-    customRules: !empty(wafPolicyDefinition.?customRules) ? wafPolicyDefinition.customRules! : []
+    // Optional pass-throughs with simplified ?. pattern and preserved defaults
+    policySettings: wafPolicyDefinition.?policySettings
+    customRules: wafPolicyDefinition.?customRules ?? []
     enableTelemetry: enableTelemetry
-    location: !empty(wafPolicyDefinition.?location) ? wafPolicyDefinition.location! : location
-    tags: !empty(wafPolicyDefinition.?tags) ? wafPolicyDefinition.tags! : tags
+    location: wafPolicyDefinition.?location ?? location
+    tags: wafPolicyDefinition.?tags ?? tags
   }
 }
 
@@ -1790,39 +1790,23 @@ module appGatewayPip 'br/public:avm/res/network/public-ip-address:0.9.0' = if (v
     // Required
     name: empty(appGatewayPublicIpDefinition!.name!) ? 'pip-agw-${baseName}' : appGatewayPublicIpDefinition!.name!
 
-    // Optionals (guarded)
-    availabilityZones: !empty(appGatewayPublicIpDefinition.?availabilityZones)
-      ? appGatewayPublicIpDefinition!.availabilityZones!
-      : [1, 2, 3]
-    ddosSettings: !empty(appGatewayPublicIpDefinition.?ddosSettings)
-      ? appGatewayPublicIpDefinition!.ddosSettings!
-      : null
-    diagnosticSettings: !empty(appGatewayPublicIpDefinition.?diagnosticSettings)
-      ? appGatewayPublicIpDefinition!.diagnosticSettings!
-      : null
-    dnsSettings: !empty(appGatewayPublicIpDefinition.?dnsSettings) ? appGatewayPublicIpDefinition!.dnsSettings! : null
+    // Optional pass-throughs with simplified ?. pattern and preserved defaults
+    availabilityZones: appGatewayPublicIpDefinition.?availabilityZones ?? [1, 2, 3]
+    ddosSettings: appGatewayPublicIpDefinition.?ddosSettings
+    diagnosticSettings: appGatewayPublicIpDefinition.?diagnosticSettings
+    dnsSettings: appGatewayPublicIpDefinition.?dnsSettings
     enableTelemetry: enableTelemetry
-    idleTimeoutInMinutes: contains(appGatewayPublicIpDefinition!, 'idleTimeoutInMinutes')
-      ? appGatewayPublicIpDefinition!.idleTimeoutInMinutes!
-      : null
-    ipTags: !empty(appGatewayPublicIpDefinition.?ipTags) ? appGatewayPublicIpDefinition!.ipTags! : []
-    location: !empty(appGatewayPublicIpDefinition.?location) ? appGatewayPublicIpDefinition!.location! : location
-    lock: !empty(appGatewayPublicIpDefinition.?lock) ? appGatewayPublicIpDefinition!.lock! : null
-    publicIPAddressVersion: !empty(appGatewayPublicIpDefinition.?publicIPAddressVersion)
-      ? appGatewayPublicIpDefinition!.publicIPAddressVersion!
-      : null
-    publicIPAllocationMethod: !empty(appGatewayPublicIpDefinition.?publicIPAllocationMethod)
-      ? appGatewayPublicIpDefinition!.publicIPAllocationMethod!
-      : null
-    publicIpPrefixResourceId: !empty(appGatewayPublicIpDefinition.?publicIpPrefixResourceId)
-      ? appGatewayPublicIpDefinition!.publicIpPrefixResourceId!
-      : null
-    roleAssignments: !empty(appGatewayPublicIpDefinition.?roleAssignments)
-      ? appGatewayPublicIpDefinition!.roleAssignments!
-      : []
-    skuName: !empty(appGatewayPublicIpDefinition.?skuName) ? appGatewayPublicIpDefinition!.skuName! : null
-    skuTier: !empty(appGatewayPublicIpDefinition.?skuTier) ? appGatewayPublicIpDefinition!.skuTier! : null
-    tags: !empty(appGatewayPublicIpDefinition.?tags) ? appGatewayPublicIpDefinition!.tags! : tags
+    idleTimeoutInMinutes: appGatewayPublicIpDefinition.?idleTimeoutInMinutes
+    ipTags: appGatewayPublicIpDefinition.?ipTags ?? []
+    location: appGatewayPublicIpDefinition.?location ?? location
+    lock: appGatewayPublicIpDefinition.?lock
+    publicIPAddressVersion: appGatewayPublicIpDefinition.?publicIPAddressVersion
+    publicIPAllocationMethod: appGatewayPublicIpDefinition.?publicIPAllocationMethod
+    publicIpPrefixResourceId: appGatewayPublicIpDefinition.?publicIpPrefixResourceId
+    roleAssignments: appGatewayPublicIpDefinition.?roleAssignments ?? []
+    skuName: appGatewayPublicIpDefinition.?skuName
+    skuTier: appGatewayPublicIpDefinition.?skuTier
+    tags: appGatewayPublicIpDefinition.?tags ?? tags
   }
 }
 
@@ -1857,58 +1841,35 @@ module azureFirewall 'br/public:avm/res/network/azure-firewall:0.8.0' = if (varD
     // Required
     name: varAfwName
 
-    // Conditionals (guarded)
-    hubIPAddresses: !empty(firewallDefinition.?hubIPAddresses) ? firewallDefinition.hubIPAddresses! : null
-    virtualHubResourceId: !empty(firewallDefinition.?virtualHubResourceId)
-      ? firewallDefinition.virtualHubResourceId!
-      : null
-    virtualNetworkResourceId: !empty(firewallDefinition.?virtualNetworkResourceId)
-      ? firewallDefinition.virtualNetworkResourceId!
-      : null
+    // Conditional pass-throughs
+    hubIPAddresses: firewallDefinition.?hubIPAddresses
+    virtualHubResourceId: firewallDefinition.?virtualHubResourceId
+    virtualNetworkResourceId: firewallDefinition.?virtualNetworkResourceId
 
-    // Optionals (guarded)
-    additionalPublicIpConfigurations: !empty(firewallDefinition.?additionalPublicIpConfigurations)
-      ? firewallDefinition.additionalPublicIpConfigurations!
-      : []
-    applicationRuleCollections: !empty(firewallDefinition.?applicationRuleCollections)
-      ? firewallDefinition.applicationRuleCollections!
-      : []
-    autoscaleMaxCapacity: contains(firewallDefinition, 'autoscaleMaxCapacity')
-      ? firewallDefinition.autoscaleMaxCapacity!
-      : null
-    autoscaleMinCapacity: contains(firewallDefinition, 'autoscaleMinCapacity')
-      ? firewallDefinition.autoscaleMinCapacity!
-      : null
-    availabilityZones: !empty(firewallDefinition.?availabilityZones) ? firewallDefinition.availabilityZones! : [1, 2, 3]
-    azureSkuTier: !empty(firewallDefinition.?azureSkuTier) ? firewallDefinition.azureSkuTier! : null
-    diagnosticSettings: !empty(firewallDefinition.?diagnosticSettings) ? firewallDefinition.diagnosticSettings! : null
-    enableForcedTunneling: contains(firewallDefinition, 'enableForcedTunneling')
-      ? firewallDefinition.enableForcedTunneling!
-      : null
+    // Optional pass-throughs with defaults
+    additionalPublicIpConfigurations: firewallDefinition.?additionalPublicIpConfigurations ?? []
+    applicationRuleCollections: firewallDefinition.?applicationRuleCollections ?? []
+    autoscaleMaxCapacity: firewallDefinition.?autoscaleMaxCapacity
+    autoscaleMinCapacity: firewallDefinition.?autoscaleMinCapacity
+    availabilityZones: firewallDefinition.?availabilityZones ?? [1, 2, 3]
+    azureSkuTier: firewallDefinition.?azureSkuTier
+    diagnosticSettings: firewallDefinition.?diagnosticSettings
+    enableForcedTunneling: firewallDefinition.?enableForcedTunneling
     enableTelemetry: enableTelemetry
-    firewallPolicyId: !empty(firewallDefinition.?firewallPolicyId)
-      ? firewallDefinition.firewallPolicyId!
-      : fwPolicy!.outputs.resourceId
-    location: !empty(firewallDefinition.?location) ? firewallDefinition.location! : location
-    lock: !empty(firewallDefinition.?lock) ? firewallDefinition.lock! : null
-    managementIPAddressObject: !empty(firewallDefinition.?managementIPAddressObject)
-      ? firewallDefinition.managementIPAddressObject!
-      : null
-    managementIPResourceID: !empty(firewallDefinition.?managementIPResourceID)
-      ? firewallDefinition.managementIPResourceID!
-      : null
-    natRuleCollections: !empty(firewallDefinition.?natRuleCollections) ? firewallDefinition.natRuleCollections! : []
-    networkRuleCollections: !empty(firewallDefinition.?networkRuleCollections)
-      ? firewallDefinition.networkRuleCollections!
-      : []
-    publicIPAddressObject: !empty(firewallDefinition.?publicIPAddressObject)
-      ? firewallDefinition.publicIPAddressObject!
-      : null
-    publicIPResourceID: !empty(firewallDefinition.?publicIPResourceID) ? firewallDefinition.publicIPResourceID! : null
-    roleAssignments: !empty(firewallDefinition.?roleAssignments) ? firewallDefinition.roleAssignments! : []
-    tags: !empty(firewallDefinition.?tags) ? firewallDefinition.tags! : tags
-    threatIntelMode: !empty(firewallDefinition.?threatIntelMode) ? firewallDefinition.threatIntelMode! : null
+    firewallPolicyId: firewallDefinition.?firewallPolicyId ?? fwPolicy!.outputs.resourceId
+    location: firewallDefinition.?location ?? location
+    lock: firewallDefinition.?lock
+    managementIPAddressObject: firewallDefinition.?managementIPAddressObject
+    managementIPResourceID: firewallDefinition.?managementIPResourceID
+    natRuleCollections: firewallDefinition.?natRuleCollections ?? []
+    networkRuleCollections: firewallDefinition.?networkRuleCollections ?? []
+    publicIPAddressObject: firewallDefinition.?publicIPAddressObject
+    publicIPResourceID: firewallDefinition.?publicIPResourceID
+    roleAssignments: firewallDefinition.?roleAssignments ?? []
+    tags: firewallDefinition.?tags ?? tags
+    threatIntelMode: firewallDefinition.?threatIntelMode
   }
+
   dependsOn: [
     fwPolicy!
   ]
@@ -1928,50 +1889,30 @@ module fwPolicy 'br/public:avm/res/network/firewall-policy:0.3.1' = if (varDeplo
     // Required
     name: empty(firewallPolicyDefinition.name!) ? 'afwp-${baseName}' : firewallPolicyDefinition.name!
 
-    // Optionals (guarded)
-    allowSqlRedirect: contains(firewallPolicyDefinition, 'allowSqlRedirect')
-      ? firewallPolicyDefinition.allowSqlRedirect!
-      : null
-    basePolicyResourceId: !empty(firewallPolicyDefinition.?basePolicyResourceId)
-      ? firewallPolicyDefinition.basePolicyResourceId!
-      : null
-    certificateName: !empty(firewallPolicyDefinition.?certificateName)
-      ? firewallPolicyDefinition.certificateName!
-      : null
-    defaultWorkspaceResourceId: !empty(firewallPolicyDefinition.?defaultWorkspaceResourceId)
-      ? firewallPolicyDefinition.defaultWorkspaceResourceId!
-      : null
-    enableProxy: contains(firewallPolicyDefinition, 'enableProxy') ? firewallPolicyDefinition.enableProxy! : null
+    // Optional pass-throughs with simplified ?. pattern and preserved defaults
+    allowSqlRedirect: firewallPolicyDefinition.?allowSqlRedirect
+    basePolicyResourceId: firewallPolicyDefinition.?basePolicyResourceId
+    certificateName: firewallPolicyDefinition.?certificateName
+    defaultWorkspaceResourceId: firewallPolicyDefinition.?defaultWorkspaceResourceId
+    enableProxy: firewallPolicyDefinition.?enableProxy
     enableTelemetry: enableTelemetry
-    fqdns: !empty(firewallPolicyDefinition.?fqdns) ? firewallPolicyDefinition.fqdns! : []
-    insightsIsEnabled: contains(firewallPolicyDefinition, 'insightsIsEnabled')
-      ? firewallPolicyDefinition.insightsIsEnabled!
-      : null
-    intrusionDetection: !empty(firewallPolicyDefinition.?intrusionDetection)
-      ? firewallPolicyDefinition.intrusionDetection!
-      : null
-    ipAddresses: !empty(firewallPolicyDefinition.?ipAddresses) ? firewallPolicyDefinition.ipAddresses! : null
-    keyVaultSecretId: !empty(firewallPolicyDefinition.?keyVaultSecretId)
-      ? firewallPolicyDefinition.keyVaultSecretId!
-      : null
-    location: !empty(firewallPolicyDefinition.?location) ? firewallPolicyDefinition.location! : location
-    lock: !empty(firewallPolicyDefinition.?lock) ? firewallPolicyDefinition.lock! : null
-    managedIdentities: !empty(firewallPolicyDefinition.?managedIdentities)
-      ? firewallPolicyDefinition.managedIdentities!
-      : null
-    retentionDays: contains(firewallPolicyDefinition, 'retentionDays') ? firewallPolicyDefinition.retentionDays! : null
-    roleAssignments: !empty(firewallPolicyDefinition.?roleAssignments) ? firewallPolicyDefinition.roleAssignments! : []
-    ruleCollectionGroups: !empty(firewallPolicyDefinition.?ruleCollectionGroups)
-      ? firewallPolicyDefinition.ruleCollectionGroups!
-      : []
-    servers: !empty(firewallPolicyDefinition.?servers) ? firewallPolicyDefinition.servers! : []
-    snat: !empty(firewallPolicyDefinition.?snat) ? firewallPolicyDefinition.snat! : null
-    tags: !empty(firewallPolicyDefinition.?tags) ? firewallPolicyDefinition.tags! : tags
-    threatIntelMode: !empty(firewallPolicyDefinition.?threatIntelMode)
-      ? firewallPolicyDefinition.threatIntelMode!
-      : null
-    tier: !empty(firewallPolicyDefinition.?tier) ? firewallPolicyDefinition.tier! : null
-    workspaces: !empty(firewallPolicyDefinition.?workspaces) ? firewallPolicyDefinition.workspaces! : []
+    fqdns: firewallPolicyDefinition.?fqdns ?? []
+    insightsIsEnabled: firewallPolicyDefinition.?insightsIsEnabled
+    intrusionDetection: firewallPolicyDefinition.?intrusionDetection
+    ipAddresses: firewallPolicyDefinition.?ipAddresses
+    keyVaultSecretId: firewallPolicyDefinition.?keyVaultSecretId
+    location: firewallPolicyDefinition.?location ?? location
+    lock: firewallPolicyDefinition.?lock
+    managedIdentities: firewallPolicyDefinition.?managedIdentities
+    retentionDays: firewallPolicyDefinition.?retentionDays
+    roleAssignments: firewallPolicyDefinition.?roleAssignments ?? []
+    ruleCollectionGroups: firewallPolicyDefinition.?ruleCollectionGroups ?? []
+    servers: firewallPolicyDefinition.?servers ?? []
+    snat: firewallPolicyDefinition.?snat
+    tags: firewallPolicyDefinition.?tags ?? tags
+    threatIntelMode: firewallPolicyDefinition.?threatIntelMode
+    tier: firewallPolicyDefinition.?tier
+    workspaces: firewallPolicyDefinition.?workspaces ?? []
   }
 }
 
@@ -2008,52 +1949,32 @@ module logAnalytics 'br/public:avm/res/operational-insights/workspace:0.12.0' = 
     // Required
     name: varLawName
 
-    // Optionals (guarded)
-    linkedStorageAccounts: !empty(logAnalyticsDefinition.?linkedStorageAccounts)
-      ? logAnalyticsDefinition.linkedStorageAccounts!
-      : []
-    dailyQuotaGb: contains(logAnalyticsDefinition, 'dailyQuotaGb') ? logAnalyticsDefinition.dailyQuotaGb! : null
-    dataExports: !empty(logAnalyticsDefinition.?dataExports) ? logAnalyticsDefinition.dataExports! : []
-    dataRetention: contains(logAnalyticsDefinition, 'dataRetention') ? logAnalyticsDefinition.dataRetention! : 7
-    dataSources: !empty(logAnalyticsDefinition.?dataSources) ? logAnalyticsDefinition.dataSources! : []
-    diagnosticSettings: !empty(logAnalyticsDefinition.?diagnosticSettings)
-      ? logAnalyticsDefinition.diagnosticSettings!
-      : null
+    // Optional pass-throughs with simplified ?. pattern and preserved defaults
+    linkedStorageAccounts: logAnalyticsDefinition.?linkedStorageAccounts ?? []
+    dailyQuotaGb: logAnalyticsDefinition.?dailyQuotaGb
+    dataExports: logAnalyticsDefinition.?dataExports ?? []
+    dataRetention: logAnalyticsDefinition.?dataRetention ?? 7
+    dataSources: logAnalyticsDefinition.?dataSources ?? []
+    diagnosticSettings: logAnalyticsDefinition.?diagnosticSettings
     enableTelemetry: enableTelemetry
-    features: !empty(logAnalyticsDefinition.?features) ? logAnalyticsDefinition.features! : null
-    forceCmkForQuery: contains(logAnalyticsDefinition, 'forceCmkForQuery')
-      ? logAnalyticsDefinition.forceCmkForQuery!
-      : null
-    gallerySolutions: !empty(logAnalyticsDefinition.?gallerySolutions) ? logAnalyticsDefinition.gallerySolutions! : []
-    linkedServices: !empty(logAnalyticsDefinition.?linkedServices) ? logAnalyticsDefinition.linkedServices! : []
-    location: !empty(logAnalyticsDefinition.?location) ? logAnalyticsDefinition.location! : location
-    lock: !empty(logAnalyticsDefinition.?lock) ? logAnalyticsDefinition.lock! : null
-    managedIdentities: !empty(logAnalyticsDefinition.?managedIdentities)
-      ? logAnalyticsDefinition.managedIdentities!
-      : null
-    onboardWorkspaceToSentinel: contains(logAnalyticsDefinition, 'onboardWorkspaceToSentinel')
-      ? logAnalyticsDefinition.onboardWorkspaceToSentinel!
-      : null
-    publicNetworkAccessForIngestion: !empty(logAnalyticsDefinition.?publicNetworkAccessForIngestion)
-      ? logAnalyticsDefinition.publicNetworkAccessForIngestion!
-      : null
-    publicNetworkAccessForQuery: !empty(logAnalyticsDefinition.?publicNetworkAccessForQuery)
-      ? logAnalyticsDefinition.publicNetworkAccessForQuery!
-      : null
-    replication: !empty(logAnalyticsDefinition.?replication)
-      ? logAnalyticsDefinition.replication!
-      : { enabled: true, location: 'westus2' }
-    roleAssignments: !empty(logAnalyticsDefinition.?roleAssignments) ? logAnalyticsDefinition.roleAssignments! : []
-    savedSearches: !empty(logAnalyticsDefinition.?savedSearches) ? logAnalyticsDefinition.savedSearches! : []
-    skuCapacityReservationLevel: contains(logAnalyticsDefinition, 'skuCapacityReservationLevel')
-      ? logAnalyticsDefinition.skuCapacityReservationLevel!
-      : null
-    skuName: !empty(logAnalyticsDefinition.?skuName) ? logAnalyticsDefinition.skuName! : null
-    storageInsightsConfigs: !empty(logAnalyticsDefinition.?storageInsightsConfigs)
-      ? logAnalyticsDefinition.storageInsightsConfigs!
-      : []
-    tables: !empty(logAnalyticsDefinition.?tables) ? logAnalyticsDefinition.tables! : []
-    tags: !empty(logAnalyticsDefinition.?tags) ? logAnalyticsDefinition.tags! : tags
+    features: logAnalyticsDefinition.?features
+    forceCmkForQuery: logAnalyticsDefinition.?forceCmkForQuery
+    gallerySolutions: logAnalyticsDefinition.?gallerySolutions ?? []
+    linkedServices: logAnalyticsDefinition.?linkedServices ?? []
+    location: logAnalyticsDefinition.?location ?? location
+    lock: logAnalyticsDefinition.?lock
+    managedIdentities: logAnalyticsDefinition.?managedIdentities
+    onboardWorkspaceToSentinel: logAnalyticsDefinition.?onboardWorkspaceToSentinel
+    publicNetworkAccessForIngestion: logAnalyticsDefinition.?publicNetworkAccessForIngestion
+    publicNetworkAccessForQuery: logAnalyticsDefinition.?publicNetworkAccessForQuery
+    replication: logAnalyticsDefinition.?replication ?? { enabled: true, location: 'westus2' }
+    roleAssignments: logAnalyticsDefinition.?roleAssignments ?? []
+    savedSearches: logAnalyticsDefinition.?savedSearches ?? []
+    skuCapacityReservationLevel: logAnalyticsDefinition.?skuCapacityReservationLevel
+    skuName: logAnalyticsDefinition.?skuName
+    storageInsightsConfigs: logAnalyticsDefinition.?storageInsightsConfigs ?? []
+    tables: logAnalyticsDefinition.?tables ?? []
+    tags: logAnalyticsDefinition.?tags ?? tags
   }
 }
 
@@ -2091,42 +2012,30 @@ module appInsights 'br/public:avm/res/insights/component:0.6.0' = if (varDeployA
     // Use unified variable so this works for both existing and newly deployed workspace
     workspaceResourceId: varLogAnalyticsWorkspaceResourceId
 
-    // Optionals (guarded)
-    applicationType: !empty(appInsightsDefinition.?applicationType) ? appInsightsDefinition.applicationType! : null
-    diagnosticSettings: !empty(appInsightsDefinition.?diagnosticSettings)
-      ? appInsightsDefinition.diagnosticSettings!
-      : null
-    disableIpMasking: contains(appInsightsDefinition, 'disableIpMasking')
-      ? appInsightsDefinition.disableIpMasking!
-      : true
-    disableLocalAuth: contains(appInsightsDefinition, 'disableLocalAuth')
-      ? appInsightsDefinition.disableLocalAuth!
-      : null
+    // Optional pass-throughs with simplified ?. pattern and preserved defaults
+    applicationType: appInsightsDefinition.?applicationType
+    diagnosticSettings: appInsightsDefinition.?diagnosticSettings
+
+    // keep explicit default true when property is not defined
+    disableIpMasking: appInsightsDefinition.?disableIpMasking ?? true
+
+    disableLocalAuth: appInsightsDefinition.?disableLocalAuth
     enableTelemetry: enableTelemetry
-    flowType: !empty(appInsightsDefinition.?flowType) ? appInsightsDefinition.flowType! : null
-    forceCustomerStorageForProfiler: contains(appInsightsDefinition, 'forceCustomerStorageForProfiler')
-      ? appInsightsDefinition.forceCustomerStorageForProfiler!
-      : null
-    kind: !empty(appInsightsDefinition.?kind) ? appInsightsDefinition.kind! : null
-    linkedStorageAccountResourceId: !empty(appInsightsDefinition.?linkedStorageAccountResourceId)
-      ? appInsightsDefinition.linkedStorageAccountResourceId!
-      : null
-    location: !empty(appInsightsDefinition.?location) ? appInsightsDefinition.location! : location
-    lock: !empty(appInsightsDefinition.?lock) ? appInsightsDefinition.lock! : null
-    publicNetworkAccessForIngestion: !empty(appInsightsDefinition.?publicNetworkAccessForIngestion)
-      ? appInsightsDefinition.publicNetworkAccessForIngestion!
-      : null
-    publicNetworkAccessForQuery: !empty(appInsightsDefinition.?publicNetworkAccessForQuery)
-      ? appInsightsDefinition.publicNetworkAccessForQuery!
-      : null
-    requestSource: !empty(appInsightsDefinition.?requestSource) ? appInsightsDefinition.requestSource! : null
-    retentionInDays: contains(appInsightsDefinition, 'retentionInDays') ? appInsightsDefinition.retentionInDays! : null
-    roleAssignments: !empty(appInsightsDefinition.?roleAssignments) ? appInsightsDefinition.roleAssignments! : null
-    samplingPercentage: contains(appInsightsDefinition, 'samplingPercentage')
-      ? appInsightsDefinition.samplingPercentage!
-      : null
-    tags: !empty(appInsightsDefinition.?tags) ? appInsightsDefinition.tags! : tags
+    flowType: appInsightsDefinition.?flowType
+    forceCustomerStorageForProfiler: appInsightsDefinition.?forceCustomerStorageForProfiler
+    kind: appInsightsDefinition.?kind
+    linkedStorageAccountResourceId: appInsightsDefinition.?linkedStorageAccountResourceId
+    location: appInsightsDefinition.?location ?? location
+    lock: appInsightsDefinition.?lock
+    publicNetworkAccessForIngestion: appInsightsDefinition.?publicNetworkAccessForIngestion
+    publicNetworkAccessForQuery: appInsightsDefinition.?publicNetworkAccessForQuery
+    requestSource: appInsightsDefinition.?requestSource
+    retentionInDays: appInsightsDefinition.?retentionInDays
+    roleAssignments: appInsightsDefinition.?roleAssignments
+    samplingPercentage: appInsightsDefinition.?samplingPercentage
+    tags: appInsightsDefinition.?tags ?? tags
   }
+
   dependsOn: [
     #disable-next-line BCP321
     (empty(resourceIds.logAnalyticsWorkspaceResourceId!)) ? logAnalytics : null
@@ -2166,78 +2075,51 @@ module containerEnv 'br/public:avm/res/app/managed-environment:0.11.3' = if (var
     // Required
     name: varContainerEnvName
 
-    // Optionals (guarded)
-    dockerBridgeCidr: !empty(containerAppEnvDefinition.?dockerBridgeCidr)
-      ? containerAppEnvDefinition.dockerBridgeCidr!
-      : ''
-    // infrastructureResourceGroupName line intentionally removed to allow module default
-    infrastructureSubnetResourceId: !empty(containerAppEnvDefinition.?infrastructureSubnetResourceId)
-      ? containerAppEnvDefinition.infrastructureSubnetResourceId!
-      : (!empty(varAcaInfraSubnetId) ? varAcaInfraSubnetId : '')
-    internal: contains(containerAppEnvDefinition, 'internal') ? containerAppEnvDefinition.internal! : false
-    platformReservedCidr: !empty(containerAppEnvDefinition.?platformReservedCidr)
-      ? containerAppEnvDefinition.platformReservedCidr!
-      : ''
-    platformReservedDnsIP: !empty(containerAppEnvDefinition.?platformReservedDnsIP)
-      ? containerAppEnvDefinition.platformReservedDnsIP!
-      : ''
-    workloadProfiles: !empty(containerAppEnvDefinition.?workloadProfiles)
-      ? containerAppEnvDefinition.workloadProfiles!
-      : [
-          {
-            name: 'Consumption'
-            workloadProfileType: 'Consumption'
-          }
-          {
-            workloadProfileType: 'D4'
-            name: 'default'
-            minimumCount: 1
-            maximumCount: 3
-          }
-        ]
-    appInsightsConnectionString: !empty(containerAppEnvDefinition.?appInsightsConnectionString)
-      ? containerAppEnvDefinition.appInsightsConnectionString!
-      : (varDeployAppInsights ? appInsights!.outputs.connectionString : '')
-    appLogsConfiguration: !empty(containerAppEnvDefinition.?appLogsConfiguration)
-      ? containerAppEnvDefinition.appLogsConfiguration!
-      : null
-    certificate: !empty(containerAppEnvDefinition.?certificate) ? containerAppEnvDefinition.certificate! : null
-    certificatePassword: !empty(containerAppEnvDefinition.?certificatePassword)
-      ? containerAppEnvDefinition.certificatePassword!
-      : ''
-    certificateValue: !empty(containerAppEnvDefinition.?certificateValue)
-      ? containerAppEnvDefinition.certificateValue!
-      : ''
-    daprAIConnectionString: !empty(containerAppEnvDefinition.?daprAIConnectionString)
-      ? containerAppEnvDefinition.daprAIConnectionString!
-      : ''
-    daprAIInstrumentationKey: !empty(containerAppEnvDefinition.?daprAIInstrumentationKey)
-      ? containerAppEnvDefinition.daprAIInstrumentationKey!
-      : ''
-    dnsSuffix: !empty(containerAppEnvDefinition.?dnsSuffix) ? containerAppEnvDefinition.dnsSuffix! : ''
+    // Optional pass-throughs and defaults
+    dockerBridgeCidr: containerAppEnvDefinition.?dockerBridgeCidr ?? ''
+    // infrastructureResourceGroupName intentionally omitted to use module default
+    infrastructureSubnetResourceId: containerAppEnvDefinition.?infrastructureSubnetResourceId ?? (!empty(varAcaInfraSubnetId)
+      ? varAcaInfraSubnetId
+      : '')
+    internal: containerAppEnvDefinition.?internal ?? false
+    platformReservedCidr: containerAppEnvDefinition.?platformReservedCidr ?? ''
+    platformReservedDnsIP: containerAppEnvDefinition.?platformReservedDnsIP ?? ''
+
+    workloadProfiles: containerAppEnvDefinition.?workloadProfiles ?? [
+      {
+        name: 'Consumption'
+        workloadProfileType: 'Consumption'
+      }
+      {
+        workloadProfileType: 'D4'
+        name: 'default'
+        minimumCount: 1
+        maximumCount: 3
+      }
+    ]
+
+    appInsightsConnectionString: containerAppEnvDefinition.?appInsightsConnectionString ?? (varDeployAppInsights
+      ? appInsights!.outputs.connectionString
+      : '')
+    appLogsConfiguration: containerAppEnvDefinition.?appLogsConfiguration
+    certificate: containerAppEnvDefinition.?certificate
+    certificatePassword: containerAppEnvDefinition.?certificatePassword ?? ''
+    certificateValue: containerAppEnvDefinition.?certificateValue ?? ''
+    daprAIConnectionString: containerAppEnvDefinition.?daprAIConnectionString ?? ''
+    daprAIInstrumentationKey: containerAppEnvDefinition.?daprAIInstrumentationKey ?? ''
+    dnsSuffix: containerAppEnvDefinition.?dnsSuffix ?? ''
+
     enableTelemetry: enableTelemetry
-    location: !empty(containerAppEnvDefinition.?location) ? containerAppEnvDefinition.location! : location
-    lock: !empty(containerAppEnvDefinition.?lock) ? containerAppEnvDefinition.lock! : null
-    managedIdentities: !empty(containerAppEnvDefinition.?managedIdentities)
-      ? containerAppEnvDefinition.managedIdentities!
-      : null
-    openTelemetryConfiguration: !empty(containerAppEnvDefinition.?openTelemetryConfiguration)
-      ? containerAppEnvDefinition.openTelemetryConfiguration!
-      : {}
-    peerTrafficEncryption: contains(containerAppEnvDefinition, 'peerTrafficEncryption')
-      ? containerAppEnvDefinition.peerTrafficEncryption!
-      : true
-    publicNetworkAccess: !empty(containerAppEnvDefinition.?publicNetworkAccess)
-      ? containerAppEnvDefinition.publicNetworkAccess!
-      : 'Disabled'
-    roleAssignments: !empty(containerAppEnvDefinition.?roleAssignments)
-      ? containerAppEnvDefinition.roleAssignments!
-      : []
-    storages: !empty(containerAppEnvDefinition.?storages) ? containerAppEnvDefinition.storages! : []
-    tags: !empty(containerAppEnvDefinition.?tags) ? containerAppEnvDefinition.tags! : tags
-    zoneRedundant: contains(containerAppEnvDefinition, 'zoneRedundant')
-      ? containerAppEnvDefinition.zoneRedundant!
-      : true
+    location: containerAppEnvDefinition.?location ?? location
+    lock: containerAppEnvDefinition.?lock
+    managedIdentities: containerAppEnvDefinition.?managedIdentities
+    openTelemetryConfiguration: containerAppEnvDefinition.?openTelemetryConfiguration ?? {}
+    peerTrafficEncryption: containerAppEnvDefinition.?peerTrafficEncryption ?? true
+    publicNetworkAccess: containerAppEnvDefinition.?publicNetworkAccess ?? 'Disabled'
+    roleAssignments: containerAppEnvDefinition.?roleAssignments ?? []
+    storages: containerAppEnvDefinition.?storages ?? []
+    tags: containerAppEnvDefinition.?tags ?? tags
+    zoneRedundant: containerAppEnvDefinition.?zoneRedundant ?? true
   }
   dependsOn: [
     #disable-next-line BCP321
@@ -2279,56 +2161,40 @@ module configurationStore 'br/public:avm/res/app-configuration/configuration-sto
     // Required / provided name logic stays
     name: empty(appConfigurationDefinition.name) ? varAppConfigName : appConfigurationDefinition.name
 
-    // Guarded optionals
-    location: !empty(appConfigurationDefinition.?location) ? appConfigurationDefinition.location! : location
-    createMode: !empty(appConfigurationDefinition.?createMode) ? appConfigurationDefinition.createMode! : null
-    customerManagedKey: !empty(appConfigurationDefinition.?customerManagedKey)
-      ? appConfigurationDefinition.customerManagedKey!
-      : null
-    dataPlaneProxy: !empty(appConfigurationDefinition.?dataPlaneProxy)
-      ? appConfigurationDefinition.dataPlaneProxy!
-      : null
-    diagnosticSettings: !empty(appConfigurationDefinition.?diagnosticSettings)
-      ? appConfigurationDefinition.diagnosticSettings!
-      : null
-    disableLocalAuth: contains(appConfigurationDefinition, 'disableLocalAuth')
-      ? appConfigurationDefinition.disableLocalAuth!
-      : null
-    enablePurgeProtection: contains(appConfigurationDefinition, 'enablePurgeProtection')
-      ? appConfigurationDefinition.enablePurgeProtection!
-      : null
+    // Optional pass-throughs using simplified ?. pattern
+    location: appConfigurationDefinition.?location ?? location
+    createMode: appConfigurationDefinition.?createMode
+    customerManagedKey: appConfigurationDefinition.?customerManagedKey
+    dataPlaneProxy: appConfigurationDefinition.?dataPlaneProxy
+    diagnosticSettings: appConfigurationDefinition.?diagnosticSettings
+
+    // simplified safe access for booleans and integers
+    disableLocalAuth: appConfigurationDefinition.?disableLocalAuth!
+    enablePurgeProtection: appConfigurationDefinition.?enablePurgeProtection!
+    softDeleteRetentionInDays: appConfigurationDefinition.?softDeleteRetentionInDays!
+
     enableTelemetry: enableTelemetry
-    keyValues: !empty(appConfigurationDefinition.?keyValues) ? appConfigurationDefinition.keyValues! : null
-    lock: !empty(appConfigurationDefinition.?lock) ? appConfigurationDefinition.lock! : null
-    managedIdentities: !empty(appConfigurationDefinition.?managedIdentities)
-      ? appConfigurationDefinition.managedIdentities!
-      : null
-    privateEndpoints: !empty(appConfigurationDefinition.?privateEndpoints)
-      ? appConfigurationDefinition.privateEndpoints!
-      : null
-    publicNetworkAccess: !empty(appConfigurationDefinition.?publicNetworkAccess)
-      ? appConfigurationDefinition.publicNetworkAccess!
-      : null
-    replicaLocations: !empty(appConfigurationDefinition.?replicaLocations)
-      ? appConfigurationDefinition.replicaLocations!
-      : [
-          {
-            replicaLocation: 'eastus'
-            name: 'eastus'
-          }
-          {
-            replicaLocation: 'centralus'
-            name: 'centralus'
-          }
-        ]
-    roleAssignments: !empty(appConfigurationDefinition.?roleAssignments)
-      ? appConfigurationDefinition.roleAssignments!
-      : null
-    sku: !empty(appConfigurationDefinition.?sku) ? appConfigurationDefinition.sku! : null
-    softDeleteRetentionInDays: contains(appConfigurationDefinition, 'softDeleteRetentionInDays')
-      ? appConfigurationDefinition.softDeleteRetentionInDays!
-      : null
-    tags: !empty(appConfigurationDefinition.?tags) ? appConfigurationDefinition.tags! : tags
+    keyValues: appConfigurationDefinition.?keyValues
+    lock: appConfigurationDefinition.?lock
+    managedIdentities: appConfigurationDefinition.?managedIdentities
+    privateEndpoints: appConfigurationDefinition.?privateEndpoints
+    publicNetworkAccess: appConfigurationDefinition.?publicNetworkAccess
+
+    // keep explicit default replica locations when none are supplied
+    replicaLocations: appConfigurationDefinition.?replicaLocations ?? [
+      {
+        replicaLocation: 'eastus'
+        name: 'eastus'
+      }
+      {
+        replicaLocation: 'centralus'
+        name: 'centralus'
+      }
+    ]
+
+    roleAssignments: appConfigurationDefinition.?roleAssignments
+    sku: appConfigurationDefinition.?sku
+    tags: appConfigurationDefinition.?tags ?? tags
   }
 }
 
@@ -2373,41 +2239,45 @@ module containerApps 'br/public:avm/res/app/container-app:0.18.1' = [
         }
       ]
 
-      // Optional (only nullable params passed; guard -> null when absent)
-      activeRevisionsMode: !empty(app.?activeRevisionsMode) ? app.activeRevisionsMode! : null
-      additionalPortMappings: !empty(app.?additionalPortMappings) ? app.additionalPortMappings! : null
-      authConfig: !empty(app.?authConfig) ? app.authConfig! : null
-      clientCertificateMode: !empty(app.?clientCertificateMode) ? app.clientCertificateMode! : null
-      corsPolicy: !empty(app.?corsPolicy) ? app.corsPolicy! : null
-      customDomains: !empty(app.?customDomains) ? app.customDomains! : null
-      dapr: !empty(app.?dapr) ? app.dapr! : null
-      diagnosticSettings: !empty(app.?diagnosticSettings) ? app.diagnosticSettings! : null
-      identitySettings: !empty(app.?identitySettings) ? app.identitySettings! : null
-      initContainersTemplate: !empty(app.?initContainersTemplate) ? app.initContainersTemplate! : null
-      ipSecurityRestrictions: !empty(app.?ipSecurityRestrictions) ? app.ipSecurityRestrictions! : null
-      lock: !empty(app.?lock) ? app.lock! : null
-      location: !empty(app.?location) ? app.location! : null
-      managedIdentities: !empty(app.?managedIdentities) ? app.managedIdentities! : null
-      registries: !empty(app.?registries) ? app.registries! : null
-      revisionSuffix: !empty(app.?revisionSuffix) ? app.revisionSuffix! : null
-      roleAssignments: !empty(app.?roleAssignments) ? app.roleAssignments! : null
-      runtime: !empty(app.?runtime) ? app.runtime! : null
-      scaleSettings: !empty(app.?scaleSettings) ? app.scaleSettings! : null
-      secrets: !empty(app.?secrets) ? app.secrets! : null
-      service: !empty(app.?service) ? app.service! : null
-      serviceBinds: !empty(app.?serviceBinds) ? app.serviceBinds! : null
-      stickySessionsAffinity: !empty(app.?stickySessionsAffinity) ? app.stickySessionsAffinity! : null
-      tags: !empty(app.?tags) ? app.tags! : null
-      trafficLabel: !empty(app.?trafficLabel) ? app.trafficLabel! : null
-      trafficLatestRevision: contains(app, 'trafficLatestRevision') ? app.trafficLatestRevision! : null
-      trafficRevisionName: !empty(app.?trafficRevisionName) ? app.trafficRevisionName! : null
-      trafficWeight: contains(app, 'trafficWeight') ? app.trafficWeight! : null
-      volumes: !empty(app.?volumes) ? app.volumes! : null
-      workloadProfileName: !empty(app.?workloadProfileName) ? app.workloadProfileName! : null
+      // Optional pass-throughs using simplified ?. pattern
+      activeRevisionsMode: app.?activeRevisionsMode
+      additionalPortMappings: app.?additionalPortMappings
+      authConfig: app.?authConfig
+      clientCertificateMode: app.?clientCertificateMode
+      corsPolicy: app.?corsPolicy
+      customDomains: app.?customDomains
+      dapr: app.?dapr
+      diagnosticSettings: app.?diagnosticSettings
+      identitySettings: app.?identitySettings
+      initContainersTemplate: app.?initContainersTemplate
+      ipSecurityRestrictions: app.?ipSecurityRestrictions
+      lock: app.?lock
+      location: app.?location
+      managedIdentities: app.?managedIdentities
+      registries: app.?registries
+      revisionSuffix: app.?revisionSuffix
+      roleAssignments: app.?roleAssignments
+      runtime: app.?runtime
+      scaleSettings: app.?scaleSettings
+      secrets: app.?secrets
+      service: app.?service
+      serviceBinds: app.?serviceBinds
+      stickySessionsAffinity: app.?stickySessionsAffinity
+      tags: app.?tags
+      trafficLabel: app.?trafficLabel
 
-      // Global telemetry passthrough (keep so a global disable propagates)
+      // keep contains() where the property might need explicit boolean presence checks
+      trafficLatestRevision: contains(app, 'trafficLatestRevision') ? app.trafficLatestRevision! : null
+      trafficRevisionName: app.?trafficRevisionName
+      trafficWeight: contains(app, 'trafficWeight') ? app.trafficWeight! : null
+
+      volumes: app.?volumes
+      workloadProfileName: app.?workloadProfileName
+
+      // Global telemetry passthrough (keeps global disable propagation)
       enableTelemetry: enableTelemetry
     }
+
     dependsOn: [
       #disable-next-line BCP321
       (empty(resourceIds.containerEnvResourceId!)) ? containerEnv : null
@@ -2452,37 +2322,26 @@ module containerRegistry 'br/public:avm/res/container-registry/registry:0.9.3' =
     // Required
     name: varAcrNameEffective
 
-    // Nullable / genuinely optional pass-throughs (guarded -> null when absent)
-    roleAssignments: !empty(containerRegistryDefinition.?roleAssignments)
-      ? containerRegistryDefinition.roleAssignments!
-      : null
-    cacheRules: !empty(containerRegistryDefinition.?cacheRules) ? containerRegistryDefinition.cacheRules! : null
-    credentialSets: !empty(containerRegistryDefinition.?credentialSets)
-      ? containerRegistryDefinition.credentialSets!
-      : null
-    customerManagedKey: !empty(containerRegistryDefinition.?customerManagedKey)
-      ? containerRegistryDefinition.customerManagedKey!
-      : null
-    diagnosticSettings: !empty(containerRegistryDefinition.?diagnosticSettings)
-      ? containerRegistryDefinition.diagnosticSettings!
-      : null
-    lock: !empty(containerRegistryDefinition.?lock) ? containerRegistryDefinition.lock! : null
-    managedIdentities: !empty(containerRegistryDefinition.?managedIdentities)
-      ? containerRegistryDefinition.managedIdentities!
-      : null
-    networkRuleSetIpRules: !empty(containerRegistryDefinition.?networkRuleSetIpRules)
-      ? containerRegistryDefinition.networkRuleSetIpRules!
-      : null
-    privateEndpoints: !empty(containerRegistryDefinition.?privateEndpoints)
-      ? containerRegistryDefinition.privateEndpoints!
-      : null
+    // Optional pass-throughs using simplified ?. pattern
+    roleAssignments: containerRegistryDefinition.?roleAssignments
+    cacheRules: containerRegistryDefinition.?cacheRules
+    credentialSets: containerRegistryDefinition.?credentialSets
+    customerManagedKey: containerRegistryDefinition.?customerManagedKey
+    diagnosticSettings: containerRegistryDefinition.?diagnosticSettings
+    lock: containerRegistryDefinition.?lock
+    managedIdentities: containerRegistryDefinition.?managedIdentities
+    networkRuleSetIpRules: containerRegistryDefinition.?networkRuleSetIpRules
+    privateEndpoints: containerRegistryDefinition.?privateEndpoints
+
+    // Keep explicit default/override for publicNetworkAccess
     publicNetworkAccess: !empty(containerRegistryDefinition.?publicNetworkAccess)
       ? containerRegistryDefinition.publicNetworkAccess!
       : 'Disabled'
-    replications: !empty(containerRegistryDefinition.?replications) ? containerRegistryDefinition.replications! : null
-    scopeMaps: !empty(containerRegistryDefinition.?scopeMaps) ? containerRegistryDefinition.scopeMaps! : null
-    tags: !empty(containerRegistryDefinition.?tags) ? containerRegistryDefinition.tags! : null
-    webhooks: !empty(containerRegistryDefinition.?webhooks) ? containerRegistryDefinition.webhooks! : null
+
+    replications: containerRegistryDefinition.?replications
+    scopeMaps: containerRegistryDefinition.?scopeMaps
+    tags: containerRegistryDefinition.?tags
+    webhooks: containerRegistryDefinition.?webhooks
 
     // Telemetry passthrough
     enableTelemetry: enableTelemetry
@@ -2517,27 +2376,23 @@ module cosmosDbAccount 'br/public:avm/res/document-db/database-account:0.16.0' =
     // Required
     name: varCosmosDbName
 
-    // Nullable / optional guarded pass-throughs
-    capabilitiesToAdd: !empty(cosmosDbDefinition.?capabilitiesToAdd) ? cosmosDbDefinition!.capabilitiesToAdd! : null
-    dataPlaneRoleAssignments: !empty(cosmosDbDefinition.?dataPlaneRoleAssignments)
-      ? cosmosDbDefinition!.dataPlaneRoleAssignments!
-      : null
-    dataPlaneRoleDefinitions: !empty(cosmosDbDefinition.?dataPlaneRoleDefinitions)
-      ? cosmosDbDefinition!.dataPlaneRoleDefinitions!
-      : null
-    diagnosticSettings: !empty(cosmosDbDefinition.?diagnosticSettings) ? cosmosDbDefinition!.diagnosticSettings! : null
-    failoverLocations: !empty(cosmosDbDefinition.?failoverLocations) ? cosmosDbDefinition!.failoverLocations! : null
-    gremlinDatabases: !empty(cosmosDbDefinition.?gremlinDatabases) ? cosmosDbDefinition!.gremlinDatabases! : null
-    lock: !empty(cosmosDbDefinition.?lock) ? cosmosDbDefinition!.lock! : null
-    managedIdentities: !empty(cosmosDbDefinition.?managedIdentities) ? cosmosDbDefinition!.managedIdentities! : null
-    mongodbDatabases: !empty(cosmosDbDefinition.?mongodbDatabases) ? cosmosDbDefinition!.mongodbDatabases! : null
-    privateEndpoints: !empty(cosmosDbDefinition.?privateEndpoints) ? cosmosDbDefinition!.privateEndpoints! : null
-    roleAssignments: !empty(cosmosDbDefinition.?roleAssignments) ? cosmosDbDefinition!.roleAssignments! : null
-    sqlDatabases: !empty(cosmosDbDefinition.?sqlDatabases) ? cosmosDbDefinition!.sqlDatabases! : null
-    tables: !empty(cosmosDbDefinition.?tables) ? cosmosDbDefinition!.tables! : null
-    tags: !empty(cosmosDbDefinition.?tags) ? cosmosDbDefinition!.tags! : null
+    // Optional pass-throughs using simplified ?. pattern
+    capabilitiesToAdd: cosmosDbDefinition.?capabilitiesToAdd
+    dataPlaneRoleAssignments: cosmosDbDefinition.?dataPlaneRoleAssignments
+    dataPlaneRoleDefinitions: cosmosDbDefinition.?dataPlaneRoleDefinitions
+    diagnosticSettings: cosmosDbDefinition.?diagnosticSettings
+    failoverLocations: cosmosDbDefinition.?failoverLocations
+    gremlinDatabases: cosmosDbDefinition.?gremlinDatabases
+    lock: cosmosDbDefinition.?lock
+    managedIdentities: cosmosDbDefinition.?managedIdentities
+    mongodbDatabases: cosmosDbDefinition.?mongodbDatabases
+    privateEndpoints: cosmosDbDefinition.?privateEndpoints
+    roleAssignments: cosmosDbDefinition.?roleAssignments
+    sqlDatabases: cosmosDbDefinition.?sqlDatabases
+    tables: cosmosDbDefinition.?tables
+    tags: cosmosDbDefinition.?tags
 
-    // Telemetry passthrough so a global toggle still works
+    // Telemetry passthrough (global toggle)
     enableTelemetry: enableTelemetry
   }
 }
@@ -2570,18 +2425,18 @@ module vault 'br/public:avm/res/key-vault/vault:0.13.3' = if (varDeployKv) {
     // Required
     name: varKvName
 
-    // Optional guarded pass-throughs (omit non-nullables with upstream defaults)
-    accessPolicies: !empty(keyVaultDefinition.?accessPolicies) ? keyVaultDefinition!.accessPolicies! : null
-    secrets: !empty(keyVaultDefinition.?secrets) ? keyVaultDefinition!.secrets! : null
-    keys: !empty(keyVaultDefinition.?keys) ? keyVaultDefinition!.keys! : null
-    networkAcls: !empty(keyVaultDefinition.?networkAcls) ? keyVaultDefinition!.networkAcls! : null
-    lock: !empty(keyVaultDefinition.?lock) ? keyVaultDefinition!.lock! : null
-    roleAssignments: !empty(keyVaultDefinition.?roleAssignments) ? keyVaultDefinition!.roleAssignments! : null
-    privateEndpoints: !empty(keyVaultDefinition.?privateEndpoints) ? keyVaultDefinition!.privateEndpoints! : null
-    diagnosticSettings: !empty(keyVaultDefinition.?diagnosticSettings) ? keyVaultDefinition!.diagnosticSettings! : null
-    tags: !empty(keyVaultDefinition.?tags) ? keyVaultDefinition!.tags! : null
+    // Optional
+    accessPolicies: keyVaultDefinition.?accessPolicies
+    secrets: keyVaultDefinition.?secrets
+    keys: keyVaultDefinition.?keys
+    networkAcls: keyVaultDefinition.?networkAcls
+    lock: keyVaultDefinition.?lock
+    roleAssignments: keyVaultDefinition.?roleAssignments
+    privateEndpoints: keyVaultDefinition.?privateEndpoints
+    diagnosticSettings: keyVaultDefinition.?diagnosticSettings
+    tags: keyVaultDefinition.?tags
 
-    // Telemetry (keep if you purposely surface the toggle; remove if you want to rely on module default)
+    // Telemetry passthrough (keep if you want a global toggle)
     enableTelemetry: enableTelemetry
   }
 }
@@ -2600,15 +2455,15 @@ var varSaResourceId = !empty(resourceIds.storageAccountResourceId!)
   : (varDeploySa ? storageAccount!.outputs.resourceId : '')
 
 // Naming
-var varSaIdSegments = empty(resourceIds.storageAccountResourceId!)
+var varSaIdSegments = empty(resourceIds.?storageAccountResourceId!)
   ? ['']
   : split(resourceIds.storageAccountResourceId!, '/')
 var varExistingSaSub = length(varSaIdSegments) >= 3 ? varSaIdSegments[2] : ''
 var varExistingSaRg = length(varSaIdSegments) >= 5 ? varSaIdSegments[4] : ''
 var varExistingSaName = length(varSaIdSegments) >= 1 ? last(varSaIdSegments) : ''
-var varSaName = !empty(resourceIds.storageAccountResourceId!)
+var varSaName = !empty(resourceIds.?storageAccountResourceId!)
   ? varExistingSaName
-  : (empty(storageAccountDefinition!.name!) ? 'st${baseName}' : storageAccountDefinition!.name!)
+  : (empty(storageAccountDefinition!.?name!) ? 'st${baseName}' : storageAccountDefinition!.name!)
 
 module storageAccount 'br/public:avm/res/storage/storage-account:0.26.2' = if (varDeploySa) {
   name: 'storageAccountDeployment'
@@ -2616,50 +2471,26 @@ module storageAccount 'br/public:avm/res/storage/storage-account:0.26.2' = if (v
     // Required
     name: varSaName
 
-    // Guarded optionals (only pass when present & non-empty; otherwise null so upstream defaults apply)
-    roleAssignments: !empty(storageAccountDefinition.?roleAssignments)
-      ? storageAccountDefinition!.roleAssignments!
-      : null
-    managedIdentities: !empty(storageAccountDefinition.?managedIdentities)
-      ? storageAccountDefinition!.managedIdentities!
-      : null
-    azureFilesIdentityBasedAuthentication: !empty(storageAccountDefinition.?azureFilesIdentityBasedAuthentication)
-      ? storageAccountDefinition!.azureFilesIdentityBasedAuthentication!
-      : null
-    networkAcls: !empty(storageAccountDefinition.?networkAcls) ? storageAccountDefinition!.networkAcls! : null
-    privateEndpoints: !empty(storageAccountDefinition.?privateEndpoints)
-      ? storageAccountDefinition!.privateEndpoints!
-      : null
-    managementPolicyRules: !empty(storageAccountDefinition.?managementPolicyRules)
-      ? storageAccountDefinition!.managementPolicyRules!
-      : null
-    dnsEndpointType: !empty(storageAccountDefinition.?dnsEndpointType)
-      ? storageAccountDefinition!.dnsEndpointType!
-      : null
-    enableHierarchicalNamespace: contains(storageAccountDefinition!, 'enableHierarchicalNamespace')
-      ? storageAccountDefinition!.enableHierarchicalNamespace!
-      : null
-    customerManagedKey: !empty(storageAccountDefinition.?customerManagedKey)
-      ? storageAccountDefinition!.customerManagedKey!
-      : null
-    lock: !empty(storageAccountDefinition.?lock) ? storageAccountDefinition!.lock! : null
-    localUsers: !empty(storageAccountDefinition.?localUsers) ? storageAccountDefinition!.localUsers! : null
-    allowedCopyScope: !empty(storageAccountDefinition.?allowedCopyScope)
-      ? storageAccountDefinition!.allowedCopyScope!
-      : null
-    publicNetworkAccess: !empty(storageAccountDefinition.?publicNetworkAccess)
-      ? storageAccountDefinition!.publicNetworkAccess!
-      : null
-    secretsExportConfiguration: !empty(storageAccountDefinition.?secretsExportConfiguration)
-      ? storageAccountDefinition!.secretsExportConfiguration!
-      : null
-    keyType: !empty(storageAccountDefinition.?keyType) ? storageAccountDefinition!.keyType! : null
-    diagnosticSettings: !empty(storageAccountDefinition.?diagnosticSettings)
-      ? storageAccountDefinition!.diagnosticSettings!
-      : null
-    tags: !empty(storageAccountDefinition.?tags) ? storageAccountDefinition!.tags! : null
+    // Optional
+    roleAssignments: storageAccountDefinition.?roleAssignments
+    managedIdentities: storageAccountDefinition.?managedIdentities
+    azureFilesIdentityBasedAuthentication: storageAccountDefinition.?azureFilesIdentityBasedAuthentication
+    networkAcls: storageAccountDefinition.?networkAcls
+    privateEndpoints: storageAccountDefinition.?privateEndpoints
+    managementPolicyRules: storageAccountDefinition.?managementPolicyRules
+    dnsEndpointType: storageAccountDefinition.?dnsEndpointType
+    enableHierarchicalNamespace: storageAccountDefinition.?enableHierarchicalNamespace
+    customerManagedKey: storageAccountDefinition.?customerManagedKey
+    lock: storageAccountDefinition.?lock
+    localUsers: storageAccountDefinition.?localUsers
+    allowedCopyScope: storageAccountDefinition.?allowedCopyScope
+    publicNetworkAccess: storageAccountDefinition.?publicNetworkAccess
+    secretsExportConfiguration: storageAccountDefinition.?secretsExportConfiguration
+    keyType: storageAccountDefinition.?keyType
+    diagnosticSettings: storageAccountDefinition.?diagnosticSettings
+    tags: storageAccountDefinition.?tags
 
-    // Telemetry passthrough (keep for global toggle)
+    // Telemetry passthrough (global toggle)
     enableTelemetry: enableTelemetry
   }
 }

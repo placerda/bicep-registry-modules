@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "5103728008457499983"
+      "templateHash": "11961382598962647106"
     },
     "name": "AI/ML Landing Zone",
     "description": "Deploys a secure AI/ML landing zone (resource groups, networking, AI services, private endpoints, and guardrails) using AVM resource modules."
@@ -10586,11 +10586,11 @@
     "varExistingKvRg": "[if(greaterOrEquals(length(variables('varKvIdSegments')), 5), variables('varKvIdSegments')[4], '')]",
     "varExistingKvName": "[if(greaterOrEquals(length(variables('varKvIdSegments')), 1), last(variables('varKvIdSegments')), '')]",
     "varKvName": "[if(not(empty(parameters('resourceIds').keyVaultResourceId)), variables('varExistingKvName'), if(empty(parameters('keyVaultDefinition').name), format('kv-{0}', parameters('baseName')), parameters('keyVaultDefinition').name))]",
-    "varSaIdSegments": "[if(empty(parameters('resourceIds').storageAccountResourceId), createArray(''), split(parameters('resourceIds').storageAccountResourceId, '/'))]",
+    "varSaIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'storageAccountResourceId')), createArray(''), split(parameters('resourceIds').storageAccountResourceId, '/'))]",
     "varExistingSaSub": "[if(greaterOrEquals(length(variables('varSaIdSegments')), 3), variables('varSaIdSegments')[2], '')]",
     "varExistingSaRg": "[if(greaterOrEquals(length(variables('varSaIdSegments')), 5), variables('varSaIdSegments')[4], '')]",
     "varExistingSaName": "[if(greaterOrEquals(length(variables('varSaIdSegments')), 1), last(variables('varSaIdSegments')), '')]",
-    "varSaName": "[if(not(empty(parameters('resourceIds').storageAccountResourceId)), variables('varExistingSaName'), if(empty(parameters('storageAccountDefinition').name), format('st{0}', parameters('baseName')), parameters('storageAccountDefinition').name))]",
+    "varSaName": "[if(not(empty(tryGet(parameters('resourceIds'), 'storageAccountResourceId'))), variables('varExistingSaName'), if(empty(tryGet(parameters('storageAccountDefinition'), 'name')), format('st{0}', parameters('baseName')), parameters('storageAccountDefinition').name))]",
     "varSearchIdSegments": "[if(empty(parameters('resourceIds').searchServiceResourceId), createArray(''), split(parameters('resourceIds').searchServiceResourceId, '/'))]",
     "varExistingSearchSub": "[if(greaterOrEquals(length(variables('varSearchIdSegments')), 3), variables('varSearchIdSegments')[2], '')]",
     "varExistingSearchRg": "[if(greaterOrEquals(length(variables('varSearchIdSegments')), 5), variables('varSearchIdSegments')[4], '')]",
@@ -95148,13 +95148,21 @@
           "managedRules": {
             "value": "[parameters('wafPolicyDefinition').managedRules]"
           },
-          "policySettings": "[if(not(empty(tryGet(parameters('wafPolicyDefinition'), 'policySettings'))), createObject('value', parameters('wafPolicyDefinition').policySettings), createObject('value', null()))]",
-          "customRules": "[if(not(empty(tryGet(parameters('wafPolicyDefinition'), 'customRules'))), createObject('value', parameters('wafPolicyDefinition').customRules), createObject('value', createArray()))]",
+          "policySettings": {
+            "value": "[tryGet(parameters('wafPolicyDefinition'), 'policySettings')]"
+          },
+          "customRules": {
+            "value": "[coalesce(tryGet(parameters('wafPolicyDefinition'), 'customRules'), createArray())]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "location": "[if(not(empty(tryGet(parameters('wafPolicyDefinition'), 'location'))), createObject('value', parameters('wafPolicyDefinition').location), createObject('value', parameters('location')))]",
-          "tags": "[if(not(empty(tryGet(parameters('wafPolicyDefinition'), 'tags'))), createObject('value', parameters('wafPolicyDefinition').tags), createObject('value', parameters('tags')))]"
+          "location": {
+            "value": "[coalesce(tryGet(parameters('wafPolicyDefinition'), 'location'), parameters('location'))]"
+          },
+          "tags": {
+            "value": "[coalesce(tryGet(parameters('wafPolicyDefinition'), 'tags'), parameters('tags'))]"
+          }
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -95298,24 +95306,54 @@
         "mode": "Incremental",
         "parameters": {
           "name": "[if(empty(parameters('appGatewayPublicIpDefinition').name), createObject('value', format('pip-agw-{0}', parameters('baseName'))), createObject('value', parameters('appGatewayPublicIpDefinition').name))]",
-          "availabilityZones": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'availabilityZones'))), createObject('value', parameters('appGatewayPublicIpDefinition').availabilityZones), createObject('value', createArray(1, 2, 3)))]",
-          "ddosSettings": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'ddosSettings'))), createObject('value', parameters('appGatewayPublicIpDefinition').ddosSettings), createObject('value', null()))]",
-          "diagnosticSettings": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'diagnosticSettings'))), createObject('value', parameters('appGatewayPublicIpDefinition').diagnosticSettings), createObject('value', null()))]",
-          "dnsSettings": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'dnsSettings'))), createObject('value', parameters('appGatewayPublicIpDefinition').dnsSettings), createObject('value', null()))]",
+          "availabilityZones": {
+            "value": "[coalesce(tryGet(parameters('appGatewayPublicIpDefinition'), 'availabilityZones'), createArray(1, 2, 3))]"
+          },
+          "ddosSettings": {
+            "value": "[tryGet(parameters('appGatewayPublicIpDefinition'), 'ddosSettings')]"
+          },
+          "diagnosticSettings": {
+            "value": "[tryGet(parameters('appGatewayPublicIpDefinition'), 'diagnosticSettings')]"
+          },
+          "dnsSettings": {
+            "value": "[tryGet(parameters('appGatewayPublicIpDefinition'), 'dnsSettings')]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "idleTimeoutInMinutes": "[if(contains(parameters('appGatewayPublicIpDefinition'), 'idleTimeoutInMinutes'), createObject('value', parameters('appGatewayPublicIpDefinition').idleTimeoutInMinutes), createObject('value', null()))]",
-          "ipTags": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'ipTags'))), createObject('value', parameters('appGatewayPublicIpDefinition').ipTags), createObject('value', createArray()))]",
-          "location": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'location'))), createObject('value', parameters('appGatewayPublicIpDefinition').location), createObject('value', parameters('location')))]",
-          "lock": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'lock'))), createObject('value', parameters('appGatewayPublicIpDefinition').lock), createObject('value', null()))]",
-          "publicIPAddressVersion": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'publicIPAddressVersion'))), createObject('value', parameters('appGatewayPublicIpDefinition').publicIPAddressVersion), createObject('value', null()))]",
-          "publicIPAllocationMethod": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'publicIPAllocationMethod'))), createObject('value', parameters('appGatewayPublicIpDefinition').publicIPAllocationMethod), createObject('value', null()))]",
-          "publicIpPrefixResourceId": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'publicIpPrefixResourceId'))), createObject('value', parameters('appGatewayPublicIpDefinition').publicIpPrefixResourceId), createObject('value', null()))]",
-          "roleAssignments": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'roleAssignments'))), createObject('value', parameters('appGatewayPublicIpDefinition').roleAssignments), createObject('value', createArray()))]",
-          "skuName": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'skuName'))), createObject('value', parameters('appGatewayPublicIpDefinition').skuName), createObject('value', null()))]",
-          "skuTier": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'skuTier'))), createObject('value', parameters('appGatewayPublicIpDefinition').skuTier), createObject('value', null()))]",
-          "tags": "[if(not(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'tags'))), createObject('value', parameters('appGatewayPublicIpDefinition').tags), createObject('value', parameters('tags')))]"
+          "idleTimeoutInMinutes": {
+            "value": "[tryGet(parameters('appGatewayPublicIpDefinition'), 'idleTimeoutInMinutes')]"
+          },
+          "ipTags": {
+            "value": "[coalesce(tryGet(parameters('appGatewayPublicIpDefinition'), 'ipTags'), createArray())]"
+          },
+          "location": {
+            "value": "[coalesce(tryGet(parameters('appGatewayPublicIpDefinition'), 'location'), parameters('location'))]"
+          },
+          "lock": {
+            "value": "[tryGet(parameters('appGatewayPublicIpDefinition'), 'lock')]"
+          },
+          "publicIPAddressVersion": {
+            "value": "[tryGet(parameters('appGatewayPublicIpDefinition'), 'publicIPAddressVersion')]"
+          },
+          "publicIPAllocationMethod": {
+            "value": "[tryGet(parameters('appGatewayPublicIpDefinition'), 'publicIPAllocationMethod')]"
+          },
+          "publicIpPrefixResourceId": {
+            "value": "[tryGet(parameters('appGatewayPublicIpDefinition'), 'publicIpPrefixResourceId')]"
+          },
+          "roleAssignments": {
+            "value": "[coalesce(tryGet(parameters('appGatewayPublicIpDefinition'), 'roleAssignments'), createArray())]"
+          },
+          "skuName": {
+            "value": "[tryGet(parameters('appGatewayPublicIpDefinition'), 'skuName')]"
+          },
+          "skuTier": {
+            "value": "[tryGet(parameters('appGatewayPublicIpDefinition'), 'skuTier')]"
+          },
+          "tags": {
+            "value": "[coalesce(tryGet(parameters('appGatewayPublicIpDefinition'), 'tags'), parameters('tags'))]"
+          }
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -96004,32 +96042,78 @@
           "name": {
             "value": "[variables('varAfwName')]"
           },
-          "hubIPAddresses": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'hubIPAddresses'))), createObject('value', parameters('firewallDefinition').hubIPAddresses), createObject('value', null()))]",
-          "virtualHubResourceId": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'virtualHubResourceId'))), createObject('value', parameters('firewallDefinition').virtualHubResourceId), createObject('value', null()))]",
-          "virtualNetworkResourceId": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'virtualNetworkResourceId'))), createObject('value', parameters('firewallDefinition').virtualNetworkResourceId), createObject('value', null()))]",
-          "additionalPublicIpConfigurations": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'additionalPublicIpConfigurations'))), createObject('value', parameters('firewallDefinition').additionalPublicIpConfigurations), createObject('value', createArray()))]",
-          "applicationRuleCollections": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'applicationRuleCollections'))), createObject('value', parameters('firewallDefinition').applicationRuleCollections), createObject('value', createArray()))]",
-          "autoscaleMaxCapacity": "[if(contains(parameters('firewallDefinition'), 'autoscaleMaxCapacity'), createObject('value', parameters('firewallDefinition').autoscaleMaxCapacity), createObject('value', null()))]",
-          "autoscaleMinCapacity": "[if(contains(parameters('firewallDefinition'), 'autoscaleMinCapacity'), createObject('value', parameters('firewallDefinition').autoscaleMinCapacity), createObject('value', null()))]",
-          "availabilityZones": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'availabilityZones'))), createObject('value', parameters('firewallDefinition').availabilityZones), createObject('value', createArray(1, 2, 3)))]",
-          "azureSkuTier": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'azureSkuTier'))), createObject('value', parameters('firewallDefinition').azureSkuTier), createObject('value', null()))]",
-          "diagnosticSettings": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'diagnosticSettings'))), createObject('value', parameters('firewallDefinition').diagnosticSettings), createObject('value', null()))]",
-          "enableForcedTunneling": "[if(contains(parameters('firewallDefinition'), 'enableForcedTunneling'), createObject('value', parameters('firewallDefinition').enableForcedTunneling), createObject('value', null()))]",
+          "hubIPAddresses": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'hubIPAddresses')]"
+          },
+          "virtualHubResourceId": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'virtualHubResourceId')]"
+          },
+          "virtualNetworkResourceId": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'virtualNetworkResourceId')]"
+          },
+          "additionalPublicIpConfigurations": {
+            "value": "[coalesce(tryGet(parameters('firewallDefinition'), 'additionalPublicIpConfigurations'), createArray())]"
+          },
+          "applicationRuleCollections": {
+            "value": "[coalesce(tryGet(parameters('firewallDefinition'), 'applicationRuleCollections'), createArray())]"
+          },
+          "autoscaleMaxCapacity": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'autoscaleMaxCapacity')]"
+          },
+          "autoscaleMinCapacity": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'autoscaleMinCapacity')]"
+          },
+          "availabilityZones": {
+            "value": "[coalesce(tryGet(parameters('firewallDefinition'), 'availabilityZones'), createArray(1, 2, 3))]"
+          },
+          "azureSkuTier": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'azureSkuTier')]"
+          },
+          "diagnosticSettings": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'diagnosticSettings')]"
+          },
+          "enableForcedTunneling": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'enableForcedTunneling')]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "firewallPolicyId": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'firewallPolicyId'))), createObject('value', parameters('firewallDefinition').firewallPolicyId), createObject('value', reference('fwPolicy').outputs.resourceId.value))]",
-          "location": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'location'))), createObject('value', parameters('firewallDefinition').location), createObject('value', parameters('location')))]",
-          "lock": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'lock'))), createObject('value', parameters('firewallDefinition').lock), createObject('value', null()))]",
-          "managementIPAddressObject": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'managementIPAddressObject'))), createObject('value', parameters('firewallDefinition').managementIPAddressObject), createObject('value', null()))]",
-          "managementIPResourceID": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'managementIPResourceID'))), createObject('value', parameters('firewallDefinition').managementIPResourceID), createObject('value', null()))]",
-          "natRuleCollections": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'natRuleCollections'))), createObject('value', parameters('firewallDefinition').natRuleCollections), createObject('value', createArray()))]",
-          "networkRuleCollections": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'networkRuleCollections'))), createObject('value', parameters('firewallDefinition').networkRuleCollections), createObject('value', createArray()))]",
-          "publicIPAddressObject": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'publicIPAddressObject'))), createObject('value', parameters('firewallDefinition').publicIPAddressObject), createObject('value', null()))]",
-          "publicIPResourceID": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'publicIPResourceID'))), createObject('value', parameters('firewallDefinition').publicIPResourceID), createObject('value', null()))]",
-          "roleAssignments": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'roleAssignments'))), createObject('value', parameters('firewallDefinition').roleAssignments), createObject('value', createArray()))]",
-          "tags": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'tags'))), createObject('value', parameters('firewallDefinition').tags), createObject('value', parameters('tags')))]",
-          "threatIntelMode": "[if(not(empty(tryGet(parameters('firewallDefinition'), 'threatIntelMode'))), createObject('value', parameters('firewallDefinition').threatIntelMode), createObject('value', null()))]"
+          "firewallPolicyId": {
+            "value": "[coalesce(tryGet(parameters('firewallDefinition'), 'firewallPolicyId'), reference('fwPolicy').outputs.resourceId.value)]"
+          },
+          "location": {
+            "value": "[coalesce(tryGet(parameters('firewallDefinition'), 'location'), parameters('location'))]"
+          },
+          "lock": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'lock')]"
+          },
+          "managementIPAddressObject": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'managementIPAddressObject')]"
+          },
+          "managementIPResourceID": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'managementIPResourceID')]"
+          },
+          "natRuleCollections": {
+            "value": "[coalesce(tryGet(parameters('firewallDefinition'), 'natRuleCollections'), createArray())]"
+          },
+          "networkRuleCollections": {
+            "value": "[coalesce(tryGet(parameters('firewallDefinition'), 'networkRuleCollections'), createArray())]"
+          },
+          "publicIPAddressObject": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'publicIPAddressObject')]"
+          },
+          "publicIPResourceID": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'publicIPResourceID')]"
+          },
+          "roleAssignments": {
+            "value": "[coalesce(tryGet(parameters('firewallDefinition'), 'roleAssignments'), createArray())]"
+          },
+          "tags": {
+            "value": "[coalesce(tryGet(parameters('firewallDefinition'), 'tags'), parameters('tags'))]"
+          },
+          "threatIntelMode": {
+            "value": "[tryGet(parameters('firewallDefinition'), 'threatIntelMode')]"
+          }
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -98621,31 +98705,75 @@
         "mode": "Incremental",
         "parameters": {
           "name": "[if(empty(parameters('firewallPolicyDefinition').name), createObject('value', format('afwp-{0}', parameters('baseName'))), createObject('value', parameters('firewallPolicyDefinition').name))]",
-          "allowSqlRedirect": "[if(contains(parameters('firewallPolicyDefinition'), 'allowSqlRedirect'), createObject('value', parameters('firewallPolicyDefinition').allowSqlRedirect), createObject('value', null()))]",
-          "basePolicyResourceId": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'basePolicyResourceId'))), createObject('value', parameters('firewallPolicyDefinition').basePolicyResourceId), createObject('value', null()))]",
-          "certificateName": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'certificateName'))), createObject('value', parameters('firewallPolicyDefinition').certificateName), createObject('value', null()))]",
-          "defaultWorkspaceResourceId": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'defaultWorkspaceResourceId'))), createObject('value', parameters('firewallPolicyDefinition').defaultWorkspaceResourceId), createObject('value', null()))]",
-          "enableProxy": "[if(contains(parameters('firewallPolicyDefinition'), 'enableProxy'), createObject('value', parameters('firewallPolicyDefinition').enableProxy), createObject('value', null()))]",
+          "allowSqlRedirect": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'allowSqlRedirect')]"
+          },
+          "basePolicyResourceId": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'basePolicyResourceId')]"
+          },
+          "certificateName": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'certificateName')]"
+          },
+          "defaultWorkspaceResourceId": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'defaultWorkspaceResourceId')]"
+          },
+          "enableProxy": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'enableProxy')]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "fqdns": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'fqdns'))), createObject('value', parameters('firewallPolicyDefinition').fqdns), createObject('value', createArray()))]",
-          "insightsIsEnabled": "[if(contains(parameters('firewallPolicyDefinition'), 'insightsIsEnabled'), createObject('value', parameters('firewallPolicyDefinition').insightsIsEnabled), createObject('value', null()))]",
-          "intrusionDetection": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'intrusionDetection'))), createObject('value', parameters('firewallPolicyDefinition').intrusionDetection), createObject('value', null()))]",
-          "ipAddresses": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'ipAddresses'))), createObject('value', parameters('firewallPolicyDefinition').ipAddresses), createObject('value', null()))]",
-          "keyVaultSecretId": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'keyVaultSecretId'))), createObject('value', parameters('firewallPolicyDefinition').keyVaultSecretId), createObject('value', null()))]",
-          "location": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'location'))), createObject('value', parameters('firewallPolicyDefinition').location), createObject('value', parameters('location')))]",
-          "lock": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'lock'))), createObject('value', parameters('firewallPolicyDefinition').lock), createObject('value', null()))]",
-          "managedIdentities": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'managedIdentities'))), createObject('value', parameters('firewallPolicyDefinition').managedIdentities), createObject('value', null()))]",
-          "retentionDays": "[if(contains(parameters('firewallPolicyDefinition'), 'retentionDays'), createObject('value', parameters('firewallPolicyDefinition').retentionDays), createObject('value', null()))]",
-          "roleAssignments": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'roleAssignments'))), createObject('value', parameters('firewallPolicyDefinition').roleAssignments), createObject('value', createArray()))]",
-          "ruleCollectionGroups": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'ruleCollectionGroups'))), createObject('value', parameters('firewallPolicyDefinition').ruleCollectionGroups), createObject('value', createArray()))]",
-          "servers": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'servers'))), createObject('value', parameters('firewallPolicyDefinition').servers), createObject('value', createArray()))]",
-          "snat": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'snat'))), createObject('value', parameters('firewallPolicyDefinition').snat), createObject('value', null()))]",
-          "tags": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'tags'))), createObject('value', parameters('firewallPolicyDefinition').tags), createObject('value', parameters('tags')))]",
-          "threatIntelMode": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'threatIntelMode'))), createObject('value', parameters('firewallPolicyDefinition').threatIntelMode), createObject('value', null()))]",
-          "tier": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'tier'))), createObject('value', parameters('firewallPolicyDefinition').tier), createObject('value', null()))]",
-          "workspaces": "[if(not(empty(tryGet(parameters('firewallPolicyDefinition'), 'workspaces'))), createObject('value', parameters('firewallPolicyDefinition').workspaces), createObject('value', createArray()))]"
+          "fqdns": {
+            "value": "[coalesce(tryGet(parameters('firewallPolicyDefinition'), 'fqdns'), createArray())]"
+          },
+          "insightsIsEnabled": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'insightsIsEnabled')]"
+          },
+          "intrusionDetection": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'intrusionDetection')]"
+          },
+          "ipAddresses": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'ipAddresses')]"
+          },
+          "keyVaultSecretId": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'keyVaultSecretId')]"
+          },
+          "location": {
+            "value": "[coalesce(tryGet(parameters('firewallPolicyDefinition'), 'location'), parameters('location'))]"
+          },
+          "lock": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'lock')]"
+          },
+          "managedIdentities": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'managedIdentities')]"
+          },
+          "retentionDays": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'retentionDays')]"
+          },
+          "roleAssignments": {
+            "value": "[coalesce(tryGet(parameters('firewallPolicyDefinition'), 'roleAssignments'), createArray())]"
+          },
+          "ruleCollectionGroups": {
+            "value": "[coalesce(tryGet(parameters('firewallPolicyDefinition'), 'ruleCollectionGroups'), createArray())]"
+          },
+          "servers": {
+            "value": "[coalesce(tryGet(parameters('firewallPolicyDefinition'), 'servers'), createArray())]"
+          },
+          "snat": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'snat')]"
+          },
+          "tags": {
+            "value": "[coalesce(tryGet(parameters('firewallPolicyDefinition'), 'tags'), parameters('tags'))]"
+          },
+          "threatIntelMode": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'threatIntelMode')]"
+          },
+          "tier": {
+            "value": "[tryGet(parameters('firewallPolicyDefinition'), 'tier')]"
+          },
+          "workspaces": {
+            "value": "[coalesce(tryGet(parameters('firewallPolicyDefinition'), 'workspaces'), createArray())]"
+          }
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -99434,33 +99562,81 @@
           "name": {
             "value": "[variables('varLawName')]"
           },
-          "linkedStorageAccounts": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'linkedStorageAccounts'))), createObject('value', parameters('logAnalyticsDefinition').linkedStorageAccounts), createObject('value', createArray()))]",
-          "dailyQuotaGb": "[if(contains(parameters('logAnalyticsDefinition'), 'dailyQuotaGb'), createObject('value', parameters('logAnalyticsDefinition').dailyQuotaGb), createObject('value', null()))]",
-          "dataExports": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'dataExports'))), createObject('value', parameters('logAnalyticsDefinition').dataExports), createObject('value', createArray()))]",
-          "dataRetention": "[if(contains(parameters('logAnalyticsDefinition'), 'dataRetention'), createObject('value', parameters('logAnalyticsDefinition').dataRetention), createObject('value', 7))]",
-          "dataSources": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'dataSources'))), createObject('value', parameters('logAnalyticsDefinition').dataSources), createObject('value', createArray()))]",
-          "diagnosticSettings": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'diagnosticSettings'))), createObject('value', parameters('logAnalyticsDefinition').diagnosticSettings), createObject('value', null()))]",
+          "linkedStorageAccounts": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'linkedStorageAccounts'), createArray())]"
+          },
+          "dailyQuotaGb": {
+            "value": "[tryGet(parameters('logAnalyticsDefinition'), 'dailyQuotaGb')]"
+          },
+          "dataExports": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'dataExports'), createArray())]"
+          },
+          "dataRetention": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'dataRetention'), 7)]"
+          },
+          "dataSources": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'dataSources'), createArray())]"
+          },
+          "diagnosticSettings": {
+            "value": "[tryGet(parameters('logAnalyticsDefinition'), 'diagnosticSettings')]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "features": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'features'))), createObject('value', parameters('logAnalyticsDefinition').features), createObject('value', null()))]",
-          "forceCmkForQuery": "[if(contains(parameters('logAnalyticsDefinition'), 'forceCmkForQuery'), createObject('value', parameters('logAnalyticsDefinition').forceCmkForQuery), createObject('value', null()))]",
-          "gallerySolutions": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'gallerySolutions'))), createObject('value', parameters('logAnalyticsDefinition').gallerySolutions), createObject('value', createArray()))]",
-          "linkedServices": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'linkedServices'))), createObject('value', parameters('logAnalyticsDefinition').linkedServices), createObject('value', createArray()))]",
-          "location": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'location'))), createObject('value', parameters('logAnalyticsDefinition').location), createObject('value', parameters('location')))]",
-          "lock": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'lock'))), createObject('value', parameters('logAnalyticsDefinition').lock), createObject('value', null()))]",
-          "managedIdentities": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'managedIdentities'))), createObject('value', parameters('logAnalyticsDefinition').managedIdentities), createObject('value', null()))]",
-          "onboardWorkspaceToSentinel": "[if(contains(parameters('logAnalyticsDefinition'), 'onboardWorkspaceToSentinel'), createObject('value', parameters('logAnalyticsDefinition').onboardWorkspaceToSentinel), createObject('value', null()))]",
-          "publicNetworkAccessForIngestion": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'publicNetworkAccessForIngestion'))), createObject('value', parameters('logAnalyticsDefinition').publicNetworkAccessForIngestion), createObject('value', null()))]",
-          "publicNetworkAccessForQuery": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'publicNetworkAccessForQuery'))), createObject('value', parameters('logAnalyticsDefinition').publicNetworkAccessForQuery), createObject('value', null()))]",
-          "replication": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'replication'))), createObject('value', parameters('logAnalyticsDefinition').replication), createObject('value', createObject('enabled', true(), 'location', 'westus2')))]",
-          "roleAssignments": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'roleAssignments'))), createObject('value', parameters('logAnalyticsDefinition').roleAssignments), createObject('value', createArray()))]",
-          "savedSearches": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'savedSearches'))), createObject('value', parameters('logAnalyticsDefinition').savedSearches), createObject('value', createArray()))]",
-          "skuCapacityReservationLevel": "[if(contains(parameters('logAnalyticsDefinition'), 'skuCapacityReservationLevel'), createObject('value', parameters('logAnalyticsDefinition').skuCapacityReservationLevel), createObject('value', null()))]",
-          "skuName": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'skuName'))), createObject('value', parameters('logAnalyticsDefinition').skuName), createObject('value', null()))]",
-          "storageInsightsConfigs": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'storageInsightsConfigs'))), createObject('value', parameters('logAnalyticsDefinition').storageInsightsConfigs), createObject('value', createArray()))]",
-          "tables": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'tables'))), createObject('value', parameters('logAnalyticsDefinition').tables), createObject('value', createArray()))]",
-          "tags": "[if(not(empty(tryGet(parameters('logAnalyticsDefinition'), 'tags'))), createObject('value', parameters('logAnalyticsDefinition').tags), createObject('value', parameters('tags')))]"
+          "features": {
+            "value": "[tryGet(parameters('logAnalyticsDefinition'), 'features')]"
+          },
+          "forceCmkForQuery": {
+            "value": "[tryGet(parameters('logAnalyticsDefinition'), 'forceCmkForQuery')]"
+          },
+          "gallerySolutions": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'gallerySolutions'), createArray())]"
+          },
+          "linkedServices": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'linkedServices'), createArray())]"
+          },
+          "location": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'location'), parameters('location'))]"
+          },
+          "lock": {
+            "value": "[tryGet(parameters('logAnalyticsDefinition'), 'lock')]"
+          },
+          "managedIdentities": {
+            "value": "[tryGet(parameters('logAnalyticsDefinition'), 'managedIdentities')]"
+          },
+          "onboardWorkspaceToSentinel": {
+            "value": "[tryGet(parameters('logAnalyticsDefinition'), 'onboardWorkspaceToSentinel')]"
+          },
+          "publicNetworkAccessForIngestion": {
+            "value": "[tryGet(parameters('logAnalyticsDefinition'), 'publicNetworkAccessForIngestion')]"
+          },
+          "publicNetworkAccessForQuery": {
+            "value": "[tryGet(parameters('logAnalyticsDefinition'), 'publicNetworkAccessForQuery')]"
+          },
+          "replication": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'replication'), createObject('enabled', true(), 'location', 'westus2'))]"
+          },
+          "roleAssignments": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'roleAssignments'), createArray())]"
+          },
+          "savedSearches": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'savedSearches'), createArray())]"
+          },
+          "skuCapacityReservationLevel": {
+            "value": "[tryGet(parameters('logAnalyticsDefinition'), 'skuCapacityReservationLevel')]"
+          },
+          "skuName": {
+            "value": "[tryGet(parameters('logAnalyticsDefinition'), 'skuName')]"
+          },
+          "storageInsightsConfigs": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'storageInsightsConfigs'), createArray())]"
+          },
+          "tables": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'tables'), createArray())]"
+          },
+          "tags": {
+            "value": "[coalesce(tryGet(parameters('logAnalyticsDefinition'), 'tags'), parameters('tags'))]"
+          }
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -102536,26 +102712,60 @@
             "value": "[variables('varAppiName')]"
           },
           "workspaceResourceId": "[if(variables('varDeployLogAnalytics'), createObject('value', reference('logAnalytics').outputs.resourceId.value), if(not(empty(parameters('resourceIds').logAnalyticsWorkspaceResourceId)), createObject('value', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingLawSubscriptionId'), variables('varExistingLawResourceGroupName')), 'Microsoft.OperationalInsights/workspaces', variables('varExistingLawName'))), createObject('value', '')))]",
-          "applicationType": "[if(not(empty(tryGet(parameters('appInsightsDefinition'), 'applicationType'))), createObject('value', parameters('appInsightsDefinition').applicationType), createObject('value', null()))]",
-          "diagnosticSettings": "[if(not(empty(tryGet(parameters('appInsightsDefinition'), 'diagnosticSettings'))), createObject('value', parameters('appInsightsDefinition').diagnosticSettings), createObject('value', null()))]",
-          "disableIpMasking": "[if(contains(parameters('appInsightsDefinition'), 'disableIpMasking'), createObject('value', parameters('appInsightsDefinition').disableIpMasking), createObject('value', true()))]",
-          "disableLocalAuth": "[if(contains(parameters('appInsightsDefinition'), 'disableLocalAuth'), createObject('value', parameters('appInsightsDefinition').disableLocalAuth), createObject('value', null()))]",
+          "applicationType": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'applicationType')]"
+          },
+          "diagnosticSettings": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'diagnosticSettings')]"
+          },
+          "disableIpMasking": {
+            "value": "[coalesce(tryGet(parameters('appInsightsDefinition'), 'disableIpMasking'), true())]"
+          },
+          "disableLocalAuth": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'disableLocalAuth')]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "flowType": "[if(not(empty(tryGet(parameters('appInsightsDefinition'), 'flowType'))), createObject('value', parameters('appInsightsDefinition').flowType), createObject('value', null()))]",
-          "forceCustomerStorageForProfiler": "[if(contains(parameters('appInsightsDefinition'), 'forceCustomerStorageForProfiler'), createObject('value', parameters('appInsightsDefinition').forceCustomerStorageForProfiler), createObject('value', null()))]",
-          "kind": "[if(not(empty(tryGet(parameters('appInsightsDefinition'), 'kind'))), createObject('value', parameters('appInsightsDefinition').kind), createObject('value', null()))]",
-          "linkedStorageAccountResourceId": "[if(not(empty(tryGet(parameters('appInsightsDefinition'), 'linkedStorageAccountResourceId'))), createObject('value', parameters('appInsightsDefinition').linkedStorageAccountResourceId), createObject('value', null()))]",
-          "location": "[if(not(empty(tryGet(parameters('appInsightsDefinition'), 'location'))), createObject('value', parameters('appInsightsDefinition').location), createObject('value', parameters('location')))]",
-          "lock": "[if(not(empty(tryGet(parameters('appInsightsDefinition'), 'lock'))), createObject('value', parameters('appInsightsDefinition').lock), createObject('value', null()))]",
-          "publicNetworkAccessForIngestion": "[if(not(empty(tryGet(parameters('appInsightsDefinition'), 'publicNetworkAccessForIngestion'))), createObject('value', parameters('appInsightsDefinition').publicNetworkAccessForIngestion), createObject('value', null()))]",
-          "publicNetworkAccessForQuery": "[if(not(empty(tryGet(parameters('appInsightsDefinition'), 'publicNetworkAccessForQuery'))), createObject('value', parameters('appInsightsDefinition').publicNetworkAccessForQuery), createObject('value', null()))]",
-          "requestSource": "[if(not(empty(tryGet(parameters('appInsightsDefinition'), 'requestSource'))), createObject('value', parameters('appInsightsDefinition').requestSource), createObject('value', null()))]",
-          "retentionInDays": "[if(contains(parameters('appInsightsDefinition'), 'retentionInDays'), createObject('value', parameters('appInsightsDefinition').retentionInDays), createObject('value', null()))]",
-          "roleAssignments": "[if(not(empty(tryGet(parameters('appInsightsDefinition'), 'roleAssignments'))), createObject('value', parameters('appInsightsDefinition').roleAssignments), createObject('value', null()))]",
-          "samplingPercentage": "[if(contains(parameters('appInsightsDefinition'), 'samplingPercentage'), createObject('value', parameters('appInsightsDefinition').samplingPercentage), createObject('value', null()))]",
-          "tags": "[if(not(empty(tryGet(parameters('appInsightsDefinition'), 'tags'))), createObject('value', parameters('appInsightsDefinition').tags), createObject('value', parameters('tags')))]"
+          "flowType": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'flowType')]"
+          },
+          "forceCustomerStorageForProfiler": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'forceCustomerStorageForProfiler')]"
+          },
+          "kind": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'kind')]"
+          },
+          "linkedStorageAccountResourceId": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'linkedStorageAccountResourceId')]"
+          },
+          "location": {
+            "value": "[coalesce(tryGet(parameters('appInsightsDefinition'), 'location'), parameters('location'))]"
+          },
+          "lock": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'lock')]"
+          },
+          "publicNetworkAccessForIngestion": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'publicNetworkAccessForIngestion')]"
+          },
+          "publicNetworkAccessForQuery": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'publicNetworkAccessForQuery')]"
+          },
+          "requestSource": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'requestSource')]"
+          },
+          "retentionInDays": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'retentionInDays')]"
+          },
+          "roleAssignments": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'roleAssignments')]"
+          },
+          "samplingPercentage": {
+            "value": "[tryGet(parameters('appInsightsDefinition'), 'samplingPercentage')]"
+          },
+          "tags": {
+            "value": "[coalesce(tryGet(parameters('appInsightsDefinition'), 'tags'), parameters('tags'))]"
+          }
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -103264,33 +103474,81 @@
           "name": {
             "value": "[variables('varContainerEnvName')]"
           },
-          "dockerBridgeCidr": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'dockerBridgeCidr'))), createObject('value', parameters('containerAppEnvDefinition').dockerBridgeCidr), createObject('value', ''))]",
-          "infrastructureSubnetResourceId": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'infrastructureSubnetResourceId'))), createObject('value', parameters('containerAppEnvDefinition').infrastructureSubnetResourceId), if(not(empty(variables('varAcaInfraSubnetId'))), createObject('value', variables('varAcaInfraSubnetId')), createObject('value', '')))]",
-          "internal": "[if(contains(parameters('containerAppEnvDefinition'), 'internal'), createObject('value', parameters('containerAppEnvDefinition').internal), createObject('value', false()))]",
-          "platformReservedCidr": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'platformReservedCidr'))), createObject('value', parameters('containerAppEnvDefinition').platformReservedCidr), createObject('value', ''))]",
-          "platformReservedDnsIP": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'platformReservedDnsIP'))), createObject('value', parameters('containerAppEnvDefinition').platformReservedDnsIP), createObject('value', ''))]",
-          "workloadProfiles": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'workloadProfiles'))), createObject('value', parameters('containerAppEnvDefinition').workloadProfiles), createObject('value', createArray(createObject('name', 'Consumption', 'workloadProfileType', 'Consumption'), createObject('workloadProfileType', 'D4', 'name', 'default', 'minimumCount', 1, 'maximumCount', 3))))]",
-          "appInsightsConnectionString": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'appInsightsConnectionString'))), createObject('value', parameters('containerAppEnvDefinition').appInsightsConnectionString), if(variables('varDeployAppInsights'), createObject('value', reference('appInsights').outputs.connectionString.value), createObject('value', '')))]",
-          "appLogsConfiguration": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'appLogsConfiguration'))), createObject('value', parameters('containerAppEnvDefinition').appLogsConfiguration), createObject('value', null()))]",
-          "certificate": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'certificate'))), createObject('value', parameters('containerAppEnvDefinition').certificate), createObject('value', null()))]",
-          "certificatePassword": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'certificatePassword'))), createObject('value', parameters('containerAppEnvDefinition').certificatePassword), createObject('value', ''))]",
-          "certificateValue": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'certificateValue'))), createObject('value', parameters('containerAppEnvDefinition').certificateValue), createObject('value', ''))]",
-          "daprAIConnectionString": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'daprAIConnectionString'))), createObject('value', parameters('containerAppEnvDefinition').daprAIConnectionString), createObject('value', ''))]",
-          "daprAIInstrumentationKey": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'daprAIInstrumentationKey'))), createObject('value', parameters('containerAppEnvDefinition').daprAIInstrumentationKey), createObject('value', ''))]",
-          "dnsSuffix": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'dnsSuffix'))), createObject('value', parameters('containerAppEnvDefinition').dnsSuffix), createObject('value', ''))]",
+          "dockerBridgeCidr": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'dockerBridgeCidr'), '')]"
+          },
+          "infrastructureSubnetResourceId": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'infrastructureSubnetResourceId'), if(not(empty(variables('varAcaInfraSubnetId'))), variables('varAcaInfraSubnetId'), ''))]"
+          },
+          "internal": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'internal'), false())]"
+          },
+          "platformReservedCidr": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'platformReservedCidr'), '')]"
+          },
+          "platformReservedDnsIP": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'platformReservedDnsIP'), '')]"
+          },
+          "workloadProfiles": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'workloadProfiles'), createArray(createObject('name', 'Consumption', 'workloadProfileType', 'Consumption'), createObject('workloadProfileType', 'D4', 'name', 'default', 'minimumCount', 1, 'maximumCount', 3)))]"
+          },
+          "appInsightsConnectionString": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'appInsightsConnectionString'), if(variables('varDeployAppInsights'), reference('appInsights').outputs.connectionString.value, ''))]"
+          },
+          "appLogsConfiguration": {
+            "value": "[tryGet(parameters('containerAppEnvDefinition'), 'appLogsConfiguration')]"
+          },
+          "certificate": {
+            "value": "[tryGet(parameters('containerAppEnvDefinition'), 'certificate')]"
+          },
+          "certificatePassword": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'certificatePassword'), '')]"
+          },
+          "certificateValue": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'certificateValue'), '')]"
+          },
+          "daprAIConnectionString": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'daprAIConnectionString'), '')]"
+          },
+          "daprAIInstrumentationKey": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'daprAIInstrumentationKey'), '')]"
+          },
+          "dnsSuffix": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'dnsSuffix'), '')]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "location": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'location'))), createObject('value', parameters('containerAppEnvDefinition').location), createObject('value', parameters('location')))]",
-          "lock": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'lock'))), createObject('value', parameters('containerAppEnvDefinition').lock), createObject('value', null()))]",
-          "managedIdentities": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'managedIdentities'))), createObject('value', parameters('containerAppEnvDefinition').managedIdentities), createObject('value', null()))]",
-          "openTelemetryConfiguration": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'openTelemetryConfiguration'))), createObject('value', parameters('containerAppEnvDefinition').openTelemetryConfiguration), createObject('value', createObject()))]",
-          "peerTrafficEncryption": "[if(contains(parameters('containerAppEnvDefinition'), 'peerTrafficEncryption'), createObject('value', parameters('containerAppEnvDefinition').peerTrafficEncryption), createObject('value', true()))]",
-          "publicNetworkAccess": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'publicNetworkAccess'))), createObject('value', parameters('containerAppEnvDefinition').publicNetworkAccess), createObject('value', 'Disabled'))]",
-          "roleAssignments": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'roleAssignments'))), createObject('value', parameters('containerAppEnvDefinition').roleAssignments), createObject('value', createArray()))]",
-          "storages": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'storages'))), createObject('value', parameters('containerAppEnvDefinition').storages), createObject('value', createArray()))]",
-          "tags": "[if(not(empty(tryGet(parameters('containerAppEnvDefinition'), 'tags'))), createObject('value', parameters('containerAppEnvDefinition').tags), createObject('value', parameters('tags')))]",
-          "zoneRedundant": "[if(contains(parameters('containerAppEnvDefinition'), 'zoneRedundant'), createObject('value', parameters('containerAppEnvDefinition').zoneRedundant), createObject('value', true()))]"
+          "location": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'location'), parameters('location'))]"
+          },
+          "lock": {
+            "value": "[tryGet(parameters('containerAppEnvDefinition'), 'lock')]"
+          },
+          "managedIdentities": {
+            "value": "[tryGet(parameters('containerAppEnvDefinition'), 'managedIdentities')]"
+          },
+          "openTelemetryConfiguration": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'openTelemetryConfiguration'), createObject())]"
+          },
+          "peerTrafficEncryption": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'peerTrafficEncryption'), true())]"
+          },
+          "publicNetworkAccess": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'publicNetworkAccess'), 'Disabled')]"
+          },
+          "roleAssignments": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'roleAssignments'), createArray())]"
+          },
+          "storages": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'storages'), createArray())]"
+          },
+          "tags": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'tags'), parameters('tags'))]"
+          },
+          "zoneRedundant": {
+            "value": "[coalesce(tryGet(parameters('containerAppEnvDefinition'), 'zoneRedundant'), true())]"
+          }
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -104190,26 +104448,60 @@
         "mode": "Incremental",
         "parameters": {
           "name": "[if(empty(parameters('appConfigurationDefinition').name), createObject('value', variables('varAppConfigName')), createObject('value', parameters('appConfigurationDefinition').name))]",
-          "location": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'location'))), createObject('value', parameters('appConfigurationDefinition').location), createObject('value', parameters('location')))]",
-          "createMode": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'createMode'))), createObject('value', parameters('appConfigurationDefinition').createMode), createObject('value', null()))]",
-          "customerManagedKey": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'customerManagedKey'))), createObject('value', parameters('appConfigurationDefinition').customerManagedKey), createObject('value', null()))]",
-          "dataPlaneProxy": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'dataPlaneProxy'))), createObject('value', parameters('appConfigurationDefinition').dataPlaneProxy), createObject('value', null()))]",
-          "diagnosticSettings": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'diagnosticSettings'))), createObject('value', parameters('appConfigurationDefinition').diagnosticSettings), createObject('value', null()))]",
-          "disableLocalAuth": "[if(contains(parameters('appConfigurationDefinition'), 'disableLocalAuth'), createObject('value', parameters('appConfigurationDefinition').disableLocalAuth), createObject('value', null()))]",
-          "enablePurgeProtection": "[if(contains(parameters('appConfigurationDefinition'), 'enablePurgeProtection'), createObject('value', parameters('appConfigurationDefinition').enablePurgeProtection), createObject('value', null()))]",
+          "location": {
+            "value": "[coalesce(tryGet(parameters('appConfigurationDefinition'), 'location'), parameters('location'))]"
+          },
+          "createMode": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'createMode')]"
+          },
+          "customerManagedKey": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'customerManagedKey')]"
+          },
+          "dataPlaneProxy": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'dataPlaneProxy')]"
+          },
+          "diagnosticSettings": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'diagnosticSettings')]"
+          },
+          "disableLocalAuth": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'disableLocalAuth')]"
+          },
+          "enablePurgeProtection": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'enablePurgeProtection')]"
+          },
+          "softDeleteRetentionInDays": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'softDeleteRetentionInDays')]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "keyValues": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'keyValues'))), createObject('value', parameters('appConfigurationDefinition').keyValues), createObject('value', null()))]",
-          "lock": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'lock'))), createObject('value', parameters('appConfigurationDefinition').lock), createObject('value', null()))]",
-          "managedIdentities": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'managedIdentities'))), createObject('value', parameters('appConfigurationDefinition').managedIdentities), createObject('value', null()))]",
-          "privateEndpoints": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'privateEndpoints'))), createObject('value', parameters('appConfigurationDefinition').privateEndpoints), createObject('value', null()))]",
-          "publicNetworkAccess": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'publicNetworkAccess'))), createObject('value', parameters('appConfigurationDefinition').publicNetworkAccess), createObject('value', null()))]",
-          "replicaLocations": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'replicaLocations'))), createObject('value', parameters('appConfigurationDefinition').replicaLocations), createObject('value', createArray(createObject('replicaLocation', 'eastus', 'name', 'eastus'), createObject('replicaLocation', 'centralus', 'name', 'centralus'))))]",
-          "roleAssignments": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'roleAssignments'))), createObject('value', parameters('appConfigurationDefinition').roleAssignments), createObject('value', null()))]",
-          "sku": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'sku'))), createObject('value', parameters('appConfigurationDefinition').sku), createObject('value', null()))]",
-          "softDeleteRetentionInDays": "[if(contains(parameters('appConfigurationDefinition'), 'softDeleteRetentionInDays'), createObject('value', parameters('appConfigurationDefinition').softDeleteRetentionInDays), createObject('value', null()))]",
-          "tags": "[if(not(empty(tryGet(parameters('appConfigurationDefinition'), 'tags'))), createObject('value', parameters('appConfigurationDefinition').tags), createObject('value', parameters('tags')))]"
+          "keyValues": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'keyValues')]"
+          },
+          "lock": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'lock')]"
+          },
+          "managedIdentities": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'managedIdentities')]"
+          },
+          "privateEndpoints": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'privateEndpoints')]"
+          },
+          "publicNetworkAccess": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'publicNetworkAccess')]"
+          },
+          "replicaLocations": {
+            "value": "[coalesce(tryGet(parameters('appConfigurationDefinition'), 'replicaLocations'), createArray(createObject('replicaLocation', 'eastus', 'name', 'eastus'), createObject('replicaLocation', 'centralus', 'name', 'centralus')))]"
+          },
+          "roleAssignments": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'roleAssignments')]"
+          },
+          "sku": {
+            "value": "[tryGet(parameters('appConfigurationDefinition'), 'sku')]"
+          },
+          "tags": {
+            "value": "[coalesce(tryGet(parameters('appConfigurationDefinition'), 'tags'), parameters('tags'))]"
+          }
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -106436,36 +106728,92 @@
               }
             ]
           },
-          "activeRevisionsMode": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'activeRevisionsMode'))), createObject('value', parameters('containerAppsList')[copyIndex()].activeRevisionsMode), createObject('value', null()))]",
-          "additionalPortMappings": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'additionalPortMappings'))), createObject('value', parameters('containerAppsList')[copyIndex()].additionalPortMappings), createObject('value', null()))]",
-          "authConfig": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'authConfig'))), createObject('value', parameters('containerAppsList')[copyIndex()].authConfig), createObject('value', null()))]",
-          "clientCertificateMode": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'clientCertificateMode'))), createObject('value', parameters('containerAppsList')[copyIndex()].clientCertificateMode), createObject('value', null()))]",
-          "corsPolicy": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'corsPolicy'))), createObject('value', parameters('containerAppsList')[copyIndex()].corsPolicy), createObject('value', null()))]",
-          "customDomains": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'customDomains'))), createObject('value', parameters('containerAppsList')[copyIndex()].customDomains), createObject('value', null()))]",
-          "dapr": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'dapr'))), createObject('value', parameters('containerAppsList')[copyIndex()].dapr), createObject('value', null()))]",
-          "diagnosticSettings": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'diagnosticSettings'))), createObject('value', parameters('containerAppsList')[copyIndex()].diagnosticSettings), createObject('value', null()))]",
-          "identitySettings": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'identitySettings'))), createObject('value', parameters('containerAppsList')[copyIndex()].identitySettings), createObject('value', null()))]",
-          "initContainersTemplate": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'initContainersTemplate'))), createObject('value', parameters('containerAppsList')[copyIndex()].initContainersTemplate), createObject('value', null()))]",
-          "ipSecurityRestrictions": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'ipSecurityRestrictions'))), createObject('value', parameters('containerAppsList')[copyIndex()].ipSecurityRestrictions), createObject('value', null()))]",
-          "lock": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'lock'))), createObject('value', parameters('containerAppsList')[copyIndex()].lock), createObject('value', null()))]",
-          "location": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'location'))), createObject('value', parameters('containerAppsList')[copyIndex()].location), createObject('value', null()))]",
-          "managedIdentities": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'managedIdentities'))), createObject('value', parameters('containerAppsList')[copyIndex()].managedIdentities), createObject('value', null()))]",
-          "registries": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'registries'))), createObject('value', parameters('containerAppsList')[copyIndex()].registries), createObject('value', null()))]",
-          "revisionSuffix": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'revisionSuffix'))), createObject('value', parameters('containerAppsList')[copyIndex()].revisionSuffix), createObject('value', null()))]",
-          "roleAssignments": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'roleAssignments'))), createObject('value', parameters('containerAppsList')[copyIndex()].roleAssignments), createObject('value', null()))]",
-          "runtime": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'runtime'))), createObject('value', parameters('containerAppsList')[copyIndex()].runtime), createObject('value', null()))]",
-          "scaleSettings": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'scaleSettings'))), createObject('value', parameters('containerAppsList')[copyIndex()].scaleSettings), createObject('value', null()))]",
-          "secrets": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'secrets'))), createObject('value', parameters('containerAppsList')[copyIndex()].secrets), createObject('value', null()))]",
-          "service": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'service'))), createObject('value', parameters('containerAppsList')[copyIndex()].service), createObject('value', null()))]",
-          "serviceBinds": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'serviceBinds'))), createObject('value', parameters('containerAppsList')[copyIndex()].serviceBinds), createObject('value', null()))]",
-          "stickySessionsAffinity": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'stickySessionsAffinity'))), createObject('value', parameters('containerAppsList')[copyIndex()].stickySessionsAffinity), createObject('value', null()))]",
-          "tags": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'tags'))), createObject('value', parameters('containerAppsList')[copyIndex()].tags), createObject('value', null()))]",
-          "trafficLabel": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'trafficLabel'))), createObject('value', parameters('containerAppsList')[copyIndex()].trafficLabel), createObject('value', null()))]",
+          "activeRevisionsMode": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'activeRevisionsMode')]"
+          },
+          "additionalPortMappings": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'additionalPortMappings')]"
+          },
+          "authConfig": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'authConfig')]"
+          },
+          "clientCertificateMode": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'clientCertificateMode')]"
+          },
+          "corsPolicy": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'corsPolicy')]"
+          },
+          "customDomains": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'customDomains')]"
+          },
+          "dapr": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'dapr')]"
+          },
+          "diagnosticSettings": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'diagnosticSettings')]"
+          },
+          "identitySettings": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'identitySettings')]"
+          },
+          "initContainersTemplate": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'initContainersTemplate')]"
+          },
+          "ipSecurityRestrictions": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'ipSecurityRestrictions')]"
+          },
+          "lock": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'lock')]"
+          },
+          "location": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'location')]"
+          },
+          "managedIdentities": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'managedIdentities')]"
+          },
+          "registries": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'registries')]"
+          },
+          "revisionSuffix": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'revisionSuffix')]"
+          },
+          "roleAssignments": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'roleAssignments')]"
+          },
+          "runtime": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'runtime')]"
+          },
+          "scaleSettings": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'scaleSettings')]"
+          },
+          "secrets": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'secrets')]"
+          },
+          "service": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'service')]"
+          },
+          "serviceBinds": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'serviceBinds')]"
+          },
+          "stickySessionsAffinity": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'stickySessionsAffinity')]"
+          },
+          "tags": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'tags')]"
+          },
+          "trafficLabel": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'trafficLabel')]"
+          },
           "trafficLatestRevision": "[if(contains(parameters('containerAppsList')[copyIndex()], 'trafficLatestRevision'), createObject('value', parameters('containerAppsList')[copyIndex()].trafficLatestRevision), createObject('value', null()))]",
-          "trafficRevisionName": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'trafficRevisionName'))), createObject('value', parameters('containerAppsList')[copyIndex()].trafficRevisionName), createObject('value', null()))]",
+          "trafficRevisionName": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'trafficRevisionName')]"
+          },
           "trafficWeight": "[if(contains(parameters('containerAppsList')[copyIndex()], 'trafficWeight'), createObject('value', parameters('containerAppsList')[copyIndex()].trafficWeight), createObject('value', null()))]",
-          "volumes": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'volumes'))), createObject('value', parameters('containerAppsList')[copyIndex()].volumes), createObject('value', null()))]",
-          "workloadProfileName": "[if(not(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'workloadProfileName'))), createObject('value', parameters('containerAppsList')[copyIndex()].workloadProfileName), createObject('value', null()))]",
+          "volumes": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'volumes')]"
+          },
+          "workloadProfileName": {
+            "value": "[tryGet(parameters('containerAppsList')[copyIndex()], 'workloadProfileName')]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           }
@@ -108052,20 +108400,46 @@
           "name": {
             "value": "[variables('varAcrNameEffective')]"
           },
-          "roleAssignments": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'roleAssignments'))), createObject('value', parameters('containerRegistryDefinition').roleAssignments), createObject('value', null()))]",
-          "cacheRules": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'cacheRules'))), createObject('value', parameters('containerRegistryDefinition').cacheRules), createObject('value', null()))]",
-          "credentialSets": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'credentialSets'))), createObject('value', parameters('containerRegistryDefinition').credentialSets), createObject('value', null()))]",
-          "customerManagedKey": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'customerManagedKey'))), createObject('value', parameters('containerRegistryDefinition').customerManagedKey), createObject('value', null()))]",
-          "diagnosticSettings": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'diagnosticSettings'))), createObject('value', parameters('containerRegistryDefinition').diagnosticSettings), createObject('value', null()))]",
-          "lock": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'lock'))), createObject('value', parameters('containerRegistryDefinition').lock), createObject('value', null()))]",
-          "managedIdentities": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'managedIdentities'))), createObject('value', parameters('containerRegistryDefinition').managedIdentities), createObject('value', null()))]",
-          "networkRuleSetIpRules": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'networkRuleSetIpRules'))), createObject('value', parameters('containerRegistryDefinition').networkRuleSetIpRules), createObject('value', null()))]",
-          "privateEndpoints": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'privateEndpoints'))), createObject('value', parameters('containerRegistryDefinition').privateEndpoints), createObject('value', null()))]",
+          "roleAssignments": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'roleAssignments')]"
+          },
+          "cacheRules": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'cacheRules')]"
+          },
+          "credentialSets": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'credentialSets')]"
+          },
+          "customerManagedKey": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'customerManagedKey')]"
+          },
+          "diagnosticSettings": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'diagnosticSettings')]"
+          },
+          "lock": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'lock')]"
+          },
+          "managedIdentities": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'managedIdentities')]"
+          },
+          "networkRuleSetIpRules": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'networkRuleSetIpRules')]"
+          },
+          "privateEndpoints": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'privateEndpoints')]"
+          },
           "publicNetworkAccess": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'publicNetworkAccess'))), createObject('value', parameters('containerRegistryDefinition').publicNetworkAccess), createObject('value', 'Disabled'))]",
-          "replications": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'replications'))), createObject('value', parameters('containerRegistryDefinition').replications), createObject('value', null()))]",
-          "scopeMaps": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'scopeMaps'))), createObject('value', parameters('containerRegistryDefinition').scopeMaps), createObject('value', null()))]",
-          "tags": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'tags'))), createObject('value', parameters('containerRegistryDefinition').tags), createObject('value', null()))]",
-          "webhooks": "[if(not(empty(tryGet(parameters('containerRegistryDefinition'), 'webhooks'))), createObject('value', parameters('containerRegistryDefinition').webhooks), createObject('value', null()))]",
+          "replications": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'replications')]"
+          },
+          "scopeMaps": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'scopeMaps')]"
+          },
+          "tags": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'tags')]"
+          },
+          "webhooks": {
+            "value": "[tryGet(parameters('containerRegistryDefinition'), 'webhooks')]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           }
@@ -111225,20 +111599,48 @@
           "name": {
             "value": "[variables('varCosmosDbName')]"
           },
-          "capabilitiesToAdd": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'capabilitiesToAdd'))), createObject('value', parameters('cosmosDbDefinition').capabilitiesToAdd), createObject('value', null()))]",
-          "dataPlaneRoleAssignments": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'dataPlaneRoleAssignments'))), createObject('value', parameters('cosmosDbDefinition').dataPlaneRoleAssignments), createObject('value', null()))]",
-          "dataPlaneRoleDefinitions": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'dataPlaneRoleDefinitions'))), createObject('value', parameters('cosmosDbDefinition').dataPlaneRoleDefinitions), createObject('value', null()))]",
-          "diagnosticSettings": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'diagnosticSettings'))), createObject('value', parameters('cosmosDbDefinition').diagnosticSettings), createObject('value', null()))]",
-          "failoverLocations": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'failoverLocations'))), createObject('value', parameters('cosmosDbDefinition').failoverLocations), createObject('value', null()))]",
-          "gremlinDatabases": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'gremlinDatabases'))), createObject('value', parameters('cosmosDbDefinition').gremlinDatabases), createObject('value', null()))]",
-          "lock": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'lock'))), createObject('value', parameters('cosmosDbDefinition').lock), createObject('value', null()))]",
-          "managedIdentities": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'managedIdentities'))), createObject('value', parameters('cosmosDbDefinition').managedIdentities), createObject('value', null()))]",
-          "mongodbDatabases": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'mongodbDatabases'))), createObject('value', parameters('cosmosDbDefinition').mongodbDatabases), createObject('value', null()))]",
-          "privateEndpoints": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'privateEndpoints'))), createObject('value', parameters('cosmosDbDefinition').privateEndpoints), createObject('value', null()))]",
-          "roleAssignments": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'roleAssignments'))), createObject('value', parameters('cosmosDbDefinition').roleAssignments), createObject('value', null()))]",
-          "sqlDatabases": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'sqlDatabases'))), createObject('value', parameters('cosmosDbDefinition').sqlDatabases), createObject('value', null()))]",
-          "tables": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'tables'))), createObject('value', parameters('cosmosDbDefinition').tables), createObject('value', null()))]",
-          "tags": "[if(not(empty(tryGet(parameters('cosmosDbDefinition'), 'tags'))), createObject('value', parameters('cosmosDbDefinition').tags), createObject('value', null()))]",
+          "capabilitiesToAdd": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'capabilitiesToAdd')]"
+          },
+          "dataPlaneRoleAssignments": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'dataPlaneRoleAssignments')]"
+          },
+          "dataPlaneRoleDefinitions": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'dataPlaneRoleDefinitions')]"
+          },
+          "diagnosticSettings": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'diagnosticSettings')]"
+          },
+          "failoverLocations": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'failoverLocations')]"
+          },
+          "gremlinDatabases": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'gremlinDatabases')]"
+          },
+          "lock": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'lock')]"
+          },
+          "managedIdentities": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'managedIdentities')]"
+          },
+          "mongodbDatabases": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'mongodbDatabases')]"
+          },
+          "privateEndpoints": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'privateEndpoints')]"
+          },
+          "roleAssignments": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'roleAssignments')]"
+          },
+          "sqlDatabases": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'sqlDatabases')]"
+          },
+          "tables": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'tables')]"
+          },
+          "tags": {
+            "value": "[tryGet(parameters('cosmosDbDefinition'), 'tags')]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           }
@@ -115125,15 +115527,33 @@
           "name": {
             "value": "[variables('varKvName')]"
           },
-          "accessPolicies": "[if(not(empty(tryGet(parameters('keyVaultDefinition'), 'accessPolicies'))), createObject('value', parameters('keyVaultDefinition').accessPolicies), createObject('value', null()))]",
-          "secrets": "[if(not(empty(tryGet(parameters('keyVaultDefinition'), 'secrets'))), createObject('value', parameters('keyVaultDefinition').secrets), createObject('value', null()))]",
-          "keys": "[if(not(empty(tryGet(parameters('keyVaultDefinition'), 'keys'))), createObject('value', parameters('keyVaultDefinition').keys), createObject('value', null()))]",
-          "networkAcls": "[if(not(empty(tryGet(parameters('keyVaultDefinition'), 'networkAcls'))), createObject('value', parameters('keyVaultDefinition').networkAcls), createObject('value', null()))]",
-          "lock": "[if(not(empty(tryGet(parameters('keyVaultDefinition'), 'lock'))), createObject('value', parameters('keyVaultDefinition').lock), createObject('value', null()))]",
-          "roleAssignments": "[if(not(empty(tryGet(parameters('keyVaultDefinition'), 'roleAssignments'))), createObject('value', parameters('keyVaultDefinition').roleAssignments), createObject('value', null()))]",
-          "privateEndpoints": "[if(not(empty(tryGet(parameters('keyVaultDefinition'), 'privateEndpoints'))), createObject('value', parameters('keyVaultDefinition').privateEndpoints), createObject('value', null()))]",
-          "diagnosticSettings": "[if(not(empty(tryGet(parameters('keyVaultDefinition'), 'diagnosticSettings'))), createObject('value', parameters('keyVaultDefinition').diagnosticSettings), createObject('value', null()))]",
-          "tags": "[if(not(empty(tryGet(parameters('keyVaultDefinition'), 'tags'))), createObject('value', parameters('keyVaultDefinition').tags), createObject('value', null()))]",
+          "accessPolicies": {
+            "value": "[tryGet(parameters('keyVaultDefinition'), 'accessPolicies')]"
+          },
+          "secrets": {
+            "value": "[tryGet(parameters('keyVaultDefinition'), 'secrets')]"
+          },
+          "keys": {
+            "value": "[tryGet(parameters('keyVaultDefinition'), 'keys')]"
+          },
+          "networkAcls": {
+            "value": "[tryGet(parameters('keyVaultDefinition'), 'networkAcls')]"
+          },
+          "lock": {
+            "value": "[tryGet(parameters('keyVaultDefinition'), 'lock')]"
+          },
+          "roleAssignments": {
+            "value": "[tryGet(parameters('keyVaultDefinition'), 'roleAssignments')]"
+          },
+          "privateEndpoints": {
+            "value": "[tryGet(parameters('keyVaultDefinition'), 'privateEndpoints')]"
+          },
+          "diagnosticSettings": {
+            "value": "[tryGet(parameters('keyVaultDefinition'), 'diagnosticSettings')]"
+          },
+          "tags": {
+            "value": "[tryGet(parameters('keyVaultDefinition'), 'tags')]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           }
@@ -118545,23 +118965,57 @@
           "name": {
             "value": "[variables('varSaName')]"
           },
-          "roleAssignments": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'roleAssignments'))), createObject('value', parameters('storageAccountDefinition').roleAssignments), createObject('value', null()))]",
-          "managedIdentities": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'managedIdentities'))), createObject('value', parameters('storageAccountDefinition').managedIdentities), createObject('value', null()))]",
-          "azureFilesIdentityBasedAuthentication": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'azureFilesIdentityBasedAuthentication'))), createObject('value', parameters('storageAccountDefinition').azureFilesIdentityBasedAuthentication), createObject('value', null()))]",
-          "networkAcls": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'networkAcls'))), createObject('value', parameters('storageAccountDefinition').networkAcls), createObject('value', null()))]",
-          "privateEndpoints": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'privateEndpoints'))), createObject('value', parameters('storageAccountDefinition').privateEndpoints), createObject('value', null()))]",
-          "managementPolicyRules": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'managementPolicyRules'))), createObject('value', parameters('storageAccountDefinition').managementPolicyRules), createObject('value', null()))]",
-          "dnsEndpointType": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'dnsEndpointType'))), createObject('value', parameters('storageAccountDefinition').dnsEndpointType), createObject('value', null()))]",
-          "enableHierarchicalNamespace": "[if(contains(parameters('storageAccountDefinition'), 'enableHierarchicalNamespace'), createObject('value', parameters('storageAccountDefinition').enableHierarchicalNamespace), createObject('value', null()))]",
-          "customerManagedKey": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'customerManagedKey'))), createObject('value', parameters('storageAccountDefinition').customerManagedKey), createObject('value', null()))]",
-          "lock": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'lock'))), createObject('value', parameters('storageAccountDefinition').lock), createObject('value', null()))]",
-          "localUsers": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'localUsers'))), createObject('value', parameters('storageAccountDefinition').localUsers), createObject('value', null()))]",
-          "allowedCopyScope": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'allowedCopyScope'))), createObject('value', parameters('storageAccountDefinition').allowedCopyScope), createObject('value', null()))]",
-          "publicNetworkAccess": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'publicNetworkAccess'))), createObject('value', parameters('storageAccountDefinition').publicNetworkAccess), createObject('value', null()))]",
-          "secretsExportConfiguration": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'secretsExportConfiguration'))), createObject('value', parameters('storageAccountDefinition').secretsExportConfiguration), createObject('value', null()))]",
-          "keyType": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'keyType'))), createObject('value', parameters('storageAccountDefinition').keyType), createObject('value', null()))]",
-          "diagnosticSettings": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'diagnosticSettings'))), createObject('value', parameters('storageAccountDefinition').diagnosticSettings), createObject('value', null()))]",
-          "tags": "[if(not(empty(tryGet(parameters('storageAccountDefinition'), 'tags'))), createObject('value', parameters('storageAccountDefinition').tags), createObject('value', null()))]",
+          "roleAssignments": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'roleAssignments')]"
+          },
+          "managedIdentities": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'managedIdentities')]"
+          },
+          "azureFilesIdentityBasedAuthentication": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'azureFilesIdentityBasedAuthentication')]"
+          },
+          "networkAcls": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'networkAcls')]"
+          },
+          "privateEndpoints": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'privateEndpoints')]"
+          },
+          "managementPolicyRules": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'managementPolicyRules')]"
+          },
+          "dnsEndpointType": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'dnsEndpointType')]"
+          },
+          "enableHierarchicalNamespace": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'enableHierarchicalNamespace')]"
+          },
+          "customerManagedKey": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'customerManagedKey')]"
+          },
+          "lock": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'lock')]"
+          },
+          "localUsers": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'localUsers')]"
+          },
+          "allowedCopyScope": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'allowedCopyScope')]"
+          },
+          "publicNetworkAccess": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'publicNetworkAccess')]"
+          },
+          "secretsExportConfiguration": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'secretsExportConfiguration')]"
+          },
+          "keyType": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'keyType')]"
+          },
+          "diagnosticSettings": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'diagnosticSettings')]"
+          },
+          "tags": {
+            "value": "[tryGet(parameters('storageAccountDefinition'), 'tags')]"
+          },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           }
