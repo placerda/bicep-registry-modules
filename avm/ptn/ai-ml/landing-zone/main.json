@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "11961382598962647106"
+      "templateHash": "7330944965811026747"
     },
     "name": "AI/ML Landing Zone",
     "description": "Deploys a secure AI/ML landing zone (resource groups, networking, AI services, private endpoints, and guardrails) using AVM resource modules."
@@ -10448,36 +10448,36 @@
   },
   "variables": {
     "$fxv#0": "#cloud-config\npackage_update: true\npackage_upgrade: true\npackages: [curl, jq, tar, apt-transport-https]\nwrite_files:\n  - path: /opt/runner/env.sh\n    permissions: \"0644\"\n    owner: root:root\n    content: |\n      RUNNER_KIND=\"{0}\"\n      AZP_URL=\"{1}\"\n      AZP_POOL=\"{2}\"\n      AZP_AGENT_NAME=\"{3}\"\n      AZP_WORK=\"{4}\"\n      GH_OWNER=\"{5}\"\n      GH_REPO=\"{6}\"\n      GH_LABELS=\"{7}\"\n      GH_AGENT_NAME=\"{8}\"\n      GH_WORK=\"{9}\"\n      AZP_PAT=\"{10}\"\n      GH_PAT=\"{11}\"\nruncmd:\n  - [ bash, -lc, \"useradd -m {12} -s /bin/bash || true\" ]\n  - |\n    bash -lc \"mkdir -p /home/{12}/.ssh && \\\n      echo '{13}' >> /home/{12}/.ssh/authorized_keys && \\\n      chown -R {12}:{12} /home/{12}/.ssh && \\\n      chmod 600 /home/{12}/.ssh/authorized_keys\"\n  - |\n    bash -lc \"if [ \\\"$RUNNER_KIND\\\" = \\\"azdo\\\" ]; then\n      AGENT_DIR=\\\"$AZP_WORK\\\"; if [ -z \\\"$AGENT_DIR\\\" ]; then AGENT_DIR=/opt/azdo-agent; fi; mkdir -p \\\"$AGENT_DIR\\\"; cd \\\"$AGENT_DIR\\\";\n      curl -LsS https://vstsagentpackage.azureedge.net/agent/3.240.1/vsts-agent-linux-x64-3.240.1.tar.gz -o agent.tar.gz;\n      tar zxvf agent.tar.gz;\n      ./bin/installdependencies.sh;\n      A_NAME=\\\"$AZP_AGENT_NAME\\\"; if [ -z \\\"$A_NAME\\\" ]; then A_NAME=build-{14}; fi;\n      WORKF=\\\"$AZP_WORK\\\"; if [ -z \\\"$WORKF\\\" ]; then WORKF=_work; fi;\n      ./config.sh --unattended --url \\\"$AZP_URL\\\" --auth pat --token \\\"$AZP_PAT\\\" --pool \\\"$AZP_POOL\\\" --agent \\\"$A_NAME\\\" --work \\\"$WORKF\\\" --replace;\n      ./svc.sh install; ./svc.sh start;\n    else\n      RUNNER_DIR=\\\"$GH_WORK\\\"; if [ -z \\\"$RUNNER_DIR\\\" ]; then RUNNER_DIR=/opt/github-runner; fi; mkdir -p \\\"$RUNNER_DIR\\\"; cd \\\"$RUNNER_DIR\\\";\n      LATEST=$(curl -s https://api.github.com/repos/actions/runner/releases/latest | jq -r .tag_name);\n      LATEST_NO_V=$(echo \\\"$LATEST\\\" | sed 's/^v//');\n      curl -Lo actions-runner-linux-x64-$LATEST_NO_V.tar.gz https://github.com/actions/runner/releases/download/$LATEST/actions-runner-linux-x64-${LATEST_NO_V}.tar.gz;\n      tar xzf actions-runner-linux-x64-$LATEST_NO_V.tar.gz;\n      token=$(curl -s -X POST -H \\\"Authorization: token $GH_PAT\\\" -H \\\"Accept: application/vnd.github+json\\\" https://api.github.com/repos/$GH_OWNER/$GH_REPO/actions/runners/registration-token | jq -r .token);\n      LABELS=\\\"$GH_LABELS\\\"; if [ -z \\\"$LABELS\\\" ]; then LABELS=self-hosted,linux,x64; fi;\n      G_NAME=\\\"$GH_AGENT_NAME\\\"; if [ -z \\\"$G_NAME\\\" ]; then G_NAME=build-{14}; fi;\n      WORKG=\\\"$GH_WORK\\\"; if [ -z \\\"$WORKG\\\" ]; then WORKG=_work; fi;\n      ./config.sh --unattended --url https://github.com/$GH_OWNER/$GH_REPO --token \\\"$token\\\" --labels \\\"$LABELS\\\" --name \\\"$G_NAME\\\" --work \\\"$WORKG\\\" --replace;\n      ./svc.sh install; ./svc.sh start;\n    fi\"",
-    "varDeploySa": "[and(empty(parameters('resourceIds').storageAccountResourceId), parameters('deployToggles').storageAccount)]",
-    "varDeployCosmos": "[and(empty(parameters('resourceIds').dbAccountResourceId), parameters('deployToggles').cosmosDb)]",
-    "varDeploySearch": "[and(empty(parameters('resourceIds').searchServiceResourceId), parameters('deployToggles').searchService)]",
-    "varDeployKv": "[and(empty(parameters('resourceIds').keyVaultResourceId), parameters('deployToggles').keyVault)]",
-    "varDeployContainerAppEnv": "[and(empty(parameters('resourceIds').containerEnvResourceId), parameters('deployToggles').containerEnv)]",
-    "varDeployContainerApps": "[and(and(variables('varHasContainerEnv'), parameters('deployToggles').containerApps), greater(length(parameters('containerAppsList')), 0))]",
-    "varDeployAppConfig": "[and(empty(parameters('resourceIds').appConfigResourceId), parameters('deployToggles').appConfig)]",
-    "varDeployAcr": "[and(empty(parameters('resourceIds').containerRegistryResourceId), parameters('deployToggles').containerRegistry)]",
-    "varDeployApim": "[and(empty(parameters('resourceIds').apimServiceResourceId), parameters('deployToggles').apiManagement)]",
-    "varDeployAppGateway": "[and(empty(parameters('resourceIds').applicationGatewayResourceId), parameters('deployToggles').applicationGateway)]",
-    "varDeployFirewall": "[and(empty(parameters('resourceIds').firewallResourceId), parameters('deployToggles').firewall)]",
-    "varDeployAfwPolicy": "[and(variables('varDeployFirewall'), or(not(contains(parameters('firewallDefinition'), 'firewallPolicyId')), empty(parameters('firewallDefinition').firewallPolicyId)))]",
-    "varDeployVnet": "[and(empty(parameters('resourceIds').virtualNetworkResourceId), parameters('deployToggles').virtualNetwork)]",
-    "varDeployAppGatewayPublicIp": "[if(contains(parameters('deployToggles'), 'applicationGatewayPublicIp'), bool(parameters('deployToggles').applicationGatewayPublicIp), true())]",
-    "varDeployLogAnalytics": "[and(empty(parameters('resourceIds').logAnalyticsWorkspaceResourceId), parameters('deployToggles').logAnalytics)]",
-    "varDeployAppInsights": "[and(and(empty(parameters('resourceIds').appInsightsResourceId), parameters('deployToggles').appInsights), variables('varHasLogAnalytics'))]",
+    "varDeploySa": "[and(empty(tryGet(parameters('resourceIds'), 'storageAccountResourceId')), tryGet(parameters('deployToggles'), 'storageAccount'))]",
+    "varDeployCosmos": "[and(empty(tryGet(parameters('resourceIds'), 'dbAccountResourceId')), tryGet(parameters('deployToggles'), 'cosmosDb'))]",
+    "varDeploySearch": "[and(empty(tryGet(parameters('resourceIds'), 'searchServiceResourceId')), tryGet(parameters('deployToggles'), 'searchService'))]",
+    "varDeployKv": "[and(empty(tryGet(parameters('resourceIds'), 'keyVaultResourceId')), tryGet(parameters('deployToggles'), 'keyVault'))]",
+    "varDeployContainerAppEnv": "[and(empty(tryGet(parameters('resourceIds'), 'containerEnvResourceId')), tryGet(parameters('deployToggles'), 'containerEnv'))]",
+    "varDeployContainerApps": "[and(and(variables('varHasContainerEnv'), tryGet(parameters('deployToggles'), 'containerApps')), greater(length(parameters('containerAppsList')), 0))]",
+    "varDeployAppConfig": "[and(empty(tryGet(parameters('resourceIds'), 'appConfigResourceId')), tryGet(parameters('deployToggles'), 'appConfig'))]",
+    "varDeployAcr": "[and(empty(tryGet(parameters('resourceIds'), 'containerRegistryResourceId')), tryGet(parameters('deployToggles'), 'containerRegistry'))]",
+    "varDeployApim": "[and(empty(tryGet(parameters('resourceIds'), 'apimServiceResourceId')), tryGet(parameters('deployToggles'), 'apiManagement'))]",
+    "varDeployAppGateway": "[and(empty(parameters('resourceIds').applicationGatewayResourceId), tryGet(parameters('deployToggles'), 'applicationGateway'))]",
+    "varDeployFirewall": "[and(empty(tryGet(parameters('resourceIds'), 'firewallResourceId')), tryGet(parameters('deployToggles'), 'firewall'))]",
+    "varDeployAfwPolicy": "[and(variables('varDeployFirewall'), or(not(contains(parameters('firewallDefinition'), 'firewallPolicyId')), empty(tryGet(parameters('firewallDefinition'), 'firewallPolicyId'))))]",
+    "varDeployVnet": "[and(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId')), tryGet(parameters('deployToggles'), 'virtualNetwork'))]",
+    "varDeployAppGatewayPublicIp": "[if(contains(parameters('deployToggles'), 'applicationGatewayPublicIp'), bool(tryGet(parameters('deployToggles'), 'applicationGatewayPublicIp')), true())]",
+    "varDeployLogAnalytics": "[and(empty(tryGet(parameters('resourceIds'), 'logAnalyticsWorkspaceResourceId')), tryGet(parameters('deployToggles'), 'logAnalytics'))]",
+    "varDeployAppInsights": "[and(and(empty(tryGet(parameters('resourceIds'), 'appInsightsResourceId')), tryGet(parameters('deployToggles'), 'appInsights')), variables('varHasLogAnalytics'))]",
     "varIsPlatformLz": "[parameters('flagPlatformLandingZone')]",
     "varDeployPdnsAndPe": "[not(variables('varIsPlatformLz'))]",
     "varDeployBuildVm": "[and(parameters('deployToggles').buildVm, not(variables('varIsPlatformLz')))]",
     "varDeployJumpVm": "[and(and(parameters('deployToggles').jumpVm, not(variables('varIsPlatformLz'))), not(empty(parameters('jumpVmAdminPassword'))))]",
-    "varHasApim": "[or(not(empty(parameters('resourceIds').apimServiceResourceId)), variables('varDeployApim'))]",
-    "varHasStorage": "[or(not(empty(parameters('resourceIds').storageAccountResourceId)), variables('varDeploySa'))]",
-    "varHasCosmos": "[or(not(empty(parameters('resourceIds').dbAccountResourceId)), variables('varDeployCosmos'))]",
-    "varHasSearch": "[or(not(empty(parameters('resourceIds').searchServiceResourceId)), variables('varDeploySearch'))]",
-    "varHasKv": "[or(not(empty(parameters('resourceIds').keyVaultResourceId)), variables('varDeployKv'))]",
-    "varHasContainerEnv": "[or(not(empty(parameters('resourceIds').containerEnvResourceId)), variables('varDeployContainerAppEnv'))]",
-    "varHasAppConfig": "[or(not(empty(parameters('resourceIds').appConfigResourceId)), variables('varDeployAppConfig'))]",
-    "varHasAcr": "[or(not(empty(parameters('resourceIds').containerRegistryResourceId)), variables('varDeployAcr'))]",
-    "varHasLogAnalytics": "[or(not(empty(parameters('resourceIds').logAnalyticsWorkspaceResourceId)), variables('varDeployLogAnalytics'))]",
-    "varHasAppInsights": "[or(not(empty(parameters('resourceIds').appInsightsResourceId)), variables('varDeployAppInsights'))]",
+    "varHasApim": "[or(not(empty(tryGet(parameters('resourceIds'), 'apimServiceResourceId'))), variables('varDeployApim'))]",
+    "varHasStorage": "[or(not(empty(tryGet(parameters('resourceIds'), 'storageAccountResourceId'))), variables('varDeploySa'))]",
+    "varHasCosmos": "[or(not(empty(tryGet(parameters('resourceIds'), 'dbAccountResourceId'))), variables('varDeployCosmos'))]",
+    "varHasSearch": "[or(not(empty(tryGet(parameters('resourceIds'), 'searchServiceResourceId'))), variables('varDeploySearch'))]",
+    "varHasKv": "[or(not(empty(tryGet(parameters('resourceIds'), 'keyVaultResourceId'))), variables('varDeployKv'))]",
+    "varHasContainerEnv": "[or(not(empty(tryGet(parameters('resourceIds'), 'containerEnvResourceId'))), variables('varDeployContainerAppEnv'))]",
+    "varHasAppConfig": "[or(not(empty(tryGet(parameters('resourceIds'), 'appConfigResourceId'))), variables('varDeployAppConfig'))]",
+    "varHasAcr": "[or(not(empty(tryGet(parameters('resourceIds'), 'containerRegistryResourceId'))), variables('varDeployAcr'))]",
+    "varHasLogAnalytics": "[or(not(empty(tryGet(parameters('resourceIds'), 'logAnalyticsWorkspaceResourceId'))), variables('varDeployLogAnalytics'))]",
+    "varHasAppInsights": "[or(not(empty(tryGet(parameters('resourceIds'), 'appInsightsResourceId'))), variables('varDeployAppInsights'))]",
     "deployNsgAgent": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'agent'), 'name')))]",
     "deployNsgPe": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'pe'), 'name')))]",
     "deployNsgAppGw": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'applicationGateway'), 'name')))]",
@@ -10485,11 +10485,11 @@
     "deployNsgJumpbox": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'jumpbox'), 'name')))]",
     "deployNsgAcaEnv": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'acaEnvironment'), 'name')))]",
     "deployNsgDevopsBuildAgents": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'devopsBuildAgents'), 'name')))]",
-    "varVnetIdSegments": "[if(empty(parameters('resourceIds').virtualNetworkResourceId), createArray(''), split(parameters('resourceIds').virtualNetworkResourceId, '/'))]",
+    "varVnetIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId')), createArray(''), split(parameters('resourceIds').virtualNetworkResourceId, '/'))]",
     "varExistingVNetSubscriptionId": "[if(greaterOrEquals(length(variables('varVnetIdSegments')), 3), variables('varVnetIdSegments')[2], '')]",
     "varExistingVNetResourceGroupName": "[if(greaterOrEquals(length(variables('varVnetIdSegments')), 5), variables('varVnetIdSegments')[4], '')]",
     "varExistingVNetName": "[if(greaterOrEquals(length(variables('varVnetIdSegments')), 1), last(variables('varVnetIdSegments')), '')]",
-    "varVnetName": "[if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), variables('varExistingVNetName'), if(empty(parameters('vNetDefinition').name), format('vnet-{0}', parameters('baseName')), parameters('vNetDefinition').name))]",
+    "varVnetName": "[if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), variables('varExistingVNetName'), if(empty(tryGet(parameters('vNetDefinition'), 'name')), format('vnet-{0}', parameters('baseName')), parameters('vNetDefinition').name))]",
     "varPeSubnetName": "[if(empty(parameters('subnetsNamesDefinition').pe), 'pe-subnet', parameters('subnetsNamesDefinition').pe)]",
     "varAgentSubnetName": "[if(empty(parameters('subnetsNamesDefinition').agent), 'agent-subnet', parameters('subnetsNamesDefinition').agent)]",
     "varAgwSubnetName": "[if(empty(parameters('subnetsNamesDefinition').applicationGateway), 'AppGatewaySubnet', parameters('subnetsNamesDefinition').applicationGateway)]",
@@ -10497,13 +10497,13 @@
     "varAcaInfraSubnetName": "[if(empty(parameters('subnetsNamesDefinition').acaEnvironment), 'aca-environment-subnet', parameters('subnetsNamesDefinition').acaEnvironment)]",
     "varJumpSubnetName": "[if(empty(parameters('subnetsNamesDefinition').jumpbox), 'jumpbox-subnet', parameters('subnetsNamesDefinition').jumpbox)]",
     "varBuildSubnetName": "[if(empty(parameters('subnetsNamesDefinition').devopsBuildAgents), 'devops-build-agents-subnet', parameters('subnetsNamesDefinition').devopsBuildAgents)]",
-    "varPeSubnetId": "[if(empty(parameters('resourceIds').virtualNetworkResourceId), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varPeSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varPeSubnetName')))]",
-    "varAgentSubnetId": "[if(empty(parameters('resourceIds').virtualNetworkResourceId), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varAgentSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varAgentSubnetName')))]",
-    "varAgwSubnetId": "[if(empty(parameters('resourceIds').virtualNetworkResourceId), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varAgwSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varAgwSubnetName')))]",
-    "varApimSubnetId": "[if(empty(parameters('resourceIds').virtualNetworkResourceId), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varApimSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varApimSubnetName')))]",
-    "varAcaInfraSubnetId": "[if(empty(parameters('resourceIds').virtualNetworkResourceId), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varAcaInfraSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varAcaInfraSubnetName')))]",
-    "varJumpSubnetId": "[if(empty(parameters('resourceIds').virtualNetworkResourceId), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varJumpSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varJumpSubnetName')))]",
-    "varBuildSubnetId": "[if(empty(parameters('resourceIds').virtualNetworkResourceId), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varBuildSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varBuildSubnetName')))]",
+    "varPeSubnetId": "[if(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId')), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varPeSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varPeSubnetName')))]",
+    "varAgentSubnetId": "[if(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId')), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varAgentSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varAgentSubnetName')))]",
+    "varAgwSubnetId": "[if(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId')), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varAgwSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varAgwSubnetName')))]",
+    "varApimSubnetId": "[if(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId')), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varApimSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varApimSubnetName')))]",
+    "varAcaInfraSubnetId": "[if(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId')), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varAcaInfraSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varAcaInfraSubnetName')))]",
+    "varJumpSubnetId": "[if(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId')), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varJumpSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varJumpSubnetName')))]",
+    "varBuildSubnetId": "[if(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId')), resourceId('Microsoft.Network/virtualNetworks/subnets', variables('varVnetName'), variables('varBuildSubnetName')), format('{0}/subnets/{1}', parameters('resourceIds').virtualNetworkResourceId, variables('varBuildSubnetName')))]",
     "varHubPeerVnetId": "[parameters('hubVnetPeeringDefinition').peerVnetResourceId]",
     "varHubPeerParts": "[split(variables('varHubPeerVnetId'), '/')]",
     "varHubPeerSub": "[if(greaterOrEquals(length(variables('varHubPeerParts')), 3), variables('varHubPeerParts')[2], '')]",
@@ -10531,73 +10531,73 @@
     "varAfCosmosCfg": "[if(contains(parameters('aiFoundryDefinition'), 'cosmosDbConfiguration'), parameters('aiFoundryDefinition').cosmosDbConfiguration, createObject())]",
     "varAfKvCfg": "[if(contains(parameters('aiFoundryDefinition'), 'keyVaultConfiguration'), parameters('aiFoundryDefinition').keyVaultConfiguration, createObject())]",
     "varAfStorageCfg": "[if(contains(parameters('aiFoundryDefinition'), 'storageAccountConfiguration'), parameters('aiFoundryDefinition').storageAccountConfiguration, createObject())]",
-    "varApimIdSegments": "[if(empty(parameters('resourceIds').apimServiceResourceId), createArray(''), split(parameters('resourceIds').apimServiceResourceId, '/'))]",
+    "varApimIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'apimServiceResourceId')), createArray(''), split(parameters('resourceIds').apimServiceResourceId, '/'))]",
     "varApimSub": "[if(greaterOrEquals(length(variables('varApimIdSegments')), 3), variables('varApimIdSegments')[2], '')]",
     "varApimRg": "[if(greaterOrEquals(length(variables('varApimIdSegments')), 5), variables('varApimIdSegments')[4], '')]",
     "varApimNameExisting": "[if(greaterOrEquals(length(variables('varApimIdSegments')), 1), last(variables('varApimIdSegments')), '')]",
-    "varApimName": "[if(not(empty(parameters('resourceIds').apimServiceResourceId)), variables('varApimNameExisting'), if(empty(parameters('apimDefinition').name), format('apim-{0}', parameters('baseName')), parameters('apimDefinition').name))]",
-    "varAgwIdSegments": "[if(empty(parameters('resourceIds').applicationGatewayResourceId), createArray(''), split(parameters('resourceIds').applicationGatewayResourceId, '/'))]",
+    "varApimName": "[if(not(empty(tryGet(parameters('resourceIds'), 'apimServiceResourceId'))), variables('varApimNameExisting'), if(empty(tryGet(parameters('apimDefinition'), 'name')), format('apim-{0}', parameters('baseName')), parameters('apimDefinition').name))]",
+    "varAgwIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'applicationGatewayResourceId')), createArray(''), split(parameters('resourceIds').applicationGatewayResourceId, '/'))]",
     "varAgwSub": "[if(greaterOrEquals(length(variables('varAgwIdSegments')), 3), variables('varAgwIdSegments')[2], '')]",
     "varAgwRg": "[if(greaterOrEquals(length(variables('varAgwIdSegments')), 5), variables('varAgwIdSegments')[4], '')]",
     "varAgwNameExisting": "[if(greaterOrEquals(length(variables('varAgwIdSegments')), 1), last(variables('varAgwIdSegments')), '')]",
-    "varAgwName": "[if(not(empty(parameters('resourceIds').applicationGatewayResourceId)), variables('varAgwNameExisting'), if(empty(parameters('appGatewayDefinition').name), format('agw-{0}', parameters('baseName')), parameters('appGatewayDefinition').name))]",
+    "varAgwName": "[if(not(empty(tryGet(parameters('resourceIds'), 'applicationGatewayResourceId'))), variables('varAgwNameExisting'), if(empty(tryGet(parameters('appGatewayDefinition'), 'name')), format('agw-{0}', parameters('baseName')), parameters('appGatewayDefinition').name))]",
     "varAppGatewaySKU": "[if(contains(parameters('appGatewayDefinition'), 'sku'), parameters('appGatewayDefinition').sku, 'WAF_v2')]",
     "varAppGatewayNeedFirewallPolicy": "[equals(variables('varAppGatewaySKU'), 'WAF_v2')]",
     "varDeployWafPolicy": "[parameters('deployToggles').wafPolicy]",
-    "varAfwIdSegments": "[if(empty(parameters('resourceIds').firewallResourceId), createArray(''), split(parameters('resourceIds').firewallResourceId, '/'))]",
+    "varAfwIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'firewallResourceId')), createArray(''), split(parameters('resourceIds').firewallResourceId, '/'))]",
     "varAfwSub": "[if(greaterOrEquals(length(variables('varAfwIdSegments')), 3), variables('varAfwIdSegments')[2], '')]",
     "varAfwRg": "[if(greaterOrEquals(length(variables('varAfwIdSegments')), 5), variables('varAfwIdSegments')[4], '')]",
     "varAfwNameExisting": "[if(greaterOrEquals(length(variables('varAfwIdSegments')), 1), last(variables('varAfwIdSegments')), '')]",
-    "varAfwName": "[if(not(empty(parameters('resourceIds').firewallResourceId)), variables('varAfwNameExisting'), if(empty(parameters('firewallDefinition').name), format('afw-{0}', parameters('baseName')), parameters('firewallDefinition').name))]",
-    "varLawIdSegments": "[if(empty(parameters('resourceIds').logAnalyticsWorkspaceResourceId), createArray(''), split(parameters('resourceIds').logAnalyticsWorkspaceResourceId, '/'))]",
+    "varAfwName": "[if(not(empty(tryGet(parameters('resourceIds'), 'firewallResourceId'))), variables('varAfwNameExisting'), if(empty(tryGet(parameters('firewallDefinition'), 'name')), format('afw-{0}', parameters('baseName')), parameters('firewallDefinition').name))]",
+    "varLawIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'logAnalyticsWorkspaceResourceId')), createArray(''), split(parameters('resourceIds').logAnalyticsWorkspaceResourceId, '/'))]",
     "varExistingLawSubscriptionId": "[if(greaterOrEquals(length(variables('varLawIdSegments')), 3), variables('varLawIdSegments')[2], '')]",
     "varExistingLawResourceGroupName": "[if(greaterOrEquals(length(variables('varLawIdSegments')), 5), variables('varLawIdSegments')[4], '')]",
     "varExistingLawName": "[if(greaterOrEquals(length(variables('varLawIdSegments')), 1), last(variables('varLawIdSegments')), '')]",
-    "varLawName": "[if(not(empty(parameters('resourceIds').logAnalyticsWorkspaceResourceId)), variables('varExistingLawName'), if(empty(parameters('logAnalyticsDefinition').name), format('log-{0}', parameters('baseName')), parameters('logAnalyticsDefinition').name))]",
-    "varAiIdSegments": "[if(empty(parameters('resourceIds').appInsightsResourceId), createArray(''), split(parameters('resourceIds').appInsightsResourceId, '/'))]",
+    "varLawName": "[if(not(empty(tryGet(parameters('resourceIds'), 'logAnalyticsWorkspaceResourceId'))), variables('varExistingLawName'), if(empty(tryGet(parameters('logAnalyticsDefinition'), 'name')), format('log-{0}', parameters('baseName')), parameters('logAnalyticsDefinition').name))]",
+    "varAiIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'appInsightsResourceId')), createArray(''), split(parameters('resourceIds').appInsightsResourceId, '/'))]",
     "varExistingAISubscriptionId": "[if(greaterOrEquals(length(variables('varAiIdSegments')), 3), variables('varAiIdSegments')[2], '')]",
     "varExistingAIResourceGroupName": "[if(greaterOrEquals(length(variables('varAiIdSegments')), 5), variables('varAiIdSegments')[4], '')]",
     "varExistingAIName": "[if(greaterOrEquals(length(variables('varAiIdSegments')), 1), last(variables('varAiIdSegments')), '')]",
-    "varAppiName": "[if(not(empty(parameters('resourceIds').appInsightsResourceId)), variables('varExistingAIName'), if(empty(parameters('appInsightsDefinition').name), format('appi-{0}', parameters('baseName')), parameters('appInsightsDefinition').name))]",
-    "varEnvIdSegments": "[if(empty(parameters('resourceIds').containerEnvResourceId), createArray(''), split(parameters('resourceIds').containerEnvResourceId, '/'))]",
+    "varAppiName": "[if(not(empty(tryGet(parameters('resourceIds'), 'appInsightsResourceId'))), variables('varExistingAIName'), if(empty(tryGet(parameters('appInsightsDefinition'), 'name')), format('appi-{0}', parameters('baseName')), parameters('appInsightsDefinition').name))]",
+    "varEnvIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'containerEnvResourceId')), createArray(''), split(parameters('resourceIds').containerEnvResourceId, '/'))]",
     "varExistingEnvSubscriptionId": "[if(greaterOrEquals(length(variables('varEnvIdSegments')), 3), variables('varEnvIdSegments')[2], '')]",
     "varExistingEnvResourceGroup": "[if(greaterOrEquals(length(variables('varEnvIdSegments')), 5), variables('varEnvIdSegments')[4], '')]",
     "varExistingEnvName": "[if(greaterOrEquals(length(variables('varEnvIdSegments')), 1), last(variables('varEnvIdSegments')), '')]",
-    "varContainerEnvName": "[if(not(empty(parameters('resourceIds').containerEnvResourceId)), variables('varExistingEnvName'), if(empty(parameters('containerAppEnvDefinition').name), format('cae-{0}', parameters('baseName')), parameters('containerAppEnvDefinition').name))]",
-    "varAppcsIdSegments": "[if(empty(parameters('resourceIds').appConfigResourceId), createArray(''), split(parameters('resourceIds').appConfigResourceId, '/'))]",
+    "varContainerEnvName": "[if(not(empty(tryGet(parameters('resourceIds'), 'containerEnvResourceId'))), variables('varExistingEnvName'), if(empty(tryGet(parameters('containerAppEnvDefinition'), 'name')), format('cae-{0}', parameters('baseName')), parameters('containerAppEnvDefinition').name))]",
+    "varAppcsIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'appConfigResourceId')), createArray(''), split(parameters('resourceIds').appConfigResourceId, '/'))]",
     "varExistingAppcsSub": "[if(greaterOrEquals(length(variables('varAppcsIdSegments')), 3), variables('varAppcsIdSegments')[2], '')]",
     "varExistingAppcsRg": "[if(greaterOrEquals(length(variables('varAppcsIdSegments')), 5), variables('varAppcsIdSegments')[4], '')]",
     "varExistingAppcsName": "[if(greaterOrEquals(length(variables('varAppcsIdSegments')), 1), last(variables('varAppcsIdSegments')), '')]",
-    "varAppConfigName": "[if(not(empty(parameters('resourceIds').appConfigResourceId)), variables('varExistingAppcsName'), if(empty(parameters('appConfigurationDefinition').name), format('appcs-{0}', parameters('baseName')), parameters('appConfigurationDefinition').name))]",
-    "varAppConfigResourceId": "[if(not(empty(parameters('resourceIds').appConfigResourceId)), parameters('resourceIds').appConfigResourceId, if(variables('varDeployAppConfig'), resourceId('Microsoft.AppConfiguration/configurationStores', variables('varAppConfigName')), ''))]",
+    "varAppConfigName": "[if(not(empty(tryGet(parameters('resourceIds'), 'appConfigResourceId'))), variables('varExistingAppcsName'), if(empty(tryGet(parameters('appConfigurationDefinition'), 'name')), format('appcs-{0}', parameters('baseName')), parameters('appConfigurationDefinition').name))]",
+    "varAppConfigResourceId": "[if(not(empty(tryGet(parameters('resourceIds'), 'appConfigResourceId'))), parameters('resourceIds').appConfigResourceId, if(variables('varDeployAppConfig'), resourceId('Microsoft.AppConfiguration/configurationStores', variables('varAppConfigName')), ''))]",
     "varContainerDummyImageName": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest",
-    "varAcrIdSegments": "[if(empty(parameters('resourceIds').containerRegistryResourceId), createArray(''), split(parameters('resourceIds').containerRegistryResourceId, '/'))]",
+    "varAcrIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'containerRegistryResourceId')), createArray(''), split(parameters('resourceIds').containerRegistryResourceId, '/'))]",
     "varExistingAcrSub": "[if(greaterOrEquals(length(variables('varAcrIdSegments')), 3), variables('varAcrIdSegments')[2], '')]",
     "varExistingAcrRg": "[if(greaterOrEquals(length(variables('varAcrIdSegments')), 5), variables('varAcrIdSegments')[4], '')]",
     "varExistingAcrName": "[if(greaterOrEquals(length(variables('varAcrIdSegments')), 1), last(variables('varAcrIdSegments')), '')]",
-    "varAcrNameEffective": "[if(not(empty(parameters('resourceIds').containerRegistryResourceId)), variables('varExistingAcrName'), if(empty(parameters('containerRegistryDefinition').name), format('cr{0}', parameters('baseName')), parameters('containerRegistryDefinition').name))]",
-    "varCosmosDbSegments": "[if(empty(parameters('resourceIds').dbAccountResourceId), createArray(''), split(parameters('resourceIds').dbAccountResourceId, '/'))]",
+    "varAcrNameEffective": "[if(not(empty(tryGet(parameters('resourceIds'), 'containerRegistryResourceId'))), variables('varExistingAcrName'), if(empty(parameters('containerRegistryDefinition').name), format('cr{0}', parameters('baseName')), parameters('containerRegistryDefinition').name))]",
+    "varCosmosDbSegments": "[if(empty(tryGet(parameters('resourceIds'), 'dbAccountResourceId')), createArray(''), split(parameters('resourceIds').dbAccountResourceId, '/'))]",
     "varExistingCosmosDbSubscriptionId": "[if(greaterOrEquals(length(variables('varCosmosDbSegments')), 3), variables('varCosmosDbSegments')[2], '')]",
     "varExistingCosmosDbResourceGroupName": "[if(greaterOrEquals(length(variables('varCosmosDbSegments')), 5), variables('varCosmosDbSegments')[4], '')]",
     "varExistingCosmosDbName": "[if(greaterOrEquals(length(variables('varCosmosDbSegments')), 1), last(variables('varCosmosDbSegments')), '')]",
-    "varCosmosDbName": "[if(not(empty(parameters('resourceIds').dbAccountResourceId)), variables('varExistingCosmosDbName'), if(empty(parameters('cosmosDbDefinition').name), format('cos-{0}', parameters('baseName')), parameters('cosmosDbDefinition').name))]",
-    "varKvIdSegments": "[if(empty(parameters('resourceIds').keyVaultResourceId), createArray(''), split(parameters('resourceIds').keyVaultResourceId, '/'))]",
+    "varCosmosDbName": "[if(not(empty(tryGet(parameters('resourceIds'), 'dbAccountResourceId'))), variables('varExistingCosmosDbName'), if(empty(tryGet(parameters('cosmosDbDefinition'), 'name')), format('cos-{0}', parameters('baseName')), tryGet(parameters('cosmosDbDefinition'), 'name')))]",
+    "varKvIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'keyVaultResourceId')), createArray(''), split(parameters('resourceIds').keyVaultResourceId, '/'))]",
     "varExistingKvSub": "[if(greaterOrEquals(length(variables('varKvIdSegments')), 3), variables('varKvIdSegments')[2], '')]",
     "varExistingKvRg": "[if(greaterOrEquals(length(variables('varKvIdSegments')), 5), variables('varKvIdSegments')[4], '')]",
     "varExistingKvName": "[if(greaterOrEquals(length(variables('varKvIdSegments')), 1), last(variables('varKvIdSegments')), '')]",
-    "varKvName": "[if(not(empty(parameters('resourceIds').keyVaultResourceId)), variables('varExistingKvName'), if(empty(parameters('keyVaultDefinition').name), format('kv-{0}', parameters('baseName')), parameters('keyVaultDefinition').name))]",
+    "varKvName": "[if(not(empty(tryGet(parameters('resourceIds'), 'keyVaultResourceId'))), variables('varExistingKvName'), if(empty(tryGet(parameters('keyVaultDefinition'), 'name')), format('kv-{0}', parameters('baseName')), parameters('keyVaultDefinition').name))]",
     "varSaIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'storageAccountResourceId')), createArray(''), split(parameters('resourceIds').storageAccountResourceId, '/'))]",
     "varExistingSaSub": "[if(greaterOrEquals(length(variables('varSaIdSegments')), 3), variables('varSaIdSegments')[2], '')]",
     "varExistingSaRg": "[if(greaterOrEquals(length(variables('varSaIdSegments')), 5), variables('varSaIdSegments')[4], '')]",
     "varExistingSaName": "[if(greaterOrEquals(length(variables('varSaIdSegments')), 1), last(variables('varSaIdSegments')), '')]",
     "varSaName": "[if(not(empty(tryGet(parameters('resourceIds'), 'storageAccountResourceId'))), variables('varExistingSaName'), if(empty(tryGet(parameters('storageAccountDefinition'), 'name')), format('st{0}', parameters('baseName')), parameters('storageAccountDefinition').name))]",
-    "varSearchIdSegments": "[if(empty(parameters('resourceIds').searchServiceResourceId), createArray(''), split(parameters('resourceIds').searchServiceResourceId, '/'))]",
+    "varSearchIdSegments": "[if(empty(tryGet(parameters('resourceIds'), 'searchServiceResourceId')), createArray(''), split(parameters('resourceIds').searchServiceResourceId, '/'))]",
     "varExistingSearchSub": "[if(greaterOrEquals(length(variables('varSearchIdSegments')), 3), variables('varSearchIdSegments')[2], '')]",
     "varExistingSearchRg": "[if(greaterOrEquals(length(variables('varSearchIdSegments')), 5), variables('varSearchIdSegments')[4], '')]",
     "varExistingSearchName": "[if(greaterOrEquals(length(variables('varSearchIdSegments')), 1), last(variables('varSearchIdSegments')), '')]",
-    "varSearchName": "[if(not(empty(parameters('resourceIds').searchServiceResourceId)), variables('varExistingSearchName'), if(empty(parameters('searchDefinition').name), format('srch-{0}', parameters('baseName')), parameters('searchDefinition').name))]",
-    "varInvokeBingModule": "[or(not(empty(parameters('resourceIds').groundingServiceResourceId)), and(parameters('deployToggles').groundingWithBingSearch, empty(parameters('resourceIds').groundingServiceResourceId)))]",
-    "varBingNameEffective": "[if(empty(parameters('groundingWithBingDefinition').name), format('bing-{0}', parameters('baseName')), parameters('groundingWithBingDefinition').name)]",
+    "varSearchName": "[if(not(empty(tryGet(parameters('resourceIds'), 'searchServiceResourceId'))), variables('varExistingSearchName'), if(empty(tryGet(parameters('searchDefinition'), 'name')), format('srch-{0}', parameters('baseName')), parameters('searchDefinition').name))]",
+    "varInvokeBingModule": "[or(not(empty(tryGet(parameters('resourceIds'), 'groundingServiceResourceId'))), and(parameters('deployToggles').groundingWithBingSearch, empty(tryGet(parameters('resourceIds'), 'groundingServiceResourceId'))))]",
+    "varBingNameEffective": "[if(empty(tryGet(parameters('groundingWithBingDefinition'), 'name')), format('bing-{0}', parameters('baseName')), parameters('groundingWithBingDefinition').name)]",
     "varBuildVmOsType": "[if(not(empty(tryGet(parameters('buildVmDefinition'), 'osType'))), parameters('buildVmDefinition').osType, 'Linux')]",
     "varDefaultBuildUbuntu": {
       "publisher": "Canonical",
@@ -10633,7 +10633,7 @@
       "version": "latest"
     },
     "varJumpVmImageRef": "[if(not(empty(string(tryGet(parameters('jumpVmDefinition'), 'imageReference')))), parameters('jumpVmDefinition').imageReference, variables('varDefaultJumpWindows'))]",
-    "varRawJumpName": "[if(empty(parameters('jumpVmDefinition').name), format('vm-{0}jmp', parameters('baseName')), replace(replace(replace(parameters('jumpVmDefinition').name, ' ', ''), '_', ''), '.', ''))]",
+    "varRawJumpName": "[if(empty(tryGet(parameters('jumpVmDefinition'), 'name')), format('vm-{0}jmp', parameters('baseName')), replace(replace(replace(parameters('jumpVmDefinition').name, ' ', ''), '_', ''), '.', ''))]",
     "varMaxComputerNameLength": 15,
     "varJumpNameLen": "[min(variables('varMaxComputerNameLength'), length(variables('varRawJumpName')))]",
     "varJumpComputerName": "[toLower(substring(variables('varRawJumpName'), 0, variables('varJumpNameLen')))]"
@@ -10660,7 +10660,7 @@
       }
     },
     "existingVNet": {
-      "condition": "[not(empty(parameters('resourceIds').virtualNetworkResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId')))]",
       "existing": true,
       "type": "Microsoft.Network/virtualNetworks",
       "apiVersion": "2024-07-01",
@@ -10678,7 +10678,7 @@
       "name": "[variables('varHubPeerVnetName')]"
     },
     "existingApim": {
-      "condition": "[not(empty(parameters('resourceIds').apimServiceResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'apimServiceResourceId')))]",
       "existing": true,
       "type": "Microsoft.ApiManagement/service",
       "apiVersion": "2024-06-01-preview",
@@ -10687,7 +10687,7 @@
       "name": "[variables('varApimNameExisting')]"
     },
     "existingAppGateway": {
-      "condition": "[not(empty(parameters('resourceIds').applicationGatewayResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'applicationGatewayResourceId')))]",
       "existing": true,
       "type": "Microsoft.Network/applicationGateways",
       "apiVersion": "2024-07-01",
@@ -10696,7 +10696,7 @@
       "name": "[variables('varAgwNameExisting')]"
     },
     "existingFirewall": {
-      "condition": "[not(empty(parameters('resourceIds').firewallResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'firewallResourceId')))]",
       "existing": true,
       "type": "Microsoft.Network/azureFirewalls",
       "apiVersion": "2024-07-01",
@@ -10705,7 +10705,7 @@
       "name": "[variables('varAfwNameExisting')]"
     },
     "existingLogAnalytics": {
-      "condition": "[not(empty(parameters('resourceIds').logAnalyticsWorkspaceResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'logAnalyticsWorkspaceResourceId')))]",
       "existing": true,
       "type": "Microsoft.OperationalInsights/workspaces",
       "apiVersion": "2025-02-01",
@@ -10714,7 +10714,7 @@
       "name": "[variables('varExistingLawName')]"
     },
     "existingAppInsights": {
-      "condition": "[not(empty(parameters('resourceIds').appInsightsResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'appInsightsResourceId')))]",
       "existing": true,
       "type": "Microsoft.Insights/components",
       "apiVersion": "2020-02-02",
@@ -10723,7 +10723,7 @@
       "name": "[variables('varExistingAIName')]"
     },
     "existingContainerEnv": {
-      "condition": "[not(empty(parameters('resourceIds').containerEnvResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'containerEnvResourceId')))]",
       "existing": true,
       "type": "Microsoft.App/managedEnvironments",
       "apiVersion": "2025-02-02-preview",
@@ -10732,7 +10732,7 @@
       "name": "[variables('varExistingEnvName')]"
     },
     "existingAppConfig": {
-      "condition": "[not(empty(parameters('resourceIds').appConfigResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'appConfigResourceId')))]",
       "existing": true,
       "type": "Microsoft.AppConfiguration/configurationStores",
       "apiVersion": "2024-06-01",
@@ -10741,7 +10741,7 @@
       "name": "[variables('varExistingAppcsName')]"
     },
     "existingAcr": {
-      "condition": "[not(empty(parameters('resourceIds').containerRegistryResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'containerRegistryResourceId')))]",
       "existing": true,
       "type": "Microsoft.ContainerRegistry/registries",
       "apiVersion": "2025-05-01-preview",
@@ -10750,7 +10750,7 @@
       "name": "[variables('varExistingAcrName')]"
     },
     "existingCosmos": {
-      "condition": "[not(empty(parameters('resourceIds').dbAccountResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'dbAccountResourceId')))]",
       "existing": true,
       "type": "Microsoft.DocumentDB/databaseAccounts",
       "apiVersion": "2025-04-15",
@@ -10759,7 +10759,7 @@
       "name": "[variables('varExistingCosmosDbName')]"
     },
     "existingVault": {
-      "condition": "[not(empty(parameters('resourceIds').keyVaultResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'keyVaultResourceId')))]",
       "existing": true,
       "type": "Microsoft.KeyVault/vaults",
       "apiVersion": "2024-12-01-preview",
@@ -10768,7 +10768,7 @@
       "name": "[variables('varExistingKvName')]"
     },
     "existingStorage": {
-      "condition": "[not(empty(parameters('resourceIds').storageAccountResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'storageAccountResourceId')))]",
       "existing": true,
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2025-01-01",
@@ -10777,7 +10777,7 @@
       "name": "[variables('varExistingSaName')]"
     },
     "existingSearch": {
-      "condition": "[not(empty(parameters('resourceIds').searchServiceResourceId))]",
+      "condition": "[not(empty(tryGet(parameters('resourceIds'), 'searchServiceResourceId')))]",
       "existing": true,
       "type": "Microsoft.Search/searchServices",
       "apiVersion": "2024-03-01",
@@ -17062,7 +17062,7 @@
             "value": [
               {
                 "name": "[if(empty(parameters('hubVnetPeeringDefinition').reverseName), 'to-spoke', parameters('hubVnetPeeringDefinition').reverseName)]",
-                "remoteVirtualNetworkResourceId": "[if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))]",
+                "remoteVirtualNetworkResourceId": "[if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))]",
                 "allowVirtualNetworkAccess": "[parameters('hubVnetPeeringDefinition').reverseAllowVirtualNetworkAccess]",
                 "allowForwardedTraffic": "[parameters('hubVnetPeeringDefinition').reverseAllowForwardedTraffic]",
                 "allowGatewayTransit": "[parameters('hubVnetPeeringDefinition').reverseAllowGatewayTransit]",
@@ -18716,7 +18716,7 @@
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-apim-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
+          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-apim-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -22083,7 +22083,7 @@
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-cogsvcs-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
+          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-cogsvcs-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -25450,7 +25450,7 @@
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-openai-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
+          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-openai-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -28817,7 +28817,7 @@
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-aiservices-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
+          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-aiservices-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -32184,7 +32184,7 @@
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-search-std-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
+          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-search-std-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -35551,7 +35551,7 @@
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-cosmos-std-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
+          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-cosmos-std-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -38918,7 +38918,7 @@
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-blob-std-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
+          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-blob-std-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -42285,7 +42285,7 @@
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-kv-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
+          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-kv-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -45652,7 +45652,7 @@
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-appcfg-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
+          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-appcfg-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -49019,7 +49019,7 @@
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-containerapps-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
+          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-containerapps-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -52386,7 +52386,7 @@
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-acr-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
+          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-acr-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -55753,7 +55753,7 @@
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           },
-          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-ai-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
+          "virtualNetworkLinks": "[if(and(contains(parameters('privateDnsZonesDefinition'), 'createNetworkLinks'), parameters('privateDnsZonesDefinition').createNetworkLinks), createObject('value', createArray(createObject('name', format('{0}-ai-link', variables('varVnetName')), 'registrationEnabled', false(), 'virtualNetworkResourceId', if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))))), createObject('value', createArray()))]"
         },
         "template": {
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -59130,7 +59130,7 @@
               {
                 "name": "appConfigConnection",
                 "properties": {
-                  "privateLinkServiceId": "[if(empty(parameters('resourceIds').appConfigResourceId), reference('configurationStore').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingAppcsSub'), variables('varExistingAppcsRg')), 'Microsoft.AppConfiguration/configurationStores', variables('varExistingAppcsName')))]",
+                  "privateLinkServiceId": "[if(empty(tryGet(parameters('resourceIds'), 'appConfigResourceId')), reference('configurationStore').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingAppcsSub'), variables('varExistingAppcsRg')), 'Microsoft.AppConfiguration/configurationStores', variables('varExistingAppcsName')))]",
                   "groupIds": [
                     "configurationStores"
                   ]
@@ -59884,7 +59884,7 @@
               {
                 "name": "apimGatewayConnection",
                 "properties": {
-                  "privateLinkServiceId": "[if(empty(parameters('resourceIds').apimServiceResourceId), reference('apiManagement').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varApimSub'), variables('varApimRg')), 'Microsoft.ApiManagement/service', variables('varApimNameExisting')))]",
+                  "privateLinkServiceId": "[if(empty(tryGet(parameters('resourceIds'), 'apimServiceResourceId')), reference('apiManagement').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varApimSub'), variables('varApimRg')), 'Microsoft.ApiManagement/service', variables('varApimNameExisting')))]",
                   "groupIds": [
                     "gateway"
                   ]
@@ -60638,7 +60638,7 @@
               {
                 "name": "ccaConnection",
                 "properties": {
-                  "privateLinkServiceId": "[if(empty(parameters('resourceIds').containerEnvResourceId), reference('containerEnv').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingEnvSubscriptionId'), variables('varExistingEnvResourceGroup')), 'Microsoft.App/managedEnvironments', variables('varExistingEnvName')))]",
+                  "privateLinkServiceId": "[if(empty(tryGet(parameters('resourceIds'), 'containerEnvResourceId')), reference('containerEnv').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingEnvSubscriptionId'), variables('varExistingEnvResourceGroup')), 'Microsoft.App/managedEnvironments', variables('varExistingEnvName')))]",
                   "groupIds": [
                     "managedEnvironments"
                   ]
@@ -61392,7 +61392,7 @@
               {
                 "name": "acrConnection",
                 "properties": {
-                  "privateLinkServiceId": "[if(not(empty(parameters('resourceIds').containerRegistryResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingAcrSub'), variables('varExistingAcrRg')), 'Microsoft.ContainerRegistry/registries', variables('varExistingAcrName')), if(variables('varDeployAcr'), reference('containerRegistry').outputs.resourceId.value, ''))]",
+                  "privateLinkServiceId": "[if(not(empty(tryGet(parameters('resourceIds'), 'containerRegistryResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingAcrSub'), variables('varExistingAcrRg')), 'Microsoft.ContainerRegistry/registries', variables('varExistingAcrName')), if(variables('varDeployAcr'), reference('containerRegistry').outputs.resourceId.value, ''))]",
                   "groupIds": [
                     "registry"
                   ]
@@ -62146,7 +62146,7 @@
               {
                 "name": "blobConnection",
                 "properties": {
-                  "privateLinkServiceId": "[if(empty(parameters('resourceIds').storageAccountResourceId), reference('storageAccount').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingSaSub'), variables('varExistingSaRg')), 'Microsoft.Storage/storageAccounts', variables('varExistingSaName')))]",
+                  "privateLinkServiceId": "[if(empty(tryGet(parameters('resourceIds'), 'storageAccountResourceId')), reference('storageAccount').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingSaSub'), variables('varExistingSaRg')), 'Microsoft.Storage/storageAccounts', variables('varExistingSaName')))]",
                   "groupIds": [
                     "blob"
                   ]
@@ -62900,7 +62900,7 @@
               {
                 "name": "cosmosConnection",
                 "properties": {
-                  "privateLinkServiceId": "[if(empty(parameters('resourceIds').dbAccountResourceId), reference('cosmosDbAccount').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingCosmosDbSubscriptionId'), variables('varExistingCosmosDbResourceGroupName')), 'Microsoft.DocumentDB/databaseAccounts', variables('varExistingCosmosDbName')))]",
+                  "privateLinkServiceId": "[if(empty(tryGet(parameters('resourceIds'), 'dbAccountResourceId')), reference('cosmosDbAccount').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingCosmosDbSubscriptionId'), variables('varExistingCosmosDbResourceGroupName')), 'Microsoft.DocumentDB/databaseAccounts', variables('varExistingCosmosDbName')))]",
                   "groupIds": [
                     "Sql"
                   ]
@@ -63654,7 +63654,7 @@
               {
                 "name": "searchConnection",
                 "properties": {
-                  "privateLinkServiceId": "[if(empty(parameters('resourceIds').searchServiceResourceId), reference('searchService').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingSearchSub'), variables('varExistingSearchRg')), 'Microsoft.Search/searchServices', variables('varExistingSearchName')))]",
+                  "privateLinkServiceId": "[if(empty(tryGet(parameters('resourceIds'), 'searchServiceResourceId')), reference('searchService').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingSearchSub'), variables('varExistingSearchRg')), 'Microsoft.Search/searchServices', variables('varExistingSearchName')))]",
                   "groupIds": [
                     "searchService"
                   ]
@@ -64409,7 +64409,7 @@
               {
                 "name": "kvConnection",
                 "properties": {
-                  "privateLinkServiceId": "[if(empty(parameters('resourceIds').keyVaultResourceId), reference('vault').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingKvSub'), variables('varExistingKvRg')), 'Microsoft.KeyVault/vaults', variables('varExistingKvName')))]",
+                  "privateLinkServiceId": "[if(empty(tryGet(parameters('resourceIds'), 'keyVaultResourceId')), reference('vault').outputs.resourceId.value, extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingKvSub'), variables('varExistingKvRg')), 'Microsoft.KeyVault/vaults', variables('varExistingKvName')))]",
                   "groupIds": [
                     "vault"
                   ]
@@ -95144,7 +95144,7 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "name": "[if(empty(parameters('wafPolicyDefinition').name), createObject('value', format('afwp-{0}', parameters('baseName'))), createObject('value', parameters('wafPolicyDefinition').name))]",
+          "name": "[if(empty(tryGet(parameters('wafPolicyDefinition'), 'name')), createObject('value', format('afwp-{0}', parameters('baseName'))), createObject('value', parameters('wafPolicyDefinition').name))]",
           "managedRules": {
             "value": "[parameters('wafPolicyDefinition').managedRules]"
           },
@@ -95305,7 +95305,7 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "name": "[if(empty(parameters('appGatewayPublicIpDefinition').name), createObject('value', format('pip-agw-{0}', parameters('baseName'))), createObject('value', parameters('appGatewayPublicIpDefinition').name))]",
+          "name": "[if(empty(tryGet(parameters('appGatewayPublicIpDefinition'), 'name')), createObject('value', format('pip-agw-{0}', parameters('baseName'))), createObject('value', parameters('appGatewayPublicIpDefinition').name))]",
           "availabilityZones": {
             "value": "[coalesce(tryGet(parameters('appGatewayPublicIpDefinition'), 'availabilityZones'), createArray(1, 2, 3))]"
           },
@@ -98704,7 +98704,7 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "name": "[if(empty(parameters('firewallPolicyDefinition').name), createObject('value', format('afwp-{0}', parameters('baseName'))), createObject('value', parameters('firewallPolicyDefinition').name))]",
+          "name": "[if(empty(tryGet(parameters('firewallPolicyDefinition'), 'name')), createObject('value', format('afwp-{0}', parameters('baseName'))), createObject('value', parameters('firewallPolicyDefinition').name))]",
           "allowSqlRedirect": {
             "value": "[tryGet(parameters('firewallPolicyDefinition'), 'allowSqlRedirect')]"
           },
@@ -102711,7 +102711,7 @@
           "name": {
             "value": "[variables('varAppiName')]"
           },
-          "workspaceResourceId": "[if(variables('varDeployLogAnalytics'), createObject('value', reference('logAnalytics').outputs.resourceId.value), if(not(empty(parameters('resourceIds').logAnalyticsWorkspaceResourceId)), createObject('value', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingLawSubscriptionId'), variables('varExistingLawResourceGroupName')), 'Microsoft.OperationalInsights/workspaces', variables('varExistingLawName'))), createObject('value', '')))]",
+          "workspaceResourceId": "[if(variables('varDeployLogAnalytics'), createObject('value', reference('logAnalytics').outputs.resourceId.value), if(not(empty(tryGet(parameters('resourceIds'), 'logAnalyticsWorkspaceResourceId'))), createObject('value', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingLawSubscriptionId'), variables('varExistingLawResourceGroupName')), 'Microsoft.OperationalInsights/workspaces', variables('varExistingLawName'))), createObject('value', '')))]",
           "applicationType": {
             "value": "[tryGet(parameters('appInsightsDefinition'), 'applicationType')]"
           },
@@ -106701,19 +106701,19 @@
       "condition": "[variables('varDeployContainerApps')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
-      "name": "[if(empty(parameters('containerAppsList')[copyIndex()].name), format('ca-{0}-{1}', parameters('baseName'), parameters('containerAppsList')[copyIndex()].name), parameters('containerAppsList')[copyIndex()].name)]",
+      "name": "[if(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'name')), format('ca-{0}-{1}', parameters('baseName'), parameters('containerAppsList')[copyIndex()].name), parameters('containerAppsList')[copyIndex()].name)]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
         },
         "mode": "Incremental",
         "parameters": {
-          "name": "[if(empty(parameters('containerAppsList')[copyIndex()].name), createObject('value', format('ca-{0}-{1}', parameters('baseName'), copyIndex())), createObject('value', parameters('containerAppsList')[copyIndex()].name))]",
-          "environmentResourceId": "[if(empty(parameters('resourceIds').containerEnvResourceId), createObject('value', reference('containerEnv').outputs.resourceId.value), createObject('value', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingEnvSubscriptionId'), variables('varExistingEnvResourceGroup')), 'Microsoft.App/managedEnvironments', variables('varExistingEnvName'))))]",
+          "name": "[if(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'name')), createObject('value', format('ca-{0}-{1}', parameters('baseName'), copyIndex())), createObject('value', parameters('containerAppsList')[copyIndex()].name))]",
+          "environmentResourceId": "[if(empty(tryGet(parameters('resourceIds'), 'containerEnvResourceId')), createObject('value', reference('containerEnv').outputs.resourceId.value), createObject('value', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingEnvSubscriptionId'), variables('varExistingEnvResourceGroup')), 'Microsoft.App/managedEnvironments', variables('varExistingEnvName'))))]",
           "containers": {
             "value": [
               {
-                "name": "[if(empty(parameters('containerAppsList')[copyIndex()].name), format('ca-{0}-{1}', parameters('baseName'), copyIndex()), parameters('containerAppsList')[copyIndex()].name)]",
+                "name": "[if(empty(tryGet(parameters('containerAppsList')[copyIndex()], 'name')), format('ca-{0}-{1}', parameters('baseName'), copyIndex()), parameters('containerAppsList')[copyIndex()].name)]",
                 "image": "[variables('varContainerDummyImageName')]",
                 "resources": {
                   "cpu": "0.5",
@@ -127344,7 +127344,7 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "name": "[if(empty(parameters('buildVmMaintenanceDefinition').name), createObject('value', format('mc-{0}-build', parameters('baseName'))), createObject('value', parameters('buildVmMaintenanceDefinition').name))]",
+          "name": "[if(empty(tryGet(parameters('buildVmMaintenanceDefinition'), 'name')), createObject('value', format('mc-{0}-build', parameters('baseName'))), createObject('value', parameters('buildVmMaintenanceDefinition').name))]",
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           }
@@ -127704,7 +127704,7 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "name": "[if(empty(parameters('buildVmDefinition').name), createObject('value', format('vm-{0}-build', parameters('baseName'))), createObject('value', parameters('buildVmDefinition').name))]",
+          "name": "[if(empty(tryGet(parameters('buildVmDefinition'), 'name')), createObject('value', format('vm-{0}-build', parameters('baseName'))), createObject('value', parameters('buildVmDefinition').name))]",
           "adminUsername": {
             "value": "[parameters('buildVmDefinition').adminUsername]"
           },
@@ -136555,7 +136555,7 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "name": "[if(empty(parameters('jumpVmMaintenanceDefinition').name), createObject('value', format('mc-{0}-jump', parameters('baseName'))), createObject('value', parameters('jumpVmMaintenanceDefinition').name))]",
+          "name": "[if(empty(tryGet(parameters('jumpVmMaintenanceDefinition'), 'name')), createObject('value', format('mc-{0}-jump', parameters('baseName'))), createObject('value', parameters('jumpVmMaintenanceDefinition').name))]",
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           }
@@ -136915,7 +136915,7 @@
         },
         "mode": "Incremental",
         "parameters": {
-          "name": "[if(empty(parameters('jumpVmDefinition').name), createObject('value', format('mc-{0}-jump', parameters('baseName'))), createObject('value', parameters('jumpVmDefinition').name))]",
+          "name": "[if(empty(tryGet(parameters('jumpVmDefinition'), 'name')), createObject('value', format('mc-{0}-jump', parameters('baseName'))), createObject('value', parameters('jumpVmDefinition').name))]",
           "location": {
             "value": "[parameters('location')]"
           },
@@ -145800,63 +145800,63 @@
       "metadata": {
         "description": "Virtual network resource ID."
       },
-      "value": "[if(not(empty(parameters('resourceIds').virtualNetworkResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))]"
+      "value": "[if(not(empty(tryGet(parameters('resourceIds'), 'virtualNetworkResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingVNetSubscriptionId'), variables('varExistingVNetResourceGroupName')), 'Microsoft.Network/virtualNetworks', variables('varExistingVNetName')), if(variables('varDeployVnet'), reference('vNetwork').outputs.resourceId.value, ''))]"
     },
     "logAnalyticsWorkspaceResourceId": {
       "type": "string",
       "metadata": {
         "description": "Log Analytics workspace resource ID."
       },
-      "value": "[if(variables('varDeployLogAnalytics'), reference('logAnalytics').outputs.resourceId.value, if(not(empty(parameters('resourceIds').logAnalyticsWorkspaceResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingLawSubscriptionId'), variables('varExistingLawResourceGroupName')), 'Microsoft.OperationalInsights/workspaces', variables('varExistingLawName')), ''))]"
+      "value": "[if(variables('varDeployLogAnalytics'), reference('logAnalytics').outputs.resourceId.value, if(not(empty(tryGet(parameters('resourceIds'), 'logAnalyticsWorkspaceResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingLawSubscriptionId'), variables('varExistingLawResourceGroupName')), 'Microsoft.OperationalInsights/workspaces', variables('varExistingLawName')), ''))]"
     },
     "applicationInsightsResourceId": {
       "type": "string",
       "metadata": {
         "description": "Application Insights resource ID."
       },
-      "value": "[if(not(empty(parameters('resourceIds').appInsightsResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingAISubscriptionId'), variables('varExistingAIResourceGroupName')), 'Microsoft.Insights/components', variables('varExistingAIName')), if(variables('varDeployAppInsights'), reference('appInsights').outputs.resourceId.value, ''))]"
+      "value": "[if(not(empty(tryGet(parameters('resourceIds'), 'appInsightsResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingAISubscriptionId'), variables('varExistingAIResourceGroupName')), 'Microsoft.Insights/components', variables('varExistingAIName')), if(variables('varDeployAppInsights'), reference('appInsights').outputs.resourceId.value, ''))]"
     },
     "containerEnvResourceId": {
       "type": "string",
       "metadata": {
         "description": "Container Apps Environment resource ID."
       },
-      "value": "[if(not(empty(parameters('resourceIds').containerEnvResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingEnvSubscriptionId'), variables('varExistingEnvResourceGroup')), 'Microsoft.App/managedEnvironments', variables('varExistingEnvName')), if(variables('varDeployContainerAppEnv'), reference('containerEnv').outputs.resourceId.value, ''))]"
+      "value": "[if(not(empty(tryGet(parameters('resourceIds'), 'containerEnvResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingEnvSubscriptionId'), variables('varExistingEnvResourceGroup')), 'Microsoft.App/managedEnvironments', variables('varExistingEnvName')), if(variables('varDeployContainerAppEnv'), reference('containerEnv').outputs.resourceId.value, ''))]"
     },
     "containerRegistryResourceId": {
       "type": "string",
       "metadata": {
         "description": "Container registry resource ID."
       },
-      "value": "[if(not(empty(parameters('resourceIds').containerRegistryResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingAcrSub'), variables('varExistingAcrRg')), 'Microsoft.ContainerRegistry/registries', variables('varExistingAcrName')), if(variables('varDeployAcr'), reference('containerRegistry').outputs.resourceId.value, ''))]"
+      "value": "[if(not(empty(tryGet(parameters('resourceIds'), 'containerRegistryResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingAcrSub'), variables('varExistingAcrRg')), 'Microsoft.ContainerRegistry/registries', variables('varExistingAcrName')), if(variables('varDeployAcr'), reference('containerRegistry').outputs.resourceId.value, ''))]"
     },
     "storageAccountResourceId": {
       "type": "string",
       "metadata": {
         "description": "Storage account resource ID."
       },
-      "value": "[if(not(empty(parameters('resourceIds').storageAccountResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingSaSub'), variables('varExistingSaRg')), 'Microsoft.Storage/storageAccounts', variables('varExistingSaName')), if(variables('varDeploySa'), reference('storageAccount').outputs.resourceId.value, ''))]"
+      "value": "[if(not(empty(tryGet(parameters('resourceIds'), 'storageAccountResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingSaSub'), variables('varExistingSaRg')), 'Microsoft.Storage/storageAccounts', variables('varExistingSaName')), if(variables('varDeploySa'), reference('storageAccount').outputs.resourceId.value, ''))]"
     },
     "keyVaultResourceId": {
       "type": "string",
       "metadata": {
         "description": "Key Vault resource ID."
       },
-      "value": "[if(not(empty(parameters('resourceIds').keyVaultResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingKvSub'), variables('varExistingKvRg')), 'Microsoft.KeyVault/vaults', variables('varExistingKvName')), if(variables('varDeployKv'), reference('vault').outputs.resourceId.value, ''))]"
+      "value": "[if(not(empty(tryGet(parameters('resourceIds'), 'keyVaultResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingKvSub'), variables('varExistingKvRg')), 'Microsoft.KeyVault/vaults', variables('varExistingKvName')), if(variables('varDeployKv'), reference('vault').outputs.resourceId.value, ''))]"
     },
     "dbAccountResourceId": {
       "type": "string",
       "metadata": {
         "description": "Cosmos DB account resource ID."
       },
-      "value": "[if(not(empty(parameters('resourceIds').dbAccountResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingCosmosDbSubscriptionId'), variables('varExistingCosmosDbResourceGroupName')), 'Microsoft.DocumentDB/databaseAccounts', variables('varExistingCosmosDbName')), if(variables('varDeployCosmos'), reference('cosmosDbAccount').outputs.resourceId.value, ''))]"
+      "value": "[if(not(empty(tryGet(parameters('resourceIds'), 'dbAccountResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingCosmosDbSubscriptionId'), variables('varExistingCosmosDbResourceGroupName')), 'Microsoft.DocumentDB/databaseAccounts', variables('varExistingCosmosDbName')), if(variables('varDeployCosmos'), reference('cosmosDbAccount').outputs.resourceId.value, ''))]"
     },
     "searchServiceResourceId": {
       "type": "string",
       "metadata": {
         "description": "Azure AI Search service resource ID."
       },
-      "value": "[if(not(empty(parameters('resourceIds').searchServiceResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingSearchSub'), variables('varExistingSearchRg')), 'Microsoft.Search/searchServices', variables('varExistingSearchName')), if(variables('varDeploySearch'), reference('searchService').outputs.resourceId.value, ''))]"
+      "value": "[if(not(empty(tryGet(parameters('resourceIds'), 'searchServiceResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varExistingSearchSub'), variables('varExistingSearchRg')), 'Microsoft.Search/searchServices', variables('varExistingSearchName')), if(variables('varDeploySearch'), reference('searchService').outputs.resourceId.value, ''))]"
     },
     "appConfigResourceId": {
       "type": "string",
@@ -145870,21 +145870,21 @@
       "metadata": {
         "description": "API Management service resource ID."
       },
-      "value": "[if(not(empty(parameters('resourceIds').apimServiceResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varApimSub'), variables('varApimRg')), 'Microsoft.ApiManagement/service', variables('varApimNameExisting')), if(variables('varDeployApim'), reference('apiManagement').outputs.resourceId.value, ''))]"
+      "value": "[if(not(empty(tryGet(parameters('resourceIds'), 'apimServiceResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varApimSub'), variables('varApimRg')), 'Microsoft.ApiManagement/service', variables('varApimNameExisting')), if(variables('varDeployApim'), reference('apiManagement').outputs.resourceId.value, ''))]"
     },
     "applicationGatewayResourceId": {
       "type": "string",
       "metadata": {
         "description": "Application Gateway resource ID."
       },
-      "value": "[if(not(empty(parameters('resourceIds').applicationGatewayResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varAgwSub'), variables('varAgwRg')), 'Microsoft.Network/applicationGateways', variables('varAgwNameExisting')), if(variables('varDeployAppGateway'), reference('applicationGateway').outputs.resourceId.value, ''))]"
+      "value": "[if(not(empty(tryGet(parameters('resourceIds'), 'applicationGatewayResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varAgwSub'), variables('varAgwRg')), 'Microsoft.Network/applicationGateways', variables('varAgwNameExisting')), if(variables('varDeployAppGateway'), reference('applicationGateway').outputs.resourceId.value, ''))]"
     },
     "firewallResourceId": {
       "type": "string",
       "metadata": {
         "description": "Azure Firewall resource ID."
       },
-      "value": "[if(not(empty(parameters('resourceIds').firewallResourceId)), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varAfwSub'), variables('varAfwRg')), 'Microsoft.Network/azureFirewalls', variables('varAfwNameExisting')), if(variables('varDeployFirewall'), reference('azureFirewall').outputs.resourceId.value, ''))]"
+      "value": "[if(not(empty(tryGet(parameters('resourceIds'), 'firewallResourceId'))), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', variables('varAfwSub'), variables('varAfwRg')), 'Microsoft.Network/azureFirewalls', variables('varAfwNameExisting')), if(variables('varDeployFirewall'), reference('azureFirewall').outputs.resourceId.value, ''))]"
     },
     "groundingServiceResourceId": {
       "type": "string",
