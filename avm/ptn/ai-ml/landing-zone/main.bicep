@@ -251,13 +251,13 @@ param subnetsNamesDefinition types.subnetNamesDefinitionType = {
 param nsgDefinitions types.nsgPerSubnetDefinitionsType?
 
 // Deploy toggles (computed from presence of a name)
-var deployNsgAgent = !empty(nsgDefinitions!.agent!.name)
-var deployNsgPe = !empty(nsgDefinitions!.pe!.name)
-var deployNsgAppGw = !empty(nsgDefinitions!.applicationGateway!.name)
-var deployNsgApim = !empty(nsgDefinitions!.apiManagement!.name)
-var deployNsgJumpbox = !empty(nsgDefinitions!.jumpbox!.name)
-var deployNsgAcaEnv = !empty(nsgDefinitions!.acaEnvironment!.name)
-var deployNsgDevopsBuildAgents = !empty(nsgDefinitions!.devopsBuildAgents!.name)
+var deployNsgAgent = !empty(nsgDefinitions!.agent!.?name)
+var deployNsgPe = !empty(nsgDefinitions!.pe!.?name)
+var deployNsgAppGw = !empty(nsgDefinitions!.applicationGateway!.?name)
+var deployNsgApim = !empty(nsgDefinitions!.apiManagement!.?name)
+var deployNsgJumpbox = !empty(nsgDefinitions!.jumpbox!.?name)
+var deployNsgAcaEnv = !empty(nsgDefinitions!.acaEnvironment!.?name)
+var deployNsgDevopsBuildAgents = !empty(nsgDefinitions!.devopsBuildAgents!.?name)
 
 // Agent subnet NSG
 module nsgAgent 'br/public:avm/res/network/network-security-group:0.5.1' = if (deployNsgAgent) {
@@ -265,7 +265,7 @@ module nsgAgent 'br/public:avm/res/network/network-security-group:0.5.1' = if (d
   params: {
     name: nsgDefinitions!.agent!.name
     location: nsgDefinitions!.agent!.location! ?? location
-    enableTelemetry: nsgDefinitions!.agent!.enableTelemetry! ?? enableTelemetry
+    enableTelemetry: enableTelemetry
     flushConnection: nsgDefinitions!.agent!.flushConnection! ?? null
     diagnosticSettings: !empty(nsgDefinitions!.agent!.diagnosticSettings!)
       ? nsgDefinitions!.agent!.diagnosticSettings!
@@ -283,7 +283,7 @@ module nsgPe 'br/public:avm/res/network/network-security-group:0.5.1' = if (depl
   params: {
     name: nsgDefinitions!.pe!.name
     location: nsgDefinitions!.pe!.location! ?? location
-    enableTelemetry: nsgDefinitions!.pe!.enableTelemetry! ?? enableTelemetry
+    enableTelemetry: enableTelemetry
     flushConnection: nsgDefinitions!.pe!.flushConnection! ?? null
     diagnosticSettings: !empty(nsgDefinitions!.pe!.diagnosticSettings!) ? nsgDefinitions!.pe!.diagnosticSettings! : null
     lock: !empty(nsgDefinitions!.pe!.lock!) ? nsgDefinitions!.pe!.lock! : null
@@ -299,7 +299,7 @@ module nsgAppGateway 'br/public:avm/res/network/network-security-group:0.5.1' = 
   params: {
     name: nsgDefinitions!.applicationGateway!.name
     location: nsgDefinitions!.applicationGateway!.location! ?? location
-    enableTelemetry: nsgDefinitions!.applicationGateway!.enableTelemetry! ?? enableTelemetry
+    enableTelemetry: enableTelemetry
     flushConnection: nsgDefinitions!.applicationGateway!.flushConnection! ?? null
     diagnosticSettings: !empty(nsgDefinitions!.applicationGateway!.diagnosticSettings!)
       ? nsgDefinitions!.applicationGateway!.diagnosticSettings!
@@ -321,7 +321,7 @@ module nsgApim 'br/public:avm/res/network/network-security-group:0.5.1' = if (de
   params: {
     name: nsgDefinitions!.apiManagement!.name
     location: nsgDefinitions!.apiManagement!.location! ?? location
-    enableTelemetry: nsgDefinitions!.apiManagement!.enableTelemetry! ?? enableTelemetry
+    enableTelemetry: enableTelemetry
     flushConnection: nsgDefinitions!.apiManagement!.flushConnection! ?? null
     diagnosticSettings: !empty(nsgDefinitions!.apiManagement!.diagnosticSettings!)
       ? nsgDefinitions!.apiManagement!.diagnosticSettings!
@@ -342,7 +342,7 @@ module nsgAcaEnv 'br/public:avm/res/network/network-security-group:0.5.1' = if (
   params: {
     name: nsgDefinitions!.acaEnvironment!.name
     location: nsgDefinitions!.acaEnvironment!.location! ?? location
-    enableTelemetry: nsgDefinitions!.acaEnvironment!.enableTelemetry! ?? enableTelemetry
+    enableTelemetry: enableTelemetry
     flushConnection: nsgDefinitions!.acaEnvironment!.flushConnection! ?? null
     diagnosticSettings: !empty(nsgDefinitions!.acaEnvironment!.diagnosticSettings!)
       ? nsgDefinitions!.acaEnvironment!.diagnosticSettings!
@@ -364,7 +364,7 @@ module nsgJumpbox 'br/public:avm/res/network/network-security-group:0.5.1' = if 
   params: {
     name: nsgDefinitions!.jumpbox!.name
     location: nsgDefinitions!.jumpbox!.location! ?? location
-    enableTelemetry: nsgDefinitions!.jumpbox!.enableTelemetry! ?? enableTelemetry
+    enableTelemetry: enableTelemetry
     flushConnection: nsgDefinitions!.jumpbox!.flushConnection! ?? null
     diagnosticSettings: !empty(nsgDefinitions!.jumpbox!.diagnosticSettings!)
       ? nsgDefinitions!.jumpbox!.diagnosticSettings!
@@ -384,7 +384,7 @@ module nsgDevopsBuildAgents 'br/public:avm/res/network/network-security-group:0.
   params: {
     name: nsgDefinitions!.devopsBuildAgents!.name
     location: nsgDefinitions!.devopsBuildAgents!.location! ?? location
-    enableTelemetry: nsgDefinitions!.devopsBuildAgents!.enableTelemetry! ?? enableTelemetry
+    enableTelemetry: enableTelemetry
     flushConnection: nsgDefinitions!.devopsBuildAgents!.flushConnection! ?? null
     diagnosticSettings: !empty(nsgDefinitions!.devopsBuildAgents!.diagnosticSettings!)
       ? nsgDefinitions!.devopsBuildAgents!.diagnosticSettings!

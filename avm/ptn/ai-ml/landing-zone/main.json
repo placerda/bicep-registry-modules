@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "10648284512824280541"
+      "templateHash": "11892956528220501119"
     },
     "name": "AI/ML Landing Zone",
     "description": "Deploys a secure AI/ML landing zone (resource groups, networking, AI services, private endpoints, and guardrails) using AVM resource modules."
@@ -10478,13 +10478,13 @@
     "varHasAcr": "[or(not(empty(parameters('resourceIds').containerRegistryResourceId)), variables('varDeployAcr'))]",
     "varHasLogAnalytics": "[or(not(empty(parameters('resourceIds').logAnalyticsWorkspaceResourceId)), variables('varDeployLogAnalytics'))]",
     "varHasAppInsights": "[or(not(empty(parameters('resourceIds').appInsightsResourceId)), variables('varDeployAppInsights'))]",
-    "deployNsgAgent": "[not(empty(parameters('nsgDefinitions').agent.name))]",
-    "deployNsgPe": "[not(empty(parameters('nsgDefinitions').pe.name))]",
-    "deployNsgAppGw": "[not(empty(parameters('nsgDefinitions').applicationGateway.name))]",
-    "deployNsgApim": "[not(empty(parameters('nsgDefinitions').apiManagement.name))]",
-    "deployNsgJumpbox": "[not(empty(parameters('nsgDefinitions').jumpbox.name))]",
-    "deployNsgAcaEnv": "[not(empty(parameters('nsgDefinitions').acaEnvironment.name))]",
-    "deployNsgDevopsBuildAgents": "[not(empty(parameters('nsgDefinitions').devopsBuildAgents.name))]",
+    "deployNsgAgent": "[not(empty(tryGet(parameters('nsgDefinitions').agent, 'name')))]",
+    "deployNsgPe": "[not(empty(tryGet(parameters('nsgDefinitions').pe, 'name')))]",
+    "deployNsgAppGw": "[not(empty(tryGet(parameters('nsgDefinitions').applicationGateway, 'name')))]",
+    "deployNsgApim": "[not(empty(tryGet(parameters('nsgDefinitions').apiManagement, 'name')))]",
+    "deployNsgJumpbox": "[not(empty(tryGet(parameters('nsgDefinitions').jumpbox, 'name')))]",
+    "deployNsgAcaEnv": "[not(empty(tryGet(parameters('nsgDefinitions').acaEnvironment, 'name')))]",
+    "deployNsgDevopsBuildAgents": "[not(empty(tryGet(parameters('nsgDefinitions').devopsBuildAgents, 'name')))]",
     "varVnetIdSegments": "[if(empty(parameters('resourceIds').virtualNetworkResourceId), createArray(''), split(parameters('resourceIds').virtualNetworkResourceId, '/'))]",
     "varExistingVNetSubscriptionId": "[if(greaterOrEquals(length(variables('varVnetIdSegments')), 3), variables('varVnetIdSegments')[2], '')]",
     "varExistingVNetResourceGroupName": "[if(greaterOrEquals(length(variables('varVnetIdSegments')), 5), variables('varVnetIdSegments')[4], '')]",
@@ -10803,7 +10803,7 @@
             "value": "[coalesce(parameters('nsgDefinitions').agent.location, parameters('location'))]"
           },
           "enableTelemetry": {
-            "value": "[coalesce(parameters('nsgDefinitions').agent.enableTelemetry, parameters('enableTelemetry'))]"
+            "value": "[parameters('enableTelemetry')]"
           },
           "flushConnection": {
             "value": "[coalesce(parameters('nsgDefinitions').agent.flushConnection, null())]"
@@ -11458,7 +11458,7 @@
             "value": "[coalesce(parameters('nsgDefinitions').pe.location, parameters('location'))]"
           },
           "enableTelemetry": {
-            "value": "[coalesce(parameters('nsgDefinitions').pe.enableTelemetry, parameters('enableTelemetry'))]"
+            "value": "[parameters('enableTelemetry')]"
           },
           "flushConnection": {
             "value": "[coalesce(parameters('nsgDefinitions').pe.flushConnection, null())]"
@@ -12113,7 +12113,7 @@
             "value": "[coalesce(parameters('nsgDefinitions').applicationGateway.location, parameters('location'))]"
           },
           "enableTelemetry": {
-            "value": "[coalesce(parameters('nsgDefinitions').applicationGateway.enableTelemetry, parameters('enableTelemetry'))]"
+            "value": "[parameters('enableTelemetry')]"
           },
           "flushConnection": {
             "value": "[coalesce(parameters('nsgDefinitions').applicationGateway.flushConnection, null())]"
@@ -12768,7 +12768,7 @@
             "value": "[coalesce(parameters('nsgDefinitions').apiManagement.location, parameters('location'))]"
           },
           "enableTelemetry": {
-            "value": "[coalesce(parameters('nsgDefinitions').apiManagement.enableTelemetry, parameters('enableTelemetry'))]"
+            "value": "[parameters('enableTelemetry')]"
           },
           "flushConnection": {
             "value": "[coalesce(parameters('nsgDefinitions').apiManagement.flushConnection, null())]"
@@ -13423,7 +13423,7 @@
             "value": "[coalesce(parameters('nsgDefinitions').acaEnvironment.location, parameters('location'))]"
           },
           "enableTelemetry": {
-            "value": "[coalesce(parameters('nsgDefinitions').acaEnvironment.enableTelemetry, parameters('enableTelemetry'))]"
+            "value": "[parameters('enableTelemetry')]"
           },
           "flushConnection": {
             "value": "[coalesce(parameters('nsgDefinitions').acaEnvironment.flushConnection, null())]"
@@ -14078,7 +14078,7 @@
             "value": "[coalesce(parameters('nsgDefinitions').jumpbox.location, parameters('location'))]"
           },
           "enableTelemetry": {
-            "value": "[coalesce(parameters('nsgDefinitions').jumpbox.enableTelemetry, parameters('enableTelemetry'))]"
+            "value": "[parameters('enableTelemetry')]"
           },
           "flushConnection": {
             "value": "[coalesce(parameters('nsgDefinitions').jumpbox.flushConnection, null())]"
@@ -14733,7 +14733,7 @@
             "value": "[coalesce(parameters('nsgDefinitions').devopsBuildAgents.location, parameters('location'))]"
           },
           "enableTelemetry": {
-            "value": "[coalesce(parameters('nsgDefinitions').devopsBuildAgents.enableTelemetry, parameters('enableTelemetry'))]"
+            "value": "[parameters('enableTelemetry')]"
           },
           "flushConnection": {
             "value": "[coalesce(parameters('nsgDefinitions').devopsBuildAgents.flushConnection, null())]"
