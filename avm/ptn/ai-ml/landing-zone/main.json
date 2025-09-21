@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "11892956528220501119"
+      "templateHash": "5103728008457499983"
     },
     "name": "AI/ML Landing Zone",
     "description": "Deploys a secure AI/ML landing zone (resource groups, networking, AI services, private endpoints, and guardrails) using AVM resource modules."
@@ -10478,13 +10478,13 @@
     "varHasAcr": "[or(not(empty(parameters('resourceIds').containerRegistryResourceId)), variables('varDeployAcr'))]",
     "varHasLogAnalytics": "[or(not(empty(parameters('resourceIds').logAnalyticsWorkspaceResourceId)), variables('varDeployLogAnalytics'))]",
     "varHasAppInsights": "[or(not(empty(parameters('resourceIds').appInsightsResourceId)), variables('varDeployAppInsights'))]",
-    "deployNsgAgent": "[not(empty(tryGet(parameters('nsgDefinitions').agent, 'name')))]",
-    "deployNsgPe": "[not(empty(tryGet(parameters('nsgDefinitions').pe, 'name')))]",
-    "deployNsgAppGw": "[not(empty(tryGet(parameters('nsgDefinitions').applicationGateway, 'name')))]",
-    "deployNsgApim": "[not(empty(tryGet(parameters('nsgDefinitions').apiManagement, 'name')))]",
-    "deployNsgJumpbox": "[not(empty(tryGet(parameters('nsgDefinitions').jumpbox, 'name')))]",
-    "deployNsgAcaEnv": "[not(empty(tryGet(parameters('nsgDefinitions').acaEnvironment, 'name')))]",
-    "deployNsgDevopsBuildAgents": "[not(empty(tryGet(parameters('nsgDefinitions').devopsBuildAgents, 'name')))]",
+    "deployNsgAgent": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'agent'), 'name')))]",
+    "deployNsgPe": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'pe'), 'name')))]",
+    "deployNsgAppGw": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'applicationGateway'), 'name')))]",
+    "deployNsgApim": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'apiManagement'), 'name')))]",
+    "deployNsgJumpbox": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'jumpbox'), 'name')))]",
+    "deployNsgAcaEnv": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'acaEnvironment'), 'name')))]",
+    "deployNsgDevopsBuildAgents": "[not(empty(tryGet(tryGet(parameters('nsgDefinitions'), 'devopsBuildAgents'), 'name')))]",
     "varVnetIdSegments": "[if(empty(parameters('resourceIds').virtualNetworkResourceId), createArray(''), split(parameters('resourceIds').virtualNetworkResourceId, '/'))]",
     "varExistingVNetSubscriptionId": "[if(greaterOrEquals(length(variables('varVnetIdSegments')), 3), variables('varVnetIdSegments')[2], '')]",
     "varExistingVNetResourceGroupName": "[if(greaterOrEquals(length(variables('varVnetIdSegments')), 5), variables('varVnetIdSegments')[4], '')]",

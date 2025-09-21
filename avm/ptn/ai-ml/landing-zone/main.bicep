@@ -251,13 +251,13 @@ param subnetsNamesDefinition types.subnetNamesDefinitionType = {
 param nsgDefinitions types.nsgPerSubnetDefinitionsType?
 
 // Deploy toggles (computed from presence of a name)
-var deployNsgAgent = !empty(nsgDefinitions!.agent!.?name)
-var deployNsgPe = !empty(nsgDefinitions!.pe!.?name)
-var deployNsgAppGw = !empty(nsgDefinitions!.applicationGateway!.?name)
-var deployNsgApim = !empty(nsgDefinitions!.apiManagement!.?name)
-var deployNsgJumpbox = !empty(nsgDefinitions!.jumpbox!.?name)
-var deployNsgAcaEnv = !empty(nsgDefinitions!.acaEnvironment!.?name)
-var deployNsgDevopsBuildAgents = !empty(nsgDefinitions!.devopsBuildAgents!.?name)
+var deployNsgAgent = !empty(nsgDefinitions!.?agent!.?name)
+var deployNsgPe = !empty(nsgDefinitions!.?pe!.?name)
+var deployNsgAppGw = !empty(nsgDefinitions!.?applicationGateway!.?name)
+var deployNsgApim = !empty(nsgDefinitions!.?apiManagement!.?name)
+var deployNsgJumpbox = !empty(nsgDefinitions!.?jumpbox!.?name)
+var deployNsgAcaEnv = !empty(nsgDefinitions!.?acaEnvironment!.?name)
+var deployNsgDevopsBuildAgents = !empty(nsgDefinitions!.?devopsBuildAgents!.?name)
 
 // Agent subnet NSG
 module nsgAgent 'br/public:avm/res/network/network-security-group:0.5.1' = if (deployNsgAgent) {
