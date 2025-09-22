@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "9905012846592731847"
+      "templateHash": "6967571563700192248"
     },
     "name": "AI/ML Landing Zone",
     "description": "Deploys a secure AI/ML landing zone (resource groups, networking, AI services, private endpoints, and guardrails) using AVM resource modules."
@@ -127724,8 +127724,8 @@
           "imageReference": {
             "value": "[variables('varBuildVmImageRef')]"
           },
-          "disablePasswordAuthentication": "[if(not(empty(parameters('buildVmDefinition').sshPublicKey)), createObject('value', true()), createObject('value', null()))]",
-          "publicKeys": "[if(not(empty(parameters('buildVmDefinition').sshPublicKey)), createObject('value', createArray(createObject('path', format('/home/{0}/.ssh/authorized_keys', parameters('buildVmDefinition').adminUsername), 'keyData', parameters('buildVmDefinition').sshPublicKey))), createObject('value', null()))]",
+          "disablePasswordAuthentication": "[if(not(empty(tryGet(parameters('buildVmDefinition'), 'sshPublicKey'))), createObject('value', true()), createObject('value', null()))]",
+          "publicKeys": "[if(not(empty(tryGet(parameters('buildVmDefinition'), 'sshPublicKey'))), createObject('value', createArray(createObject('path', format('/home/{0}/.ssh/authorized_keys', tryGet(parameters('buildVmDefinition'), 'adminUsername')), 'keyData', tryGet(parameters('buildVmDefinition'), 'sshPublicKey')))), createObject('value', null()))]",
           "osDisk": {
             "value": {
               "caching": "ReadWrite",
@@ -127749,7 +127749,7 @@
             ]
           },
           "customData": "[if(not(empty(variables('varBuildVMCloudInit'))), createObject('value', base64(variables('varBuildVMCloudInit'))), createObject('value', null()))]",
-          "tags": "[if(not(empty(tryGet(parameters('buildVmDefinition'), 'tags'))), createObject('value', parameters('buildVmDefinition').tags), createObject('value', parameters('tags')))]",
+          "tags": "[if(not(empty(tryGet(parameters('buildVmDefinition'), 'tags'))), createObject('value', tryGet(parameters('buildVmDefinition'), 'tags')), createObject('value', parameters('tags')))]",
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
           }
@@ -136921,7 +136921,7 @@
             "value": "[parameters('location')]"
           },
           "tags": {
-            "value": "[coalesce(parameters('jumpVmDefinition').tags, parameters('tags'))]"
+            "value": "[coalesce(tryGet(parameters('jumpVmDefinition'), 'tags'), parameters('tags'))]"
           },
           "enableTelemetry": {
             "value": "[parameters('enableTelemetry')]"
@@ -136933,7 +136933,7 @@
             "value": -1
           },
           "adminUsername": {
-            "value": "[parameters('jumpVmDefinition').adminUsername]"
+            "value": "[tryGet(parameters('jumpVmDefinition'), 'adminUsername')]"
           },
           "adminPassword": {
             "value": "[parameters('jumpVmAdminPassword')]"
@@ -136945,7 +136945,7 @@
             "value": "[variables('varJumpVmImageRef')]"
           },
           "vmSize": {
-            "value": "[parameters('jumpVmDefinition').sku]"
+            "value": "[tryGet(parameters('jumpVmDefinition'), 'sku')]"
           },
           "maintenanceConfigurationResourceId": {
             "value": "[reference('jumpVmMantenanceConfiguration').outputs.resourceId.value]"

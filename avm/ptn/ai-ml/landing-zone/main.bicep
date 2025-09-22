@@ -2650,12 +2650,12 @@ module buildVm 'br/public:avm/res/compute/virtual-machine:0.20.0' = if (varDeplo
     imageReference: varBuildVmImageRef
 
     // SSH hardening: only disable password auth when an SSH key is actually supplied
-    disablePasswordAuthentication: !empty(buildVmDefinition!.sshPublicKey) ? true : null
-    publicKeys: !empty(buildVmDefinition!.sshPublicKey)
+    disablePasswordAuthentication: !empty(buildVmDefinition!.?sshPublicKey) ? true : null
+    publicKeys: !empty(buildVmDefinition!.?sshPublicKey)
       ? [
           {
-            path: '/home/${buildVmDefinition!.adminUsername}/.ssh/authorized_keys'
-            keyData: buildVmDefinition!.sshPublicKey
+            path: '/home/${buildVmDefinition!.?adminUsername}/.ssh/authorized_keys'
+            keyData: buildVmDefinition!.?sshPublicKey
           }
         ]
       : null
@@ -2685,7 +2685,7 @@ module buildVm 'br/public:avm/res/compute/virtual-machine:0.20.0' = if (varDeplo
     customData: !empty(varBuildVMCloudInit) ? base64(varBuildVMCloudInit) : null
 
     // Pass global tags only when user didn’t provide an override object
-    tags: !empty(buildVmDefinition.?tags) ? buildVmDefinition!.tags! : tags
+    tags: !empty(buildVmDefinition.?tags) ? buildVmDefinition!.?tags! : tags
 
     // Telemetry passthrough for global toggle
     enableTelemetry: enableTelemetry
@@ -2736,15 +2736,15 @@ module jumpVm 'br/public:avm/res/compute/virtual-machine:0.20.0' = if (varDeploy
   params: {
     name: empty(jumpVmDefinition!.?name!) ? 'mc-${baseName}-jump' : jumpVmDefinition!.name!
     location: location
-    tags: jumpVmDefinition!.tags! ?? tags
+    tags: jumpVmDefinition!.?tags! ?? tags
     enableTelemetry: enableTelemetry
     osType: varJumpVmOsType
     availabilityZone: -1
-    adminUsername: jumpVmDefinition!.adminUsername
+    adminUsername: jumpVmDefinition!.?adminUsername
     adminPassword: jumpVmAdminPassword
     computerName: varJumpComputerName
     imageReference: varJumpVmImageRef
-    vmSize: jumpVmDefinition!.sku
+    vmSize: jumpVmDefinition!.?sku
     maintenanceConfigurationResourceId: jumpVmMantenanceConfiguration.outputs.resourceId
     osDisk: {
       caching: 'ReadWrite'
