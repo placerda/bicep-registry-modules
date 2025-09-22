@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "13423138893892400344"
+      "templateHash": "4856267136620757964"
     },
     "name": "AI/ML Landing Zone",
     "description": "Deploys a secure AI/ML landing zone (resource groups, networking, AI services, private endpoints, and guardrails) using AVM resource modules."
@@ -136931,7 +136931,7 @@
             "value": -1
           },
           "adminUsername": {
-            "value": "[tryGet(parameters('jumpVmDefinition'), 'adminUsername')]"
+            "value": "[coalesce(tryGet(parameters('jumpVmDefinition'), 'adminUsername'), 'azureuser')]"
           },
           "adminPassword": {
             "value": "[parameters('jumpVmAdminPassword')]"

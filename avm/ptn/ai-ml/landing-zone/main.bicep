@@ -2740,7 +2740,7 @@ module jumpVm 'br/public:avm/res/compute/virtual-machine:0.20.0' = if (varDeploy
     enableTelemetry: enableTelemetry
     osType: varJumpVmOsType
     availabilityZone: -1
-    adminUsername: jumpVmDefinition!.?adminUsername
+    adminUsername: jumpVmDefinition!.?adminUsername ?? 'azureuser'
     adminPassword: jumpVmAdminPassword
     computerName: varJumpComputerName
     imageReference: varJumpVmImageRef
