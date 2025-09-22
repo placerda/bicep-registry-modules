@@ -2586,7 +2586,7 @@ param buildVmMaintenanceDefinition types.vmMaintenanceDefinitionType = {
   name: ''
 }
 
-module buildVmMaintenanceConfiguration 'br/public:avm/res/maintenance/maintenance-configuration:0.3.1' = {
+module buildVmMaintenanceConfiguration 'br/public:avm/res/maintenance/maintenance-configuration:0.3.1' = if (varDeployBuildVm) {
   name: 'buildVmMaintenanceConfigurationDeployment'
   params: {
     name: empty(buildVmMaintenanceDefinition.?name!) ? 'mc-${baseName}-build' : buildVmMaintenanceDefinition.name!
@@ -2639,9 +2639,9 @@ module buildVm 'br/public:avm/res/compute/virtual-machine:0.20.0' = if (varDeplo
   params: {
     // Required identity & sizing
     name: empty(buildVmDefinition!.?name!) ? 'vm-${baseName}-build' : buildVmDefinition!.name!
-    adminUsername: buildVmDefinition!.adminUsername
-    vmSize: buildVmDefinition!.sku
-    maintenanceConfigurationResourceId: buildVmMaintenanceConfiguration.outputs.resourceId
+    adminUsername: buildVmDefinition!.?adminUsername ?? 'builduser'
+    vmSize: buildVmDefinition!.?sku
+    maintenanceConfigurationResourceId: buildVmMaintenanceConfiguration!.outputs.resourceId
     // Required by the AVM VM module (zone sentinel pattern retained)
     availabilityZone: -1
 

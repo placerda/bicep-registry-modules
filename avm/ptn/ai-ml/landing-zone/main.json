@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "7330944965811026747"
+      "templateHash": "1468212784845428491"
     },
     "name": "AI/ML Landing Zone",
     "description": "Deploys a secure AI/ML landing zone (resource groups, networking, AI services, private endpoints, and guardrails) using AVM resource modules."
@@ -127335,6 +127335,7 @@
       ]
     },
     "buildVmMaintenanceConfiguration": {
+      "condition": "[variables('varDeployBuildVm')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "buildVmMaintenanceConfigurationDeployment",
@@ -127706,10 +127707,10 @@
         "parameters": {
           "name": "[if(empty(tryGet(parameters('buildVmDefinition'), 'name')), createObject('value', format('vm-{0}-build', parameters('baseName'))), createObject('value', parameters('buildVmDefinition').name))]",
           "adminUsername": {
-            "value": "[parameters('buildVmDefinition').adminUsername]"
+            "value": "[coalesce(tryGet(parameters('buildVmDefinition'), 'adminUsername'), 'builduser')]"
           },
           "vmSize": {
-            "value": "[parameters('buildVmDefinition').sku]"
+            "value": "[tryGet(parameters('buildVmDefinition'), 'sku')]"
           },
           "maintenanceConfigurationResourceId": {
             "value": "[reference('buildVmMaintenanceConfiguration').outputs.resourceId.value]"
