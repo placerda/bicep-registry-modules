@@ -2601,8 +2601,8 @@ var varDefaultBuildUbuntu = {
   sku: '22_04-lts'
   version: 'latest'
 }
-var varBuildVmImageRef = !empty(string(buildVmDefinition.?imageReference))
-  ? buildVmDefinition!.imageReference!
+var varBuildVmImageRef = !empty(buildVmDefinition.?imageReference)
+  ? buildVmDefinition!.?imageReference!
   : varDefaultBuildUbuntu
 
 // Normalize entire build VM object so nested props always exist
@@ -2712,7 +2712,7 @@ var varDefaultJumpWindows = {
   sku: '2022-datacenter-azure-edition'
   version: 'latest'
 }
-var varJumpVmImageRef = !empty(string(jumpVmDefinition.?imageReference))
+var varJumpVmImageRef = !empty(jumpVmDefinition.?imageReference)
   ? jumpVmDefinition!.imageReference!
   : varDefaultJumpWindows
 

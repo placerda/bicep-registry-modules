@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "1468212784845428491"
+      "templateHash": "9905012846592731847"
     },
     "name": "AI/ML Landing Zone",
     "description": "Deploys a secure AI/ML landing zone (resource groups, networking, AI services, private endpoints, and guardrails) using AVM resource modules."
@@ -10605,7 +10605,7 @@
       "sku": "22_04-lts",
       "version": "latest"
     },
-    "varBuildVmImageRef": "[if(not(empty(string(tryGet(parameters('buildVmDefinition'), 'imageReference')))), parameters('buildVmDefinition').imageReference, variables('varDefaultBuildUbuntu'))]",
+    "varBuildVmImageRef": "[if(not(empty(tryGet(parameters('buildVmDefinition'), 'imageReference'))), tryGet(parameters('buildVmDefinition'), 'imageReference'), variables('varDefaultBuildUbuntu'))]",
     "varBuildVmNormalized": "[union(createObject('azdo', createObject('orgUrl', '', 'pool', '', 'agentName', '', 'workFolder', ''), 'github', createObject('owner', '', 'repo', '', 'labels', '', 'agentName', '', 'workFolder', '')), parameters('buildVmDefinition'))]",
     "varBuildVMCloudInitRaw": "[replace(variables('$fxv#0'), '\r\n', '\n')]",
     "varBuildVMCloudInitT0": "[variables('varBuildVMCloudInitRaw')]",
@@ -10632,7 +10632,7 @@
       "sku": "2022-datacenter-azure-edition",
       "version": "latest"
     },
-    "varJumpVmImageRef": "[if(not(empty(string(tryGet(parameters('jumpVmDefinition'), 'imageReference')))), parameters('jumpVmDefinition').imageReference, variables('varDefaultJumpWindows'))]",
+    "varJumpVmImageRef": "[if(not(empty(tryGet(parameters('jumpVmDefinition'), 'imageReference'))), parameters('jumpVmDefinition').imageReference, variables('varDefaultJumpWindows'))]",
     "varRawJumpName": "[if(empty(tryGet(parameters('jumpVmDefinition'), 'name')), format('vm-{0}jmp', parameters('baseName')), replace(replace(replace(parameters('jumpVmDefinition').name, ' ', ''), '_', ''), '.', ''))]",
     "varMaxComputerNameLength": 15,
     "varJumpNameLen": "[min(variables('varMaxComputerNameLength'), length(variables('varRawJumpName')))]",
