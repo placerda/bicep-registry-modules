@@ -2640,7 +2640,7 @@ module buildVm 'br/public:avm/res/compute/virtual-machine:0.20.0' = if (varDeplo
     // Required identity & sizing
     name: empty(buildVmDefinition!.?name!) ? 'vm-${baseName}-build' : buildVmDefinition!.name!
     adminUsername: buildVmDefinition!.?adminUsername ?? 'builduser'
-    vmSize: buildVmDefinition!.?sku
+    vmSize: !empty(buildVmDefinition.?sku) ? buildVmDefinition!.sku : 'Standard_B2s'
     maintenanceConfigurationResourceId: buildVmMaintenanceConfiguration!.outputs.resourceId
     // Required by the AVM VM module (zone sentinel pattern retained)
     availabilityZone: -1
@@ -2744,7 +2744,7 @@ module jumpVm 'br/public:avm/res/compute/virtual-machine:0.20.0' = if (varDeploy
     adminPassword: jumpVmAdminPassword
     computerName: varJumpComputerName
     imageReference: varJumpVmImageRef
-    vmSize: jumpVmDefinition!.?sku
+    vmSize: jumpVmDefinition!.?sku ?? 'Standard_B2s'
     maintenanceConfigurationResourceId: jumpVmMantenanceConfiguration.outputs.resourceId
     osDisk: {
       caching: 'ReadWrite'

@@ -6,7 +6,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.37.4.10188",
-      "templateHash": "8974336949610831876"
+      "templateHash": "13423138893892400344"
     },
     "name": "AI/ML Landing Zone",
     "description": "Deploys a secure AI/ML landing zone (resource groups, networking, AI services, private endpoints, and guardrails) using AVM resource modules."
@@ -127709,9 +127709,7 @@
           "adminUsername": {
             "value": "[coalesce(tryGet(parameters('buildVmDefinition'), 'adminUsername'), 'builduser')]"
           },
-          "vmSize": {
-            "value": "[tryGet(parameters('buildVmDefinition'), 'sku')]"
-          },
+          "vmSize": "[if(not(empty(tryGet(parameters('buildVmDefinition'), 'sku'))), createObject('value', parameters('buildVmDefinition').sku), createObject('value', 'Standard_B2s'))]",
           "maintenanceConfigurationResourceId": {
             "value": "[reference('buildVmMaintenanceConfiguration').outputs.resourceId.value]"
           },
@@ -136945,7 +136943,7 @@
             "value": "[variables('varJumpVmImageRef')]"
           },
           "vmSize": {
-            "value": "[tryGet(parameters('jumpVmDefinition'), 'sku')]"
+            "value": "[coalesce(tryGet(parameters('jumpVmDefinition'), 'sku'), 'Standard_B2s')]"
           },
           "maintenanceConfigurationResourceId": {
             "value": "[reference('jumpVmMantenanceConfiguration').outputs.resourceId.value]"
